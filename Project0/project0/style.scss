@@ -1,0 +1,80 @@
+body 
+{
+  background-color: lavender;
+}
+@media screen and (min-width: 800px)
+{
+  body
+  {
+    background-color: #ffebe0;
+  }
+}
+
+$color-grayish : #595452;
+h1
+{
+  color: $color-grayish;
+  font-family: verdana;
+  font-size: 30px;
+}
+
+p
+{
+  color: black;
+  width: 50%;
+}
+
+#Berkshire
+{
+	width: 35%;	
+}
+
+#Index
+{
+	text-align: center;
+	h5
+	{
+		color: $color-grayish;
+	}
+}
+
+%message-shared
+{
+	font-size: 30px;
+	color: yellow;
+}
+
+.success
+{
+  @extend %message-shared;
+  background-color: green;
+}
+
+p.pigs
+{
+	font-size: 20px;
+	text-align: justify;
+}
+
+img
+{
+	width: 50%;
+	height: 50%;
+}
+
+table, th, td
+{
+	border: 1px solid black; border-collapse: collapse;
+	text-align: left;
+	background-color: #fff5f2;
+}
+
+th, td
+{
+	padding: 15px;
+}
+
+th
+{
+  background-color: #f2c1b3;
+}
