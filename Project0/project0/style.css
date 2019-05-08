@@ -12,10 +12,12 @@ body
 h1
 {
   color: #595452;
+  color: $color-red;
   font-family: verdana;
   font-size: 30px
   
 }
+
 p
 {
   color: black;
@@ -25,6 +27,11 @@ p
 #Berkshire
 {
 	width: 35%;	
+}
+
+#Index
+{
+	text-align: center;
 }
 
 p.pigs
@@ -45,10 +52,12 @@ table, th, td
 	text-align: left;
 	background-color: #fff5f2;
 }
+
 th, td
 {
 	padding: 15px;
 }
+
 th
 {
   background-color: #f2c1b3;
