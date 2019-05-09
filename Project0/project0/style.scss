@@ -40,14 +40,16 @@ p
 
 %message-shared
 {
-	font-size: 30px;
-	color: yellow;
+	font-size: 15 px;
+	color: black;
+	text-align: left;
 }
 
-.success
+.piggies
 {
-  @extend %message-shared;
-  background-color: green;
+	@extend %message-shared;
+	text-indent: 10px;
+	padding: 12px;
 }
 
 p.pigs

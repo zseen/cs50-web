@@ -29,13 +29,15 @@ p {
   color: #595452;
 }
 
-.success {
-  font-size: 30px;
-  color: yellow;
+.piggies {
+  font-size: 15 px;
+  color: black;
+  text-align: left;
 }
 
-.success {
-  background-color: green;
+.piggies {
+  text-indent: 10px;
+  padding: 12px;
 }
 
 p.pigs {
