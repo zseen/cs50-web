@@ -1,27 +1,16 @@
+$color-grayish : #595452;
+
 body 
 {
   background-color: lavender;
 }
+
 @media screen and (min-width: 800px)
 {
   body
   {
     background-color: #ffebe0;
   }
-}
-
-$color-grayish : #595452;
-h1
-{
-  color: $color-grayish;
-  font-family: verdana;
-  font-size: 30px;
-}
-
-p
-{
-  color: black;
-  width: 50%;
 }
 
 #Berkshire
@@ -32,10 +21,17 @@ p
 #Index
 {
 	text-align: center;
+	
 	h5
 	{
 		color: $color-grayish;
 	}
+}
+
+p.pigs
+{
+	font-size: 20px;
+	text-align: justify;
 }
 
 %message-shared
@@ -52,10 +48,17 @@ p
 	padding: 12px;
 }
 
-p.pigs
+h1
 {
-	font-size: 20px;
-	text-align: justify;
+  color: $color-grayish;
+  font-family: verdana;
+  font-size: 30px;
+}
+
+p
+{
+  color: black;
+  width: 50%;
 }
 
 img

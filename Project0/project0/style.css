@@ -7,17 +7,6 @@ body {
     background-color: #ffebe0;
   }
 }
-h1 {
-  color: #595452;
-  font-family: verdana;
-  font-size: 30px;
-}
-
-p {
-  color: black;
-  width: 50%;
-}
-
 #Berkshire {
   width: 35%;
 }
@@ -27,6 +16,11 @@ p {
 }
 #Index h5 {
   color: #595452;
+}
+
+p.pigs {
+  font-size: 20px;
+  text-align: justify;
 }
 
 .piggies {
@@ -40,9 +34,15 @@ p {
   padding: 12px;
 }
 
-p.pigs {
-  font-size: 20px;
-  text-align: justify;
+h1 {
+  color: #595452;
+  font-family: verdana;
+  font-size: 30px;
+}
+
+p {
+  color: black;
+  width: 50%;
 }
 
 img {
