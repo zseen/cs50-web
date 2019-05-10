@@ -2,84 +2,84 @@ $color-grayish : #595452;
 
 body 
 {
-  background-color: lavender;
+    background-color: lavender;
 }
 
 @media screen and (min-width: 800px)
 {
-  body
-  {
-    background-color: #ffebe0;
-  }
+    body
+    {
+        background-color: #ffebe0;
+    }
 }
 
 #Berkshire
 {
-	width: 35%;	
+    width: 35%; 
 }
 
 #Index
 {
-	text-align: center;
-	
-	h5
-	{
-		color: $color-grayish;
-	}
+    text-align: center;
+    
+    h5
+    {
+        color: $color-grayish;
+    }
 }
 
 p.pigs
 {
-	font-size: 20px;
-	text-align: justify;
+    font-size: 20px;
+    text-align: justify;
 }
 
 %message-shared
 {
-	font-size: 15 px;
-	color: black;
-	text-align: left;
+    font-size: 15 px;
+    color: black;
+    text-align: left;
 }
 
 .piggies
 {
-	@extend %message-shared;
-	text-indent: 10px;
-	padding: 12px;
+    @extend %message-shared;
+    text-indent: 10px;
+    padding: 12px;
 }
 
 h1
 {
-  color: $color-grayish;
-  font-family: verdana;
-  font-size: 30px;
+    color: $color-grayish;
+    font-family: verdana;
+    font-size: 30px;
 }
 
 p
 {
-  color: black;
-  width: 50%;
+    color: black;
+    width: 50%;
 }
 
 img
 {
-	width: 50%;
-	height: 50%;
+    width: 50%;
+    height: 50%;
 }
 
 table, th, td
 {
-	border: 1px solid black; border-collapse: collapse;
-	text-align: left;
-	background-color: #fff5f2;
+    border: 1px solid black; border-collapse: collapse;
+    text-align: left;
+    background-color: #fff5f2;
 }
 
 th, td
 {
-	padding: 15px;
+    padding: 15px;
 }
 
 th
 {
-  background-color: #f2c1b3;
+    background-color: #f2c1b3;
 }
