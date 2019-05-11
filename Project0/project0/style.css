@@ -1,12 +1,3 @@
-body {
-  background-color: lavender;
-}
-
-@media screen and (min-width: 800px) {
-  body {
-    background-color: #ffebe0;
-  }
-}
 #Berkshire {
   width: 35%;
 }
@@ -34,6 +25,15 @@ p.pigs {
   padding: 12px;
 }
 
+body {
+  background-color: lavender;
+}
+
+@media screen and (min-width: 800px) {
+  body {
+    background-color: #ffebe0;
+  }
+}
 h1 {
   color: #595452;
   font-family: verdana;
