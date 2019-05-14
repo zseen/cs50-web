@@ -23,7 +23,9 @@ Session(app)
 # Set up database
 engine = create_engine(os.getenv("DATABASE_URL"))
 db = scoped_session(sessionmaker(bind=engine))
-"------"
+
+
+
 
 @app.route("/")
 def index():
@@ -50,13 +52,58 @@ def register():
         return ("password mismatch", 400)
 
 
-    newRegisteredUser = db.execute(USERS_USERNAME_PW_INSERTION_QUERY,
-                                   username=request.form.get("username"),
-                                   hash=password)
-    if not newRegisteredUser:
-        return ("username already taken", 400)
+    db.execute("INSERT INTO users (username, hash) VALUES(:username, :hash)",
+            {"username": request.form.get("username"),
+            "hash": password})
+    db.commit()
 
-    session["user_id"] = newRegisteredUser
+    for iter in session:
+        session["user_id"] = iter[0]
+
+
+    print("here?")
+
     return redirect("/")
+
+
+@app.route("/login", methods=["GET", "POST"])
+def login():
+    """Log user in"""
+
+    # Forget any user_id
+    session.clear()
+
+    # User reached route via POST (as by submitting a form via POST)
+    if request.method == "POST":
+
+        # Ensure username was submitted
+        if not request.form.get("username"):
+            return ("must provide username", 403)
+
+        # Ensure password was submitted
+        elif not request.form.get("password"):
+            return ("must provide password", 403)
+
+        # Query database for username
+        rows = db.execute("SELECT * FROM users WHERE username = :username",
+                          {"username": request.form.get("username")})
+
+        # Ensure username exists and password is correct
+
+
+        # Remember which user has logged in
+        #session["user_id"] = rows[0]["id"]
+
+        for iter in session:
+            session["user_id"] = iter[0]
+
+        # Redirect user to home page
+        return redirect("/")
+
+    # User reached route via GET (as by clicking a link or via redirect)
+    else:
+        return render_template("login.html")
+
+
 
 
