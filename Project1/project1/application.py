@@ -5,6 +5,11 @@ from flask_session import Session
 from sqlalchemy import create_engine
 from sqlalchemy.orm import scoped_session, sessionmaker
 
+from werkzeug.security import check_password_hash, generate_password_hash
+
+from DatabaseHandler import DatabaseHandler
+
+
 
 app = Flask(__name__)
 
@@ -23,6 +28,9 @@ Session(app)
 # Set up database
 engine = create_engine(os.getenv("DATABASE_URL"))
 db = scoped_session(sessionmaker(bind=engine))
+
+
+DH = DatabaseHandler(db)
 
 
 
@@ -52,16 +60,15 @@ def register():
         return ("password mismatch", 400)
 
 
-    db.execute("INSERT INTO users (username, hash) VALUES(:username, :hash)",
-            {"username": request.form.get("username"),
-            "hash": password})
-    db.commit()
+    hashedPW = generate_password_hash(password)
+
+    newUser = DH.insertUsernameAndHashIntoUsers(request.form.get("username"), hashedPW)
+
+    if not newUser:
+        return "Username already taken"
 
     for iter in session:
         session["user_id"] = iter[0]
-
-
-    print("here?")
 
     return redirect("/")
 
@@ -78,27 +85,25 @@ def login():
 
         # Ensure username was submitted
         if not request.form.get("username"):
-            return ("must provide username", 403)
+            return "must provide username"
 
         # Ensure password was submitted
         elif not request.form.get("password"):
             return ("must provide password", 403)
 
         # Query database for username
-        rows = db.execute("SELECT * FROM users WHERE username = :username",
-                          {"username": request.form.get("username")})
+        rows = DH.selectHashByUsernameFromUsers(request.form.get("username"))
 
-        # Ensure username exists and password is correct
-
-
-        # Remember which user has logged in
-        #session["user_id"] = rows[0]["id"]
-
-        for iter in session:
-            session["user_id"] = iter[0]
+        for data in rows:
+            if not check_password_hash(data.hash, request.form.get("password")):
+                print(request.form.get("password"))
+                return "Ooops"
+            session["user_id"] = ###??????
+            print(session["user_id"])
 
         # Redirect user to home page
-        return redirect("/")
+        #return redirect("/")
+        return "Yeah, logged in!"
 
     # User reached route via GET (as by clicking a link or via redirect)
     else:
