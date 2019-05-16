@@ -1,4 +1,6 @@
 from unittest.mock import *
+from unittest import TestCase
+import unittest
 
 
 class DatabaseHandler:
@@ -22,31 +24,38 @@ class DatabaseHandler:
 
         return len(isa) == 0
 
+    def selectAllByISBNFromBooks(self, isbn):
+        book = self.database.execute("SELECT * FROM books WHERE isbn = :isbn",
+                                     {"isbn": isbn}).fetchone()
+        return book
 
 
-def testInsertion():
-    mockDB = Mock()
+class MockTestDatabaseHandler(TestCase):
+    def setUp(self):
+        self.mockDB = Mock()
+        self.dbh = DatabaseHandler(self.mockDB)
 
-    dbh = DatabaseHandler(mockDB)
+    def testInsertion(self):
+        self.dbh.insertUsernameAndHashIntoUsers("Abc", "9d56")
 
-    dbh.insertUsernameAndHashIntoUsers("Abc", "9d56")
+        self.mockDB.execute.assert_called_once()
+        self.mockDB.execute.assert_called_with("INSERT INTO users (username, hash) VALUES(:username, :hash)",
+                                               {'username': 'Abc', 'hash': '9d56'})
+        self.mockDB.commit.assert_called_once()
 
-    mockDB.execute.assert_called_once()
-    mockDB.execute.assert_called_with("INSERT INTO users (username, hash) VALUES('abc', '9d56')")
-    mockDB.commit.assert_called_once()
+    def testSelectHash(self):
+        self.mockFetchAllResult = Mock()
+        self.mockFetchAllResult.fetchall.return_value = "985747"
+        self.mockDB.execute.return_value = self.mockFetchAllResult
 
-def testSelectHash():
-    mockDB = Mock()
+        pw = self.dbh.selectHashByUsernameFromUsers("asd")
 
-    dbh = DatabaseHandler(mockDB)
+        self.mockDB.execute.assert_called_once()
+        self.mockDB.execute.assert_called_with("SELECT hash, id FROM users WHERE username = :username",
+                                          {"username": 'asd'})
 
-    mockDB.execute.assert_called_once()
-    mockDB.execute.assert_called_with("SELECT hash FROM users WHERE username = 'asd'")
+        self.assertEquals("985747", pw)
 
-    mockFetchAllResult = Mock()
-    mockFetchAllResult.fetchall.return_value("985747")
-    mockDB.execute.return_value(mockFetchAllResult)
-
-    pw = dbh.selectHashByUsernameFromUsers("abc")
-    self.assertEquals("985747", pw)
+if __name__ == '__main__':
+    unittest.main()
 
