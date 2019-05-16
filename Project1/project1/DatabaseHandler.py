@@ -12,9 +12,16 @@ class DatabaseHandler:
         self.database.commit()
 
     def selectHashByUsernameFromUsers(self, username):
-        hashedPw = self.database.execute("SELECT hash FROM users WHERE username = :username",
+        hashedPw = self.database.execute("SELECT hash, id FROM users WHERE username = :username",
                           {"username": username}).fetchall()
         return hashedPw
+
+    def isUsernameAvailable(self, username):
+        isa = self.database.execute("SELECT username FROM users WHERE username = :username",
+                        {"username": username}).fetchall()
+
+        return len(isa) == 0
+
 
 
 def testInsertion():

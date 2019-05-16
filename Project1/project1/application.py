@@ -34,7 +34,6 @@ DH = DatabaseHandler(db)
 
 
 
-
 @app.route("/")
 def index():
     return render_template("layout.html")
@@ -61,10 +60,13 @@ def register():
 
     hashedPW = generate_password_hash(password)
 
-    newUser = DH.insertUsernameAndHashIntoUsers(request.form.get("username"), hashedPW)
-
-    if not newUser:
+    if not DH.isUsernameAvailable(request.form.get("username")):
         return "Username already taken"
+
+    print("This should not be printed")
+
+
+    DH.insertUsernameAndHashIntoUsers(request.form.get("username"), hashedPW)
 
     session["username"] = request.form.get("username")
 
@@ -89,7 +91,8 @@ def login():
                 print(request.form.get("password"))
                 return "Ooops"
 
-        session["username"] = request.form.get("username")
+            session["id"] = data.id
+            print(session["id"])
 
         #return redirect("/")
         return "Yeah, logged in!"
