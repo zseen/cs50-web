@@ -63,13 +63,9 @@ def register():
     if not DH.isUsernameAvailable(request.form.get("username")):
         return "Username already taken"
 
-    print("This should not be printed")
-
-
     DH.insertUsernameAndHashIntoUsers(request.form.get("username"), hashedPW)
 
     session["username"] = request.form.get("username")
-
     return redirect("/")
 
 
@@ -95,10 +91,18 @@ def login():
             print(session["id"])
 
         #return redirect("/")
-        return "Yeah, logged in!"
+        #return "Yeah, logged in!"
+        return render_template("layout.html")
 
     else:
         return render_template("login.html")
+
+@app.route("/logout", methods=["GET", "POST"])
+def logout():
+    session.clear()
+
+    #return redirect("/")
+    return "Logged out"
 
 
 
