@@ -104,8 +104,3 @@ def search():
     book = DH.selectTitleAuthorYearByISBNFromBooks(isbnReceived)
     print(book)  #  Temporary solution, will return a book html page later
     return redirect("/")
-
-
-
-
-
