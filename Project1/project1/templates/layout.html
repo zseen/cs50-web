@@ -1,10 +1,10 @@
+<!-- Imported from cs50, slightly modified -->
+
 <!DOCTYPE html>
 
 <html lang="en">
 
     <head>
-
-        <!-- Required meta tags -->
         <meta charset="utf-8"/>
         <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no"/>
 
@@ -31,8 +31,9 @@
             <div class="collapse navbar-collapse" id="navbar">
                 {% if session.id %}
                     <ul class="navbar-nav ml-auto mt-2">
-                         <li class="nav-item"><a class="nav-link" href="/changePW">Change password</a></li>
+                        <li class="nav-item"><a class="nav-link" href="/changePW">Change password</a></li>
                         <li class="nav-item"><a class="nav-link" href="/logout">Log Out</a></li>
+                        <li class="nav-item"><a class="nav-link" href="/search">Search</a></li>
                     </ul>
                 {% else %}
                     <ul class="navbar-nav ml-auto mt-2">
