@@ -7,13 +7,13 @@ class DatabaseHandler:
     def __init__(self, database):
         self.database = database
 
-    def insertUsernameAndHashIntoUsers(self, username, hash):
+    def insertUsernameAndHashIntoUsers(self, username, hashedPW):
         self.database.execute("INSERT INTO users (username, hash) VALUES(:username, :hash)",
                    {"username": username,
-                    "hash": hash})
+                    "hash": hashedPW})
         self.database.commit()
 
-    def selectHashByUsernameFromUsers(self, username):
+    def selectHashAndIdByUsernameFromUsers(self, username):
         hashedPw = self.database.execute("SELECT hash, id FROM users WHERE username = :username",
                           {"username": username}).fetchall()
         return hashedPw
@@ -24,8 +24,8 @@ class DatabaseHandler:
 
         return len(isa) == 0
 
-    def selectAllByISBNFromBooks(self, isbn):
-        book = self.database.execute("SELECT * FROM books WHERE isbn = :isbn",
+    def selectTitleAuthorYearByISBNFromBooks(self, isbn):
+        book = self.database.execute("SELECT title, author, year FROM books WHERE isbn = :isbn",
                                      {"isbn": isbn}).fetchone()
         return book
 
@@ -48,7 +48,7 @@ class MockTestDatabaseHandler(TestCase):
         self.mockFetchAllResult.fetchall.return_value = "985747"
         self.mockDB.execute.return_value = self.mockFetchAllResult
 
-        pw = self.dbh.selectHashByUsernameFromUsers("asd")
+        pw = self.dbh.selectHashAndIdByUsernameFromUsers("asd")
 
         self.mockDB.execute.assert_called_once()
         self.mockDB.execute.assert_called_with("SELECT hash, id FROM users WHERE username = :username",

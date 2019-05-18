@@ -6,15 +6,12 @@ from sqlalchemy import create_engine
 from sqlalchemy.orm import scoped_session, sessionmaker
 
 from werkzeug.security import check_password_hash, generate_password_hash
+from helper import login_required
 
 from DatabaseHandler import DatabaseHandler
 
 
-
 app = Flask(__name__)
-
-
-USERS_USERNAME_PW_INSERTION_QUERY = "INSERT INTO users (username, hash) VALUES(:username, :hash)"
 
 # Check for environment variable
 if not os.getenv("DATABASE_URL"):
@@ -29,9 +26,7 @@ Session(app)
 engine = create_engine(os.getenv("DATABASE_URL"))
 db = scoped_session(sessionmaker(bind=engine))
 
-
 DH = DatabaseHandler(db)
-
 
 
 @app.route("/")
@@ -46,23 +41,21 @@ def register():
         return render_template("register.html")
 
     if not request.form.get("username"):
-        return ("must provide a username")
+        return "must provide a username"
     elif not request.form.get("password"):
-        return ("must provide a password", 400)
+        return "must provide a password"
 
     password = request.form.get("password")
-    # min 8 chars pw length, at least 1 upper char, at least 1 lower char, no spec chars, at least 1 digit
 
     if not request.form.get("confirmation"):
-        return ("must confirm your password")
+        return "must confirm your password"
     elif request.form.get("password") != request.form.get("confirmation"):
-        return ("password mismatch", 400)
-
-    hashedPW = generate_password_hash(password)
+        return "password mismatch"
 
     if not DH.isUsernameAvailable(request.form.get("username")):
         return "Username already taken"
 
+    hashedPW = generate_password_hash(password)
     DH.insertUsernameAndHashIntoUsers(request.form.get("username"), hashedPW)
 
     session["username"] = request.form.get("username")
@@ -73,36 +66,45 @@ def register():
 def login():
     session.clear()
 
-    if request.method == "POST":
-        if not request.form.get("username"):
-            return "must provide username"
-
-        elif not request.form.get("password"):
-            return ("must provide password", 403)
-
-        rows = DH.selectHashByUsernameFromUsers(request.form.get("username"))
-
-        for data in rows:
-            if not check_password_hash(data.hash, request.form.get("password")):
-                print(request.form.get("password"))
-                return "Ooops"
-
-            session["id"] = data.id
-            print(session["id"])
-
-        #return redirect("/")
-        #return "Yeah, logged in!"
-        return render_template("layout.html")
-
-    else:
+    if request.method != "POST":
         return render_template("login.html")
+
+    if not request.form.get("username"):
+        return "must provide username"
+
+    elif not request.form.get("password"):
+        return "must provide password"
+
+    rows = DH.selectHashAndIdByUsernameFromUsers(request.form.get("username"))
+    for data in rows:
+        if not check_password_hash(data.hash, request.form.get("password")):
+            return "Incorrect password."
+
+        session["id"] = data.id
+
+    return redirect("/")
+
 
 @app.route("/logout", methods=["GET", "POST"])
 def logout():
     session.clear()
+    return redirect("/")
 
-    #return redirect("/")
-    return "Logged out"
+
+@app.route("/search", methods=["GET", "POST"])
+@login_required
+def search():
+    if request.method != "POST":
+        return render_template("search.html")
+
+    isbnReceived = request.form.get("isbn")
+    if not isbnReceived:
+        return "No isbn received"
+
+    book = DH.selectTitleAuthorYearByISBNFromBooks(isbnReceived)
+    print(book)  #  Temporary solution, will return a book html page later
+    return redirect("/")
+
 
 
 
