@@ -26,7 +26,7 @@ Session(app)
 engine = create_engine(os.getenv("DATABASE_URL"))
 db = scoped_session(sessionmaker(bind=engine))
 
-DH = DatabaseHandler(db)
+databaseHandler = DatabaseHandler(db)
 
 
 @app.route("/")
@@ -37,7 +37,7 @@ def index():
 @app.route("/register", methods=["GET", "POST"])
 def register():
     session.clear()
-    if request.method != "POST":
+    if request.method == "GET":
         return render_template("register.html")
 
     if not request.form.get("username"):
@@ -46,19 +46,20 @@ def register():
         return "must provide a password"
 
     password = request.form.get("password")
+    username = request.form.get("username")
 
     if not request.form.get("confirmation"):
         return "must confirm your password"
-    elif request.form.get("password") != request.form.get("confirmation"):
+    elif password != request.form.get("confirmation"):
         return "password mismatch"
 
-    if not DH.isUsernameAvailable(request.form.get("username")):
+    if not databaseHandler.isUsernameAvailable(username):
         return "Username already taken"
 
     hashedPW = generate_password_hash(password)
-    DH.insertUsernameAndHashIntoUsers(request.form.get("username"), hashedPW)
+    databaseHandler.registerUser(username, hashedPW)
 
-    session["username"] = request.form.get("username")
+    session["username"] = username
     return redirect("/")
 
 
@@ -66,7 +67,7 @@ def register():
 def login():
     session.clear()
 
-    if request.method != "POST":
+    if request.method == "GET":
         return render_template("login.html")
 
     if not request.form.get("username"):
@@ -75,9 +76,12 @@ def login():
     elif not request.form.get("password"):
         return "must provide password"
 
-    rows = DH.selectHashAndIdByUsernameFromUsers(request.form.get("username"))
+    username = request.form.get("username")
+    password = request.form.get("password")
+
+    rows = databaseHandler.retrieveUserData(username)
     for data in rows:
-        if not check_password_hash(data.hash, request.form.get("password")):
+        if not check_password_hash(data.hash, password):
             return "Incorrect password."
 
         session["id"] = data.id
@@ -94,13 +98,15 @@ def logout():
 @app.route("/search", methods=["GET", "POST"])
 @login_required
 def search():
-    if request.method != "POST":
+    if request.method == "GET":
         return render_template("search.html")
 
     isbnReceived = request.form.get("isbn")
     if not isbnReceived:
         return "No isbn received"
 
-    book = DH.selectTitleAuthorYearByISBNFromBooks(isbnReceived)
+    book = databaseHandler.retrieveBookData(isbnReceived)
+    if not book:
+        return "Could not find book"
     print(book)  #  Temporary solution, will return a book html page later
     return redirect("/")

@@ -1,7 +1,7 @@
 from flask import redirect, session
 from functools import wraps
 
-#Method from cs50
+#This method was originally provided for the 2018 CS50 course "Finance" exercise
 def login_required(f):
     """
     Decorate routes to require login.
