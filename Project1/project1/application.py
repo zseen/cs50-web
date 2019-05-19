@@ -39,17 +39,18 @@ def register():
     if request.method == "GET":
         return render_template("register.html")
 
-    if not request.form.get("username"):
+    username = request.form.get("username")
+    password = request.form.get("password")
+    confirmation = request.form.get("confirmation")
+
+    if not username:
         return "must provide a username"
-    elif not request.form.get("password"):
+    elif not password:
         return "must provide a password"
 
-    password = request.form.get("password")
-    username = request.form.get("username")
-
-    if not request.form.get("confirmation"):
+    if not confirmation:
         return "must confirm your password"
-    elif password != request.form.get("confirmation"):
+    elif password != confirmation:
         return "password mismatch"
 
     if databaseHandler.isUsernameTaken(username):
@@ -59,8 +60,7 @@ def register():
     databaseHandler.registerUser(username, hashedPW)
 
     userData = databaseHandler.retrieveUserData(username)
-    for data in userData:
-        session["id"] = data.id
+    session["id"] = userData["id"]
 
     return redirect("/")
 
@@ -69,24 +69,23 @@ def register():
 def login():
     session.clear()
 
-    if request.method == "GET":
-        return render_template("login.html")
-
-    if not request.form.get("username"):
-        return "must provide username"
-
-    elif not request.form.get("password"):
-        return "must provide password"
-
     username = request.form.get("username")
     password = request.form.get("password")
 
-    rows = databaseHandler.retrieveUserData(username)
-    for data in rows:
-        if not check_password_hash(data.hash, password):
-            return "Incorrect password."
+    if request.method == "GET":
+        return render_template("login.html")
 
-        session["id"] = data.id
+    if not username:
+        return "must provide username"
+
+    elif not password:
+        return "must provide password"
+
+    userData = databaseHandler.retrieveUserData(username)
+    if not check_password_hash(userData["hash"], password):
+        return "Incorrect password."
+
+    session["id"] = userData["id"]
 
     return redirect("/")
 

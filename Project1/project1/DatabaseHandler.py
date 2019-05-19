@@ -15,14 +15,20 @@ class DatabaseHandler:
 
     def retrieveUserData(self, username):
         hashedPasswordAndId = self._database.execute("SELECT hash, id FROM users WHERE username = :username",
-                                                     {"username": username}).fetchall()
+                                                     {"username": username})
+        if len(hashedPasswordAndId) == 0:
+            pass
+
+        elif len(hashedPasswordAndId) > 1:
+            pass
+
         return hashedPasswordAndId
 
     def isUsernameTaken(self, username):
-        usernameTaken = self._database.execute("SELECT username FROM users WHERE username = :username",
+        preExistingUsername = self._database.execute("SELECT username FROM users WHERE username = :username",
                                                {"username": username}).fetchone()
 
-        return usernameTaken
+        return preExistingUsername is not None
 
     def retrieveBookData(self, isbn):
         book = self._database.execute("SELECT title, author, year FROM books WHERE isbn = :isbn",
@@ -35,39 +41,40 @@ class MockTestDatabaseHandler(TestCase):
         self.mockDB = Mock()
         self.dbh = DatabaseHandler(self.mockDB)
 
-    def testInsertion(self):
-        self.dbh.registerUser("Abc", "123")
+    def test_registerUser_correctSqlIsExecuted(self):
+        self.dbh.registerUser("Abc", "a1b2c3")
 
         self.mockDB.execute.assert_called_once()
         self.mockDB.execute.assert_called_with("INSERT INTO users (username, hash) VALUES(:username, :hash)",
-                                               {'username': 'Abc', 'hash': '123'})
+                                               {'username': 'Abc', 'hash': 'a1b2c3'})
         self.mockDB.commit.assert_called_once()
 
-    def testSelectHash(self):
+    def test_retrieveUserData_idAndHashedPasswordReturned(self):
         self.mockFetchAllResult = Mock()
-        self.mockFetchAllResult.fetchall.return_value = "123"
+        self.mockFetchAllResult.fetchone.return_value = {"id": "4", "hash": "a1b2c3"}
         self.mockDB.execute.return_value = self.mockFetchAllResult
 
-        hashedPassword = self.dbh.retrieveUserData("abc")
+        userData = self.dbh.retrieveUserData("Abc")
 
         self.mockDB.execute.assert_called_once()
         self.mockDB.execute.assert_called_with("SELECT hash, id FROM users WHERE username = :username",
-                                               {'username': 'abc'})
+                                               {'username': 'Abc'})
 
-        self.assertEquals("123", hashedPassword)
+        self.assertEquals("4", userData["id"])
+        self.assertEquals("a1b2c3", userData["hash"])
 
-    def testIsUsernameAvailable(self):
+    def test_IsUsernameTaken_returnTrue(self):
         self.mockFetchResult = Mock()
-        self.mockFetchResult.fetchone.return_value = "False"
+        self.mockFetchResult.fetchone.return_value = {"username": "Abc"}
         self.mockDB.execute.return_value = self.mockFetchResult
 
-        result = self.dbh.isUsernameAvailable("Abc")
+        result = self.dbh.isUsernameTaken("Abc")
 
         self.mockDB.execute.assert_called_once()
         self.mockDB.execute.assert_called_with("SELECT username FROM users WHERE username = :username",
                                                {'username': 'Abc'})
 
-        self.assertEquals(result, False)
+        self.assertTrue(result)
 
     def testRetrieveBookData(self):
         self.mockFetchResult = Mock()
