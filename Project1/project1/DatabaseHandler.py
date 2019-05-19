@@ -10,7 +10,7 @@ class DatabaseHandler:
     def registerUser(self, username, hashedPassword):
         self._database.execute("INSERT INTO users (username, hash) VALUES(:username, :hash)",
                                {"username": username,
-                    "hash": hashedPassword})
+                                "hash": hashedPassword})
         self._database.commit()
 
     def retrieveUserData(self, username):
