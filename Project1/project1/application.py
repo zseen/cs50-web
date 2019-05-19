@@ -59,7 +59,10 @@ def register():
     hashedPW = generate_password_hash(password)
     databaseHandler.registerUser(username, hashedPW)
 
-    session["username"] = username
+    userData = databaseHandler.retrieveUserData(username)
+    for data in userData:
+        session["id"] = data.id
+
     return redirect("/")
 
 
