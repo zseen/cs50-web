@@ -15,12 +15,12 @@ class DatabaseHandler:
 
     def retrieveUserData(self, username):
         hashedPasswordAndId = self._database.execute("SELECT hash, id FROM users WHERE username = :username",
-                                          {"username": username}).fetchall()
+                                                     {"username": username}).fetchall()
         return hashedPasswordAndId
 
     def isUsernameTaken(self, username):
         usernameTaken = self._database.execute("SELECT username FROM users WHERE username = :username",
-                                     {"username": username}).fetchone()
+                                               {"username": username}).fetchone()
 
         return usernameTaken
 
@@ -52,7 +52,7 @@ class MockTestDatabaseHandler(TestCase):
 
         self.mockDB.execute.assert_called_once()
         self.mockDB.execute.assert_called_with("SELECT hash, id FROM users WHERE username = :username",
-                                          {'username': 'abc'})
+                                               {'username': 'abc'})
 
         self.assertEquals("123", hashedPassword)
 
@@ -65,7 +65,7 @@ class MockTestDatabaseHandler(TestCase):
 
         self.mockDB.execute.assert_called_once()
         self.mockDB.execute.assert_called_with("SELECT username FROM users WHERE username = :username",
-                                     {'username': 'Abc'})
+                                               {'username': 'Abc'})
 
         self.assertEquals(result, False)
 
@@ -78,10 +78,10 @@ class MockTestDatabaseHandler(TestCase):
 
         self.mockDB.execute.assert_called_once()
         self.mockDB.execute.assert_called_with("SELECT title, author, year FROM books WHERE isbn = :isbn",
-                                      {"isbn": "123"})
+                                               {"isbn": "123"})
 
         self.assertEquals(result, "123")
 
+
 if __name__ == '__main__':
     unittest.main()
-

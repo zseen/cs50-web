@@ -10,7 +10,6 @@ from loginDecorator import login_required
 
 from DatabaseHandler import DatabaseHandler
 
-
 app = Flask(__name__)
 
 # Check for environment variable
@@ -111,5 +110,5 @@ def search():
     book = databaseHandler.retrieveBookData(isbnReceived)
     if not book:
         return "Could not find book"
-    print(book)  #  Temporary solution, will return a book html page later
+    print(book)  # Temporary solution, will return a book html page later
     return redirect("/")
