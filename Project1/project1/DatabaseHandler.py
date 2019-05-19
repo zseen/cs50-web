@@ -18,11 +18,11 @@ class DatabaseHandler:
                                           {"username": username}).fetchall()
         return hashedPasswordAndId
 
-    def isUsernameAvailable(self, username):
-        isAvailable = self._database.execute("SELECT username FROM users WHERE username = :username",
+    def isUsernameTaken(self, username):
+        usernameTaken = self._database.execute("SELECT username FROM users WHERE username = :username",
                                      {"username": username}).fetchone()
 
-        return len(isAvailable) == 0
+        return usernameTaken
 
     def retrieveBookData(self, isbn):
         book = self._database.execute("SELECT title, author, year FROM books WHERE isbn = :isbn",

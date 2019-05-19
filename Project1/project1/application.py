@@ -6,7 +6,7 @@ from sqlalchemy import create_engine
 from sqlalchemy.orm import scoped_session, sessionmaker
 
 from werkzeug.security import check_password_hash, generate_password_hash
-from helper import login_required
+from loginDecorator import login_required
 
 from DatabaseHandler import DatabaseHandler
 
@@ -53,7 +53,7 @@ def register():
     elif password != request.form.get("confirmation"):
         return "password mismatch"
 
-    if not databaseHandler.isUsernameAvailable(username):
+    if databaseHandler.isUsernameTaken(username):
         return "Username already taken"
 
     hashedPW = generate_password_hash(password)
