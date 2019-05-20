@@ -60,7 +60,7 @@ def register():
     databaseHandler.registerUser(username, hashedPW)
 
     userData = databaseHandler.retrieveUserData(username)
-    session["id"] = userData["id"]
+    session["id"] = userData[0]["id"]
 
     return redirect("/")
 
@@ -82,10 +82,12 @@ def login():
         return "must provide password"
 
     userData = databaseHandler.retrieveUserData(username)
-    if not check_password_hash(userData["hash"], password):
+    print(userData)
+    #print(len(userData))
+    if not check_password_hash(userData[0]["hash"], password):
         return "Incorrect password."
 
-    session["id"] = userData["id"]
+    session["id"] = userData[0]["id"]
 
     return redirect("/")
 

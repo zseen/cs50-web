@@ -15,12 +15,10 @@ class DatabaseHandler:
 
     def retrieveUserData(self, username):
         hashedPasswordAndId = self._database.execute("SELECT hash, id FROM users WHERE username = :username",
-                                                     {"username": username})
-        if len(hashedPasswordAndId) == 0:
-            pass
+                                                     {"username": username}).fetchall()
 
-        elif len(hashedPasswordAndId) > 1:
-            pass
+        if not hashedPasswordAndId:
+            raise ValueError("No data found for this username")
 
         return hashedPasswordAndId
 
@@ -51,7 +49,7 @@ class MockTestDatabaseHandler(TestCase):
 
     def test_retrieveUserData_idAndHashedPasswordReturned(self):
         self.mockFetchAllResult = Mock()
-        self.mockFetchAllResult.fetchone.return_value = {"id": "4", "hash": "a1b2c3"}
+        self.mockFetchAllResult.fetchall.return_value = {"id": "4", "hash": "a1b2c3"}
         self.mockDB.execute.return_value = self.mockFetchAllResult
 
         userData = self.dbh.retrieveUserData("Abc")
@@ -62,6 +60,18 @@ class MockTestDatabaseHandler(TestCase):
 
         self.assertEquals("4", userData["id"])
         self.assertEquals("a1b2c3", userData["hash"])
+
+    def test_retrieveUserData_notExistingUserRaiseException(self):
+        self.mockFetchAllResult = Mock()
+        self.mockFetchAllResult.fetchall.return_value = {}
+        self.mockDB.execute.return_value = self.mockFetchAllResult
+
+        with self.assertRaises(ValueError):
+            self.dbh.retrieveUserData("Abc")
+
+        self.mockDB.execute.assert_called_once()
+        self.mockDB.execute.assert_called_with("SELECT hash, id FROM users WHERE username = :username",
+                                               {'username': 'Abc'})
 
     def test_IsUsernameTaken_returnTrue(self):
         self.mockFetchResult = Mock()
