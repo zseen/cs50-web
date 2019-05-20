@@ -44,17 +44,19 @@ def register():
     confirmation = request.form.get("confirmation")
 
     if not username:
-        return "must provide a username"
+        return render_template("apology.html", errorMessage="Username not provided")
+
     elif not password:
-        return "must provide a password"
+        return render_template("apology.html", errorMessage="Password not provided.")
 
     if not confirmation:
-        return "must confirm your password"
+        return render_template("apology.html", errorMessage="Please confirm your password.")
+
     elif password != confirmation:
-        return "password mismatch"
+        return render_template("apology.html", errorMessage="Password mismatch.")
 
     if databaseHandler.isUsernameTaken(username):
-        return "Username already taken"
+        return render_template("apology.html", errorMessage="Username already taken.")
 
     hashedPW = generate_password_hash(password)
     databaseHandler.registerUser(username, hashedPW)
@@ -76,14 +78,14 @@ def login():
         return render_template("login.html")
 
     if not username:
-        return "must provide username"
+        return render_template("apology.html", errorMessage="No username received.")
 
     elif not password:
-        return "must provide password"
+        return render_template("apology.html", errorMessage="No password provided.")
 
     userData = databaseHandler.retrieveUserData(username)
     if not check_password_hash(userData[0]["hash"], password):
-        return "Incorrect password."
+        return render_template("apology.html", errorMessage="Incorrect password.")
 
     session["id"] = userData[0]["id"]
 
@@ -104,10 +106,10 @@ def search():
 
     isbnReceived = request.form.get("isbn")
     if not isbnReceived:
-        return "No isbn received"
+        return render_template("apology.html", errorMessage="No isbn received.")
 
     book = databaseHandler.retrieveBookData(isbnReceived)
     if not book:
-        return "Could not find book"
+        return render_template("apology.html", errorMessage="Could not find book.")
 
     return render_template("book.html", book=book)
