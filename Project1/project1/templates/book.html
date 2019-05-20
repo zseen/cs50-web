@@ -1,0 +1,31 @@
+{% extends "layout.html" %}
+
+{% block title %}
+    Book
+{% endblock %}
+
+{% block main %}
+<form action="/index" method="post">
+        <table class="table table-bordered table-sm">
+            <thead>
+                <tr>
+                    <th>Title</th>
+                    <th>Author</th>
+                    <th>Year</th>
+                    <th>ISBN</th>
+                </tr>
+            </thead>
+            <tbody>
+                    <tr>
+                        <td>{{ book.title }}</td>
+                        <td>{{ book.author }}</td>
+                        <td>{{ book.year }}</td>
+                        <td>{{ book.isbn }}</td>
+                    </tr>
+
+               <tr style="height: 30px;"/>
+
+            </tbody>
+        </table>
+    </form>
+{% endblock %}

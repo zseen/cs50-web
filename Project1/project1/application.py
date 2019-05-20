@@ -82,8 +82,6 @@ def login():
         return "must provide password"
 
     userData = databaseHandler.retrieveUserData(username)
-    print(userData)
-    #print(len(userData))
     if not check_password_hash(userData[0]["hash"], password):
         return "Incorrect password."
 
@@ -111,5 +109,5 @@ def search():
     book = databaseHandler.retrieveBookData(isbnReceived)
     if not book:
         return "Could not find book"
-    print(book)  # Temporary solution, will return a book html page later
-    return redirect("/")
+
+    return render_template("book.html", book=book)

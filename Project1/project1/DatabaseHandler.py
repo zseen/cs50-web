@@ -29,7 +29,7 @@ class DatabaseHandler:
         return preExistingUsername is not None
 
     def retrieveBookData(self, isbn):
-        book = self._database.execute("SELECT title, author, year FROM books WHERE isbn = :isbn",
+        book = self._database.execute("SELECT title, author, year, isbn FROM books WHERE isbn = :isbn",
                                       {"isbn": isbn}).fetchone()
         return book
 
