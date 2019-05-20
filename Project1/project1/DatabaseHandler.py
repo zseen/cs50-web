@@ -24,7 +24,7 @@ class DatabaseHandler:
 
     def isUsernameTaken(self, username):
         preExistingUsername = self._database.execute("SELECT username FROM users WHERE username = :username",
-                                               {"username": username}).fetchone()
+                                                     {"username": username}).fetchone()
 
         return preExistingUsername is not None
 
@@ -88,7 +88,8 @@ class MockTestDatabaseHandler(TestCase):
 
     def test_retrieveBookData_allDataReturnedByISBN(self):
         self.mockFetchResult = Mock()
-        self.mockFetchResult.fetchone.return_value = {"title": "ThisGoodBook", "author": "GoodAuthor", "year": "2012", "isbn": "1234567"}
+        self.mockFetchResult.fetchone.return_value = {"title": "ThisGoodBook", "author": "GoodAuthor", "year": "2012",
+                                                      "isbn": "1234567"}
         self.mockDB.execute.return_value = self.mockFetchResult
 
         result = self.dbh.retrieveBookData("1234567")
