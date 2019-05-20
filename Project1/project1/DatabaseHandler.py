@@ -86,7 +86,7 @@ class MockTestDatabaseHandler(TestCase):
 
         self.assertTrue(result)
 
-    def test_retrieveBookData_(self):
+    def test_retrieveBookData_allDataReturnedByISBN(self):
         self.mockFetchResult = Mock()
         self.mockFetchResult.fetchone.return_value = {"title": "ThisGoodBook", "author": "GoodAuthor", "year": "2012", "isbn": "1234567"}
         self.mockDB.execute.return_value = self.mockFetchResult
