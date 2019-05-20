@@ -73,7 +73,7 @@ class MockTestDatabaseHandler(TestCase):
         self.mockDB.execute.assert_called_with("SELECT hash, id FROM users WHERE username = :username",
                                                {'username': 'Abc'})
 
-    def test_IsUsernameTaken_returnTrue(self):
+    def test_isUsernameTaken_returnTrue(self):
         self.mockFetchResult = Mock()
         self.mockFetchResult.fetchone.return_value = {"username": "Abc"}
         self.mockDB.execute.return_value = self.mockFetchResult
@@ -86,18 +86,18 @@ class MockTestDatabaseHandler(TestCase):
 
         self.assertTrue(result)
 
-    def testRetrieveBookData(self):
+    def test_retrieveBookData_(self):
         self.mockFetchResult = Mock()
-        self.mockFetchResult.fetchone.return_value = "123"
+        self.mockFetchResult.fetchone.return_value = {"title": "ThisGoodBook", "author": "GoodAuthor", "year": "2012", "isbn": "1234567"}
         self.mockDB.execute.return_value = self.mockFetchResult
 
-        result = self.dbh.retrieveBookData("123")
+        result = self.dbh.retrieveBookData("1234567")
 
         self.mockDB.execute.assert_called_once()
-        self.mockDB.execute.assert_called_with("SELECT title, author, year FROM books WHERE isbn = :isbn",
-                                               {"isbn": "123"})
+        self.mockDB.execute.assert_called_with("SELECT title, author, year, isbn FROM books WHERE isbn = :isbn",
+                                               {"isbn": "1234567"})
 
-        self.assertEquals(result, "123")
+        self.assertEquals(result, {"title": "ThisGoodBook", "author": "GoodAuthor", "year": "2012", "isbn": "1234567"})
 
 
 if __name__ == '__main__':
