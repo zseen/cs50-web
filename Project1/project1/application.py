@@ -84,7 +84,6 @@ def login():
         return render_template("apology.html", errorMessage="No password provided.")
 
     userData = databaseHandler.retrieveUserData(username)
-
     if not userData:
         return render_template("apology.html", errorMessage="Incorrect username.")
 

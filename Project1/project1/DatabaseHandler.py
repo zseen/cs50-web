@@ -57,7 +57,6 @@ class MockTestDatabaseHandler(TestCase):
         self.mockDB.execute.return_value = self.mockFetchAllResult
 
         userData = self.dbh.retrieveUserData("Bookworm45")
-        print(userData)
 
         self.mockDB.execute.assert_called_once()
         self.mockDB.execute.assert_called_with("SELECT hashedpassword, id FROM users WHERE username = :username",
