@@ -46,8 +46,9 @@ class MockTestDatabaseHandler(TestCase):
         self.dbh.registerUser("Bookworm45", "pkdf43ep91qa")
 
         self.mockDB.execute.assert_called_once()
-        self.mockDB.execute.assert_called_with("INSERT INTO users (username, hashedpassword) VALUES(:username, :hashedpassword)",
-                                               {'username': 'Bookworm45', 'hashedpassword': 'pkdf43ep91qa'})
+        self.mockDB.execute.assert_called_with(
+            "INSERT INTO users (username, hashedpassword) VALUES(:username, :hashedpassword)",
+            {'username': 'Bookworm45', 'hashedpassword': 'pkdf43ep91qa'})
         self.mockDB.commit.assert_called_once()
 
     def test_retrieveUserData_idAndhashedpasswordReturned(self):
@@ -106,7 +107,6 @@ class MockTestDatabaseHandler(TestCase):
         self.assertEquals(result[1], "Amazing Author")
         self.assertEquals(result[2], "2012")
         self.assertEquals(result[3], "1234567")
-
 
 
 if __name__ == '__main__':
