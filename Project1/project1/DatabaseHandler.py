@@ -21,7 +21,7 @@ class DatabaseHandler:
             return None
 
         if sum(1 for _ in hashedpasswordAndId) > 1:
-            return "Something went wrong."
+            return "Unexpected result."
 
         return hashedpasswordAndId[0]
 
