@@ -46,13 +46,13 @@ def register():
     if not username:
         return render_template("apology.html", errorMessage="Username not provided")
 
-    elif not password:
+    if not password:
         return render_template("apology.html", errorMessage="Password not provided.")
 
     if not confirmation:
         return render_template("apology.html", errorMessage="Please confirm your password.")
 
-    elif password != confirmation:
+    if password != confirmation:
         return render_template("apology.html", errorMessage="Password mismatch.")
 
     if databaseHandler.isUsernameTaken(username):
@@ -62,7 +62,7 @@ def register():
     databaseHandler.registerUser(username, hashedPW)
 
     userData = databaseHandler.retrieveUserData(username)
-    session["id"] = userData[0]["id"]
+    session["id"] = userData["id"]
 
     return redirect("/")
 
@@ -71,23 +71,27 @@ def register():
 def login():
     session.clear()
 
-    username = request.form.get("username")
-    password = request.form.get("password")
-
     if request.method == "GET":
         return render_template("login.html")
+
+    username = request.form.get("username")
+    password = request.form.get("password")
 
     if not username:
         return render_template("apology.html", errorMessage="No username received.")
 
-    elif not password:
+    if not password:
         return render_template("apology.html", errorMessage="No password provided.")
 
     userData = databaseHandler.retrieveUserData(username)
-    if not check_password_hash(userData[0]["hash"], password):
+
+    if not userData:
+        return render_template("apology.html", errorMessage="Incorrect username.")
+
+    if not check_password_hash(userData["hashedpassword"], password):
         return render_template("apology.html", errorMessage="Incorrect password.")
 
-    session["id"] = userData[0]["id"]
+    session["id"] = userData["id"]
 
     return redirect("/")
 
