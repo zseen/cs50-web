@@ -20,8 +20,8 @@ class DatabaseHandler:
         if not hashedPasswordAndId:
             return None
 
-        rows = sum(1 for _ in hashedPasswordAndId)
-        if rows > 1:
+        numRows = sum(1 for _ in hashedPasswordAndId)
+        if numRows > 1:
             return "Unexpected error: multiple users exist with username"
 
         return hashedPasswordAndId[0]
