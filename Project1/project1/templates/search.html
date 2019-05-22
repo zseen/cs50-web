@@ -1,0 +1,16 @@
+{% extends "layout.html" %}
+
+{% block title %}
+    Search
+{% endblock %}
+
+{% block main %}
+    <form action="/search" method="post">
+         <div class="form-group">
+            <input autocomplete="off" autofocus class="form-control" name="isbn" placeholder="ISBN" type="text" required/>
+         </div>
+         <div class="form-group">
+            <button class="btn btn-primary" type="submit">Search</button>
+         </div>
+    </form>
+{% endblock %}
