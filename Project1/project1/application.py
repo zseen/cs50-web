@@ -87,7 +87,7 @@ def login():
     if not userData:
         return render_template("apology.html", errorMessage="Incorrect username.")
 
-    if not check_password_hash(userData["hashedpassword"], password):
+    if not check_password_hash(userData["hashed_password"], password):
         return render_template("apology.html", errorMessage="Incorrect password.")
 
     session["id"] = userData["id"]
