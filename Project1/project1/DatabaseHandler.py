@@ -14,23 +14,23 @@ class DatabaseHandler:
         self._database.commit()
 
     def retrieveUserData(self, username):
-        hashedPasswordAndId = self._database.execute("SELECT hashed_password, id FROM users WHERE username = :username",
-                                                     {"username": username}).fetchall()
+        userDataRows = self._database.execute("SELECT hashed_password, id FROM users WHERE username = :username",
+                                              {"username": username}).fetchall()
 
-        if not hashedPasswordAndId:
+        if not userDataRows:
             return None
 
-        numRows = sum(1 for _ in hashedPasswordAndId)
+        numRows = sum(1 for _ in userDataRows)
         if numRows > 1:
             return "Unexpected error: multiple users exist with username"
 
-        return hashedPasswordAndId[0]
+        return userDataRows[0]
 
     def isUsernameTaken(self, username):
         preExistingUsername = self._database.execute("SELECT username FROM users WHERE username = :username",
                                                      {"username": username}).fetchone()
 
-        return preExistingUsername is not None
+        return (preExistingUsername is not None)
 
     def retrieveBookData(self, isbn):
         book = self._database.execute("SELECT title, author, year, isbn FROM books WHERE isbn = :isbn",
@@ -52,7 +52,7 @@ class MockTestDatabaseHandler(TestCase):
             {'username': 'Bookworm45', 'hashed_password': 'adf43ef91ba'})
         self.mockDB.commit.assert_called_once()
 
-    def test_retrieveUserData_idAndhashedPasswordReturned(self):
+    def test_retrieveUserData_correctUserDataReturned(self):
         self.mockFetchAllResult = Mock()
         self.mockFetchAllResult.fetchall.return_value = [{"hashed_password": "adf43ef91ba", "id": 4}]
         self.mockDB.execute.return_value = self.mockFetchAllResult
@@ -79,7 +79,7 @@ class MockTestDatabaseHandler(TestCase):
 
         self.assertEquals(None, userData)
 
-    def test_isUsernameTaken_returnTrue(self):
+    def test_isUsernameTaken_calledWithExistingUser_returnTrue(self):
         self.mockFetchResult = Mock()
         self.mockFetchResult.fetchone.return_value = [{"username": "Bookworm45"}]
         self.mockDB.execute.return_value = self.mockFetchResult
