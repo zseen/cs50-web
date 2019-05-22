@@ -6,17 +6,16 @@ from sqlalchemy import create_engine
 from sqlalchemy.orm import scoped_session, sessionmaker
 
 
-parser = argparse.ArgumentParser()
-parser.add_argument("-f", "-csvFile")
-
 engine = create_engine(os.getenv("DATABASE_URL"))
 db = scoped_session(sessionmaker(bind=engine))
 
 
 def main():
+    parser = argparse.ArgumentParser()
+    parser.add_argument("-f", "--csvFile")
     args = parser.parse_args()
 
-    f = open(args.f)
+    f = open(args.csvFile)
     reader = csv.reader(f)
     for isbn, title, author, year in reader:
         db.execute("INSERT INTO books (isbn, title, author, year) VALUES (:isbn, :title, :author, :year)",

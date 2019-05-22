@@ -41,10 +41,10 @@ class DatabaseHandler:
 class MockTestDatabaseHandler(TestCase):
     def setUp(self):
         self.mockDB = Mock()
-        self.dbh = DatabaseHandler(self.mockDB)
+        self.databaseHandler = DatabaseHandler(self.mockDB)
 
     def test_registerUser_correctSqlIsExecuted(self):
-        self.dbh.registerUser("Bookworm45", "adf43ef91ba")
+        self.databaseHandler.registerUser("Bookworm45", "adf43ef91ba")
 
         self.mockDB.execute.assert_called_once()
         self.mockDB.execute.assert_called_with(
@@ -57,7 +57,7 @@ class MockTestDatabaseHandler(TestCase):
         self.mockFetchAllResult.fetchall.return_value = [{"hashed_password": "adf43ef91ba", "id": 4}]
         self.mockDB.execute.return_value = self.mockFetchAllResult
 
-        userData = self.dbh.retrieveUserData("Bookworm45")
+        userData = self.databaseHandler.retrieveUserData("Bookworm45")
 
         self.mockDB.execute.assert_called_once()
         self.mockDB.execute.assert_called_with("SELECT hashed_password, id FROM users WHERE username = :username",
@@ -71,26 +71,26 @@ class MockTestDatabaseHandler(TestCase):
         self.mockFetchAllResult.fetchall.return_value = None
         self.mockDB.execute.return_value = self.mockFetchAllResult
 
-        userData = self.dbh.retrieveUserData("Bookworm45")
+        userData = self.databaseHandler.retrieveUserData("Bookworm45")
 
         self.mockDB.execute.assert_called_once()
         self.mockDB.execute.assert_called_with("SELECT hashed_password, id FROM users WHERE username = :username",
                                                {'username': 'Bookworm45'})
 
-        self.assertEquals(userData, None)
+        self.assertEquals(None, userData)
 
     def test_isUsernameTaken_returnTrue(self):
         self.mockFetchResult = Mock()
         self.mockFetchResult.fetchone.return_value = [{"username": "Bookworm45"}]
         self.mockDB.execute.return_value = self.mockFetchResult
 
-        result = self.dbh.isUsernameTaken("Bookworm45")
+        isTaken = self.databaseHandler.isUsernameTaken("Bookworm45")
 
         self.mockDB.execute.assert_called_once()
         self.mockDB.execute.assert_called_with("SELECT username FROM users WHERE username = :username",
                                                {'username': 'Bookworm45'})
 
-        self.assertTrue(result)
+        self.assertTrue(isTaken)
 
     def test_retrieveBookData_allDataReturnedByISBN(self):
         self.mockFetchResult = Mock()
@@ -98,16 +98,16 @@ class MockTestDatabaseHandler(TestCase):
                                                       "year": "2012", "isbn": "1234567"}
         self.mockDB.execute.return_value = self.mockFetchResult
 
-        result = self.dbh.retrieveBookData("1234567")
+        bookData = self.databaseHandler.retrieveBookData("1234567")
 
         self.mockDB.execute.assert_called_once()
         self.mockDB.execute.assert_called_with("SELECT title, author, year, isbn FROM books WHERE isbn = :isbn",
                                                {"isbn": "1234567"})
 
-        self.assertEquals(result["title"], "ThisGoodBook")
-        self.assertEquals(result["author"], "Amazing Author")
-        self.assertEquals(result["year"], "2012")
-        self.assertEquals(result["isbn"], "1234567")
+        self.assertEquals("ThisGoodBook", bookData["title"])
+        self.assertEquals("Amazing Author", bookData["author"])
+        self.assertEquals("2012", bookData["year"])
+        self.assertEquals("1234567", bookData["isbn"])
 
 
 if __name__ == '__main__':
