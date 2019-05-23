@@ -33,8 +33,10 @@ class DatabaseHandler:
         return (preExistingUsername is not None)
 
     def retrieveBookData(self, query):
-        book = self._database.execute("SELECT title, author, year, isbn FROM books WHERE isbn LIKE :query OR title LIKE :query OR author LIKE :query",
-                                      {'query': query}).fetchall()
+        modifiedQuery = "%" + query + "%"
+        book = self._database.execute(
+            "SELECT title, author, year, isbn FROM books WHERE isbn LIKE :modifiedQuery OR title LIKE :modifiedQuery OR author LIKE :modifiedQuery",
+            {'modifiedQuery': modifiedQuery}).fetchall()
 
         print("query: ", query)
 
@@ -104,15 +106,15 @@ class MockTestDatabaseHandler(TestCase):
     def test_retrieveBookData_allDataReturnedByISBN(self):
         self.mockFetchResult = Mock()
         self.mockFetchResult.fetchAll.return_value = [{"title": "ThisGoodBook", "author": "Amazing Author",
-                                                      "year": "2012", "isbn": "1234567"}]
+                                                       "year": "2012", "isbn": "1234567"}]
         self.mockDB.execute.return_value = self.mockFetchResult
 
         bookData = self.databaseHandler.retrieveBookData("1234567")
 
         self.mockDB.execute.assert_called_once()
-        self.mockDB.execute.assert_called_with("SELECT title, author, year, isbn FROM books WHERE isbn LIKE :query OR title LIKE :query OR author LIKE :query",
-                                      {"query": "1234567"}).fetchall()
-
+        self.mockDB.execute.assert_called_with(
+            "SELECT title, author, year, isbn FROM books WHERE isbn LIKE :query OR title LIKE :query OR author LIKE :query",
+            {"query": "1234567"}).fetchall()
 
         self.assertEquals("ThisGoodBook", bookData["title"])
         self.assertEquals("Amazing Author", bookData["author"])
