@@ -111,8 +111,13 @@ def search():
     if not isbnReceived:
         return render_template("apology.html", errorMessage="No isbn received.")
 
-    book = databaseHandler.retrieveBookData(isbnReceived)
-    if not book:
+    books = databaseHandler.retrieveBookData(isbnReceived)
+
+    if not books:
         return render_template("apology.html", errorMessage="Could not find book.")
 
-    return render_template("book.html", book=book)
+    print("-----------")
+    for b in books:
+        print(b)
+
+    return render_template("book.html", books=books)

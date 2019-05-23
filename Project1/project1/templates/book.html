@@ -16,12 +16,14 @@
                 </tr>
             </thead>
             <tbody>
-                <tr>
-                    <td>{{ book.title }}</td>
-                    <td>{{ book.author }}</td>
-                    <td>{{ book.year }}</td>
-                    <td>{{ book.isbn }}</td>
-                </tr>
+                {% for book in books %}
+                    <tr>
+                        <td>{{ book.title }}</td>
+                        <td>{{ book.author }}</td>
+                        <td>{{ book.year }}</td>
+                        <td>{{ book.isbn }}</td>
+                    </tr>
+                {% endfor %}
 
                <tr style="height: 30px;"/>
             </tbody>
