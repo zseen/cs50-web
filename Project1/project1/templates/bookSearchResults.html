@@ -1,0 +1,22 @@
+{% extends "layout.html" %}
+
+{% block title %}
+    Results:
+{% endblock %}
+
+{% block main %}
+    <br action="/index" method="post">
+        Search results:
+        <br>
+        <br>
+         <ul>
+            {% for book in books %}
+                <li>
+                    <a href="{{ url_for('showBookDetails', isbn=book.isbn) }}">
+                        {{book.title}} by {{book.author}}
+                    </a>
+                </li>
+            {% endfor %}
+        </ul>
+    </form>
+{% endblock %}

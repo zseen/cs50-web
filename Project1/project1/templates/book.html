@@ -1,7 +1,7 @@
 {% extends "layout.html" %}
 
 {% block title %}
-    Book
+    {{ book.title }}
 {% endblock %}
 
 {% block main %}
@@ -13,17 +13,18 @@
                     <th>Author</th>
                     <th>Year</th>
                     <th>ISBN</th>
+                    <th>Your review</th>
                 </tr>
             </thead>
             <tbody>
-                {% for book in books %}
                     <tr>
                         <td>{{ book.title }}</td>
                         <td>{{ book.author }}</td>
                         <td>{{ book.year }}</td>
                         <td>{{ book.isbn }}</td>
+                        <td>{{ review }}</td>
                     </tr>
-                {% endfor %}
+
 
                <tr style="height: 30px;"/>
             </tbody>

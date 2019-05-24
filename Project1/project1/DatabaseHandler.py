@@ -33,16 +33,24 @@ class DatabaseHandler:
         return (preExistingUsername is not None)
 
     def retrieveBookData(self, query):
-        query = query.capitalize()
+        query = query.strip()
+        print("query: ", query)
+
+        try:
+            int(query[:9])
+        except ValueError:
+            query = query.capitalize()
+
         modifiedQuery = "%" + query + "%"
-        book = self._database.execute(
-            "SELECT title, author, year, isbn FROM books WHERE isbn LIKE :modifiedQuery OR title LIKE :modifiedQuery OR author LIKE :modifiedQuery",
+        books = self._database.execute(
+            "SELECT title, author, year, isbn, id FROM books WHERE isbn LIKE :modifiedQuery OR title LIKE :modifiedQuery OR author LIKE :modifiedQuery",
             {'modifiedQuery': modifiedQuery}).fetchall()
 
-        if not book:
+        print("modifiedquery: ", modifiedQuery)
+        if not books:
             return None
 
-        return book
+        return books
 
 
 class MockTestDatabaseHandler(TestCase):

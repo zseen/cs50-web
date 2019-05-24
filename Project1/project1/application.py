@@ -107,17 +107,27 @@ def search():
     if request.method == "GET":
         return render_template("search.html")
 
-    isbnReceived = request.form.get("isbn")
-    if not isbnReceived:
-        return render_template("apology.html", errorMessage="No isbn received.")
+    query = request.form.get("query")
+    if not query:
+        return render_template("apology.html", errorMessage="Please type in something to search for.")
 
-    books = databaseHandler.retrieveBookData(isbnReceived)
+    books = databaseHandler.retrieveBookData(query)
 
     if not books:
         return render_template("apology.html", errorMessage="Could not find book.")
 
-    print("-----------")
-    for b in books:
-        print(b)
+    return render_template("bookSearchResults.html", books=books)
 
-    return render_template("book.html", books=books)
+
+@app.route("/search/<isbn>", methods=["GET", "POST"])
+@login_required
+
+def showBookDetails(isbn):
+
+    print(isbn)
+
+
+    book = databaseHandler.retrieveBookData(isbn)
+
+    # "book" is list, so the book information is in the [0]th element of the list
+    return render_template("book.html", book=book[0])
