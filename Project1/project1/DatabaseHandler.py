@@ -64,6 +64,8 @@ class DatabaseHandler:
             "SELECT rating FROM reviews WHERE user_id = :user_id AND book_id = :book_id",
             {"user_id": userId, "book_id": bookId}).fetchone()
 
+        print(preExistingRating)
+
         return (preExistingRating is not None)
 
     def addBookReviewAndRating(self, rating, review, user_id, book_id):
@@ -156,7 +158,7 @@ class MockTestDatabaseHandler(TestCase):
 
         self.mockDB.execute.assert_called_once()
         self.mockDB.execute.assert_called_with("SELECT rating FROM reviews WHERE user_id = :user_id AND book_id = :book_id",
-            {"user_id": "4", "book_id": "3"}).fetchone()
+            {"user_id": "4", "book_id": "3"})
 
         self.assertTrue(isTaken)
 
