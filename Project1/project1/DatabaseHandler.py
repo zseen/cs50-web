@@ -52,6 +52,27 @@ class DatabaseHandler:
 
         return books
 
+    def isBookReviewAlreadyAdded(self, userId, bookId):
+        preExistingReview = self._database.execute(
+            "SELECT review FROM reviews WHERE user_id = :user_id AND book_id = :book_id",
+            {"user_id": userId, "book_id": bookId}).fetchone()
+
+        return (preExistingReview is not None)
+
+    def isBookRatingAlreadyAdded(self, userId, bookId):
+        preExistingRating = self._database.execute(
+            "SELECT rating FROM reviews WHERE user_id = :user_id AND book_id = :book_id",
+            {"user_id": userId, "book_id": bookId}).fetchone()
+
+        return (preExistingRating is not None)
+
+    def addBookReviewAndRating(self, rating, review, user_id, book_id):
+        self._database.execute.execute(
+            "INSERT INTO reviews (user_id, book_id, rating, review) VALUES (:user_id, :book_id, :rating, :review)",
+            {"book_id": book_id, "user_id": user_id, "rating": rating, "review": review})
+        self._database.commit()
+
+
 
 class MockTestDatabaseHandler(TestCase):
     def setUp(self):
@@ -110,20 +131,35 @@ class MockTestDatabaseHandler(TestCase):
     def test_retrieveBookData_calledWithPartialISBN_allDataReturned(self):
         self.mockFetchResult = Mock()
         self.mockFetchResult.fetchall.return_value = [{"title": "ThisGoodBook", "author": "Amazing Author",
-                                                       "year": "2012", "isbn": "1234567"}]
+                                                       "year": "2012", "isbn": "1234567", "id": "2"}]
         self.mockDB.execute.return_value = self.mockFetchResult
 
         bookData = self.databaseHandler.retrieveBookData("123456")
 
         self.mockDB.execute.assert_called_once()
         self.mockDB.execute.assert_called_with(
-            "SELECT title, author, year, isbn FROM books WHERE isbn LIKE :modifiedQuery OR title LIKE :modifiedQuery OR author LIKE :modifiedQuery",
+            "SELECT title, author, year, isbn, id FROM books WHERE isbn LIKE :modifiedQuery OR title LIKE :modifiedQuery OR author LIKE :modifiedQuery",
             {'modifiedQuery': '%123456%'})
 
         self.assertEquals("ThisGoodBook", bookData[0]["title"])
         self.assertEquals("Amazing Author", bookData[0]["author"])
         self.assertEquals("2012", bookData[0]["year"])
         self.assertEquals("1234567", bookData[0]["isbn"])
+        self.assertEquals("2", bookData[0]["id"])
+
+    def test_isBookRatingAlreadyAdded_calledWithExistingRating_returnTrue(self):
+        self.mockFetchResult = Mock()
+        self.mockFetchResult.fetchone.return_value = [{"rating": "4.6"}]
+        self.mockDB.execute.return_value = self.mockFetchResult
+
+        isTaken = self.databaseHandler.isBookRatingAlreadyAdded("4", "3")
+
+        self.mockDB.execute.assert_called_once()
+        self.mockDB.execute.assert_called_with("SELECT rating FROM reviews WHERE user_id = :user_id AND book_id = :book_id",
+            {"user_id": "4", "book_id": "3"}).fetchone()
+
+        self.assertTrue(isTaken)
+
 
 
 if __name__ == '__main__':

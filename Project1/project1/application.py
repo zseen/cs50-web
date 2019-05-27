@@ -121,13 +121,29 @@ def search():
 
 @app.route("/search/<isbn>", methods=["GET", "POST"])
 @login_required
-
 def showBookDetails(isbn):
-
-    print(isbn)
-
-
     book = databaseHandler.retrieveBookData(isbn)
 
     # "book" is list, so the book information is in the [0]th element of the list
     return render_template("book.html", book=book[0])
+
+
+def addBookReview(isbn):
+    book = databaseHandler.retrieveBookData(isbn)
+
+    userId = session["id"]
+    bookId = book[0]["id"]
+    review = request.form.get("review")
+    rating = request.form.get("rating")
+
+    if databaseHandler.isBookReviewAlreadyAdded(userId, bookId):
+        return render_template("apology.html", errorMessage="You have already submitted a review.")
+
+    if databaseHandler.isBookRatingAlreadyAdded(userId, bookId):
+        return render_template("apology.html", errorMessage="You have already submitted a rating.")
+
+    databaseHandler.addBookReviewAndRating(rating, review, userId, bookId)
+
+    redirect("/")
+
+
