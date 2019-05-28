@@ -34,7 +34,6 @@ class DatabaseHandler:
 
     def retrieveBookData(self, query):
         query = query.strip()
-        print("query: ", query)
 
         try:
             int(query[:9])
@@ -46,7 +45,6 @@ class DatabaseHandler:
             "SELECT title, author, year, isbn, id FROM books WHERE isbn LIKE :modifiedQuery OR title LIKE :modifiedQuery OR author LIKE :modifiedQuery",
             {'modifiedQuery': modifiedQuery}).fetchall()
 
-        print("modifiedquery: ", modifiedQuery)
         if not books:
             return None
 
@@ -64,14 +62,12 @@ class DatabaseHandler:
             "SELECT rating FROM reviews WHERE user_id = :user_id AND book_id = :book_id",
             {"user_id": userId, "book_id": bookId}).fetchone()
 
-        print(preExistingRating)
-
         return (preExistingRating is not None)
 
     def addBookReviewAndRating(self, rating, review, user_id, book_id):
-        self._database.execute.execute(
+        self._database.execute(
             "INSERT INTO reviews (user_id, book_id, rating, review) VALUES (:user_id, :book_id, :rating, :review)",
-            {"book_id": book_id, "user_id": user_id, "rating": rating, "review": review})
+            {"user_id": user_id, "book_id": book_id, "rating": rating, "review": review})
         self._database.commit()
 
 
@@ -161,6 +157,20 @@ class MockTestDatabaseHandler(TestCase):
             {"user_id": "4", "book_id": "3"})
 
         self.assertTrue(isTaken)
+
+    def test_addBookReview_correctSqlIsExecuted(self):
+        self.databaseHandler.addBookReviewAndRating("5.0", "goodBook", "1", "2")
+
+        self.mockDB.execute.assert_called_once()
+        self.mockDB.execute.assert_called_with(
+            "INSERT INTO reviews (user_id, book_id, rating, review) VALUES (:user_id, :book_id, :rating, :review)",
+            {"user_id": "1", "book_id": "2", "rating": "5.0", "review": "goodBook"})
+
+        self.mockDB.commit.assert_called_once()
+
+
+
+
 
 
 
