@@ -13,7 +13,7 @@
                     <th>Author</th>
                     <th>Year</th>
                     <th>ISBN</th>
-                    <th>Your rating</th>
+                    <th>What others think of this book</th>
                 </tr>
             </thead>
             <tbody>
@@ -22,8 +22,18 @@
                         <td>{{ book.author }}</td>
                         <td>{{ book.year }}</td>
                         <td>{{ book.isbn }}</td>
-                        <td>{{ rating }}</td>
-                    </tr>
+
+                        <td>
+                            <ul>
+                                {% for opinion in reviewsFromOthers %}
+                                        <li>{{ opinion }}</li>
+                                {% else %}
+                                        No reviews yet. Be the first one to review this book!
+                                {% endfor %}
+                            </ul>
+                        </td>
+                   </tr>
+
 
 
                <tr style="height: 30px;"/>

@@ -70,6 +70,10 @@ class DatabaseHandler:
             {"user_id": user_id, "book_id": book_id, "rating": rating, "review": review})
         self._database.commit()
 
+    def retrieveAllReviewsOfBook(self, bookId):
+        allReviews = self._database.execute("SELECT review FROM reviews WHERE book_id = :book_id",
+                                            {"book_id": bookId}).fetchall()
+        return allReviews
 
 
 class MockTestDatabaseHandler(TestCase):

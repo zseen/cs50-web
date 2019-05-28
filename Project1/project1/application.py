@@ -120,21 +120,29 @@ def search():
 
 
 @app.route("/search/<isbn>", methods=["GET", "POST"])
-@login_required
+
 def showBookDetails(isbn):
     book = databaseHandler.retrieveBookData(isbn)
 
-    # "book" is list, so the book information is in the [0]th element of the list
-    return render_template("book.html", book=book[0])
+    bookId = book[0]["id"]
+    reviewsFromOthers = databaseHandler.retrieveAllReviewsOfBook(bookId)
 
+    # "book" is list, so the book information is in the [0]th element of the list
+    #return render_template("book.html", book=book[0], reviewsFromOthers=reviewsFromOthers)
+    return render_template("reviewBook.html", book=book[0], reviewsFromOthers=reviewsFromOthers)
+
+
+@app.route("/addBookReview/<isbn>", methods=["GET", "POST"])
 
 def addBookReview(isbn):
+    print("here?")
     book = databaseHandler.retrieveBookData(isbn)
 
     userId = session["id"]
     bookId = book[0]["id"]
     review = request.form.get("review")
     rating = request.form.get("rating")
+    print(userId, bookId, review, rating)
 
     if databaseHandler.isBookReviewAlreadyAdded(userId, bookId):
         return render_template("apology.html", errorMessage="You have already submitted a review.")
@@ -143,7 +151,7 @@ def addBookReview(isbn):
         return render_template("apology.html", errorMessage="You have already submitted a rating.")
 
     databaseHandler.addBookReviewAndRating(rating, review, userId, bookId)
-
-    redirect("/")
+    reviewsFromOthers = databaseHandler.retrieveAllReviewsOfBook(bookId)
+    return render_template("book.html", book=book[0], reviewsFromOthers=reviewsFromOthers)
 
 
