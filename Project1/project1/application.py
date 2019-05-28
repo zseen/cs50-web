@@ -120,20 +120,22 @@ def search():
 
 
 @app.route("/search/<isbn>", methods=["GET", "POST"])
-
+@login_required
 def showBookDetails(isbn):
     book = databaseHandler.retrieveBookData(isbn)
 
     bookId = book[0]["id"]
-    reviewsFromOthers = databaseHandler.retrieveAllReviewsOfBook(bookId)
+    userId = session["id"]
+    reviewsFromOthers = databaseHandler.retrieveOthersReviewsOfBook(bookId, userId)
+    reviewFromCurrentUser = databaseHandler.retrieveCurrentUsersReviewOfBook(bookId, userId)
 
     # "book" is list, so the book information is in the [0]th element of the list
     #return render_template("book.html", book=book[0], reviewsFromOthers=reviewsFromOthers)
-    return render_template("reviewBook.html", book=book[0], reviewsFromOthers=reviewsFromOthers)
+    return render_template("reviewBook.html", book=book[0], reviewsFromOthers=reviewsFromOthers, reviewOfCurrentUser=reviewFromCurrentUser)
 
 
 @app.route("/addBookReview/<isbn>", methods=["GET", "POST"])
-
+@login_required
 def addBookReview(isbn):
     print("here?")
     book = databaseHandler.retrieveBookData(isbn)
@@ -151,7 +153,8 @@ def addBookReview(isbn):
         return render_template("apology.html", errorMessage="You have already submitted a rating.")
 
     databaseHandler.addBookReviewAndRating(rating, review, userId, bookId)
-    reviewsFromOthers = databaseHandler.retrieveAllReviewsOfBook(bookId)
-    return render_template("book.html", book=book[0], reviewsFromOthers=reviewsFromOthers)
+    reviewsFromOthers = databaseHandler.retrieveOthersReviewsOfBook(bookId, userId)
+    reviewFromCurrentUser = databaseHandler.retrieveCurrentUsersReviewOfBook(bookId, userId)
+    return render_template("book.html", book=book[0], reviewsFromOthers=reviewsFromOthers, yourReview=reviewFromCurrentUser)
 
 
