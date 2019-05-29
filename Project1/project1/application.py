@@ -126,37 +126,33 @@ def showBookDetails(isbn):
 
     bookId = book[0]["id"]
     userId = session["id"]
-    reviewsFromOthers = databaseHandler.retrieveOthersReviewsOfBook(bookId, userId)
-    reviewFromCurrentUser = databaseHandler.retrieveCurrentUsersReviewOfBook(bookId, userId)
+
+    reviewsFromOthers = databaseHandler.retrieveOthersReviewsAndRatingsOfBook(bookId, userId)
+    reviewFromCurrentUser = databaseHandler.retrieveCurrentUsersReviewAndRatingOfBook(bookId, userId)
 
     reviewsFromOthersList = []
-    ratingFromOthers = []
+    ratingFromOthersList = []
     for review in reviewsFromOthers:
         reviewsFromOthersList.append(review["review"])
-        ratingFromOthers.append(review["rating"])
+        ratingFromOthersList.append(review["rating"])
 
     averageUsersRating = 0
-    if ratingFromOthers:
-        averageUsersRating = sum(ratingFromOthers) / len(ratingFromOthers)
-
-
+    if ratingFromOthersList:
+        averageUsersRating = sum(ratingFromOthersList) / len(ratingFromOthersList)
 
     # "book" is list, so the book information is in the [0]th element of the list
-    #return render_template("book.html", book=book[0], reviewsFromOthers=reviewsFromOthers)
     return render_template("reviewBook.html", book=book[0], reviewsFromOthers=reviewsFromOthers, reviewOfCurrentUser=reviewFromCurrentUser, averageUsersRating=averageUsersRating)
 
 
 @app.route("/addBookReview/<isbn>", methods=["GET", "POST"])
 @login_required
 def addBookReview(isbn):
-    print("here?")
     book = databaseHandler.retrieveBookData(isbn)
 
     userId = session["id"]
     bookId = book[0]["id"]
     review = request.form.get("review")
     rating = request.form.get("rating")
-    print(userId, bookId, review, rating)
 
     if databaseHandler.isBookReviewAlreadyAdded(userId, bookId):
         return render_template("apology.html", errorMessage="You have already submitted a review.")
@@ -165,26 +161,19 @@ def addBookReview(isbn):
         return render_template("apology.html", errorMessage="You have already submitted a rating.")
 
     databaseHandler.addBookReviewAndRating(rating, review, userId, bookId)
-    reviewsFromOthers = databaseHandler.retrieveOthersReviewsOfBook(bookId, userId)
-    reviewFromCurrentUser = databaseHandler.retrieveCurrentUsersReviewOfBook(bookId, userId)
+
+    reviewsFromOthers = databaseHandler.retrieveOthersReviewsAndRatingsOfBook(bookId, userId)
 
     reviewsFromOthersList = []
-    ratingFromOthers = []
+    ratingFromOthersList = []
     for review in reviewsFromOthers:
         reviewsFromOthersList.append(review["review"])
-        ratingFromOthers.append(review["rating"])
-
-    print(ratingFromOthers)
+        ratingFromOthersList.append(review["rating"])
 
     averageUsersRating = 0
+    if ratingFromOthersList:
+        averageUsersRating = sum(ratingFromOthersList) / len(ratingFromOthersList)
 
-    if ratingFromOthers:
-        averageUsersRating = sum(ratingFromOthers) / len(ratingFromOthers)
-
-
-
-    print("type of reviewsFromOthers: ", type(reviewsFromOthers))
-
-    return render_template("book.html", book=book[0], reviewsFromOthers=reviewsFromOthers, yourReview=reviewFromCurrentUser, averageUsersRating=averageUsersRating)
+    return render_template("book.html", book=book[0], reviewsFromOthers=reviewsFromOthers, yourReview=review, yourRating=rating, averageUsersRating=averageUsersRating)
 
 

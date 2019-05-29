@@ -13,10 +13,10 @@
                     <th>Author</th>
                     <th>Year</th>
                     <th>ISBN</th>
-                    <th>What others think of this book</th>
-                    <th>Average rating from BookReviewer users</th>
                     <th>Your review</th>
                     <th>Your rating</th>
+                    <th>What others think of this book</th>
+                    <th>Average rating from BookReviewer users</th>
                 </tr>
             </thead>
             <tbody>
@@ -25,17 +25,17 @@
                         <td>{{ book.author }}</td>
                         <td>{{ book.year }}</td>
                         <td>{{ book.isbn }}</td>
-
+                        <td>{{yourReview}}</td>
+                        <td>{{yourRating}}/5</td>
                         <td>
                             <ul>
                                 {% for opinion in reviewsFromOthers %}
-                                        <li>{{ opinion.review }}</li>
+                                    <li>{{ opinion.review }}</li>
                                 {% else %}
-                                        No reviews from others yet.
+                                    No reviews from others yet.
                                 {% endfor %}
                             </ul>
                         </td>
-
                         <td>
                         {% if averageUsersRating > 0 %}
                             {{averageUsersRating}}/5
@@ -44,13 +44,7 @@
                             -
                         {% endif %}
                         </td>
-
-                        <td>{{yourReview.review}}</td>
-                        <td>{{yourReview.rating}}/5</td>
                     </tr>
-
-
-
                <tr style="height: 30px;"/>
             </tbody>
         </table>
