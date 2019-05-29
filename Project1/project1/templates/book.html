@@ -14,7 +14,9 @@
                     <th>Year</th>
                     <th>ISBN</th>
                     <th>What others think of this book</th>
+                    <th>Average rating from BookReviewer users</th>
                     <th>Your review</th>
+                    <th>Your rating</th>
                 </tr>
             </thead>
             <tbody>
@@ -27,16 +29,24 @@
                         <td>
                             <ul>
                                 {% for opinion in reviewsFromOthers %}
-                                        <li>{{ opinion }}</li>
+                                        <li>{{ opinion.review }}</li>
                                 {% else %}
-                                        No reviews yet. Be the first one to review this book!
+                                        No reviews from others yet.
                                 {% endfor %}
                             </ul>
                         </td>
 
+                        <td>
+                        {% if averageUsersRating > 0 %}
+                            {{averageUsersRating}}/5
 
-                    <td>{{yourReview}}</td>
+                        {% else %}
+                            -
+                        {% endif %}
+                        </td>
 
+                        <td>{{yourReview.review}}</td>
+                        <td>{{yourReview.rating}}/5</td>
                     </tr>
 
 

@@ -14,6 +14,7 @@
                     <th>Year</th>
                     <th>ISBN</th>
                     <th>What others think of this book</th>
+                    <th>Average rating from BookReviewer users</th>
                     <th>Your thoughts on this book</th>
                 </tr>
             </thead>
@@ -23,45 +24,56 @@
                         <td>{{ book.author }}</td>
                         <td>{{ book.year }}</td>
                         <td>{{ book.isbn }}</td>
-                         <td>
+                        <td>
                             <ul>
                                 {% for opinion in reviewsFromOthers %}
-                                        <li>{{ opinion }}</li>
+                                        <li>{{ opinion.review }}</li>
                                 {% else %}
-                                        No reviews yet. Be the first one to review this book!
+                                        No reviews from others yet.
                                 {% endfor %}
                             </ul>
                         </td>
 
                         <td>
+                            {% if averageUsersRating > 0 %}
+                                {{averageUsersRating}}/5.0
+
+                            {% else %}
+                                -
+                            {% endif %}
+                            </td>
+
+                        <td>
                             <ul>
-                                {% for opinion in reviewOfCurrentUser %}
-                                        <li>{{ opinion }}</li>
+                                {% if reviewOfCurrentUser %}
+                                    {{reviewOfCurrentUser.review}},
+                                    {{reviewOfCurrentUser.rating}}/5
                                 {% else %}
                                         You have not reviewed this book yet!
-                                {% endfor %}
+                                        <div class="form-group">
+                                            <label for="rating">Rating ( Out of 5 )</label>
+                                            <select class="form-control" name="rating" id="rating">
+                                                {%  for count in range(5) %}
+                                                    <option value="{{ count+1 }}">{{ count+1 }}</option>
+                                                {% endfor %}
+                                            </select>
+                                        </div>
+                                        <div class="form-group">
+                                          <label for="comment">Comment:</label>
+                                          <textarea class="form-control" rows="5" name="review"></textarea>
+                                        </div>
+
+                                        <div class="form-group">
+                                            <button class="btn btn-primary" type="submit">Submit</button>
+                                        </div>
+
+                                {% endif %}
                             </ul>
                         </td>
+                    </tr>
 
 
-                        <div class="form-group">
-                            <label for="rating">Rating ( Out of 5 )</label>
-                            <select class="form-control" name="rating" id="rating">
-                                {%  for count in range(5) %}
-                                    <option value="{{ count+1 }}">{{ count+1 }}</option>
-                                {% endfor %}
-                            </select>
-                        </div>
-                        <div class="form-group">
-                          <label for="comment">Comment:</label>
-                          <textarea class="form-control" rows="5" name="review"></textarea>
-                        </div>
 
-                        <div class="form-group">
-                            <button class="btn btn-primary" type="submit">Submit</button>
-                        </div>
-
-                   </tr>
 
 
 

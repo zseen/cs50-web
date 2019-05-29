@@ -129,9 +129,21 @@ def showBookDetails(isbn):
     reviewsFromOthers = databaseHandler.retrieveOthersReviewsOfBook(bookId, userId)
     reviewFromCurrentUser = databaseHandler.retrieveCurrentUsersReviewOfBook(bookId, userId)
 
+    reviewsFromOthersList = []
+    ratingFromOthers = []
+    for review in reviewsFromOthers:
+        reviewsFromOthersList.append(review["review"])
+        ratingFromOthers.append(review["rating"])
+
+    averageUsersRating = 0
+    if ratingFromOthers:
+        averageUsersRating = sum(ratingFromOthers) / len(ratingFromOthers)
+
+
+
     # "book" is list, so the book information is in the [0]th element of the list
     #return render_template("book.html", book=book[0], reviewsFromOthers=reviewsFromOthers)
-    return render_template("reviewBook.html", book=book[0], reviewsFromOthers=reviewsFromOthers, reviewOfCurrentUser=reviewFromCurrentUser)
+    return render_template("reviewBook.html", book=book[0], reviewsFromOthers=reviewsFromOthers, reviewOfCurrentUser=reviewFromCurrentUser, averageUsersRating=averageUsersRating)
 
 
 @app.route("/addBookReview/<isbn>", methods=["GET", "POST"])
@@ -155,6 +167,24 @@ def addBookReview(isbn):
     databaseHandler.addBookReviewAndRating(rating, review, userId, bookId)
     reviewsFromOthers = databaseHandler.retrieveOthersReviewsOfBook(bookId, userId)
     reviewFromCurrentUser = databaseHandler.retrieveCurrentUsersReviewOfBook(bookId, userId)
-    return render_template("book.html", book=book[0], reviewsFromOthers=reviewsFromOthers, yourReview=reviewFromCurrentUser)
+
+    reviewsFromOthersList = []
+    ratingFromOthers = []
+    for review in reviewsFromOthers:
+        reviewsFromOthersList.append(review["review"])
+        ratingFromOthers.append(review["rating"])
+
+    print(ratingFromOthers)
+
+    averageUsersRating = 0
+
+    if ratingFromOthers:
+        averageUsersRating = sum(ratingFromOthers) / len(ratingFromOthers)
+
+
+
+    print("type of reviewsFromOthers: ", type(reviewsFromOthers))
+
+    return render_template("book.html", book=book[0], reviewsFromOthers=reviewsFromOthers, yourReview=reviewFromCurrentUser, averageUsersRating=averageUsersRating)
 
 

@@ -71,7 +71,7 @@ class DatabaseHandler:
         self._database.commit()
 
     def retrieveOthersReviewsOfBook(self, bookId, userId):
-        allReviews = self._database.execute("SELECT review FROM reviews WHERE book_id = :book_id EXCEPT SELECT review FROM reviews WHERE user_id = :user_id",
+        allReviews = self._database.execute("SELECT rating, review FROM reviews WHERE book_id = :book_id EXCEPT SELECT rating, review FROM reviews WHERE user_id = :user_id",
                                             {"book_id": bookId, "user_id": userId}).fetchall()
         return allReviews
 
