@@ -16,6 +16,7 @@
                     <th>Your thoughts on this book</th>
                     <th>What others think of this book</th>
                     <th>Average rating from BookReviewer users</th>
+                    <th>GoodReads rating</th>
                 </tr>
             </thead>
             <tbody>
@@ -53,31 +54,24 @@
                             </ul>
                         </td>
                         <td>
-                            <ul>
-                                {% for opinion in reviewsFromOthers %}
-                                    <li>{{ opinion.review }}</li>
-                                {% else %}
-                                    No reviews from others yet.
-                                {% endfor %}
-                            </ul>
+                            {% for opinion in reviewsFromOthers %}
+                                "{{ opinion.review }}" <br>
+                            {% else %}
+                                No reviews from others yet.
+                            {% endfor %}
+
                         </td>
                         <td>
                             {% if averageUsersRating > 0 %}
                                 {{averageUsersRating}}/5
-
                             {% else %}
-                                -
+                                No ratings from others yet.
                             {% endif %}
                         </td>
-
-
+                        <td>
+                            {{ goodReadsRatingAverage }} based on {{ goodReadsRatingNum }} reviews
+                        </td>
                     </tr>
-
-
-
-
-
-
                <tr style="height: 30px;"/>
             </tbody>
         </table>

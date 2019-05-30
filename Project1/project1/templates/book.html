@@ -29,23 +29,20 @@
                         <td>{{yourReview}}</td>
                         <td>{{yourRating}}/5</td>
                         <td>
-                            <ul>
-                                {% for opinion in reviewsFromOthers %}
-                                    <li>{{ opinion.review }}</li>
-                                {% else %}
-                                    No reviews from others yet.
-                                {% endfor %}
-                            </ul>
+                            {% for opinion in reviewsFromOthers %}
+                                "{{ opinion.review }}" <br>
+                            {% else %}
+                                No reviews from others yet.
+                            {% endfor %}
                         </td>
                         <td>
                         {% if averageUsersRating > 0 %}
                             {{averageUsersRating}}/5
 
                         {% else %}
-                            -
+                            No ratings from others yet.
                         {% endif %}
                         </td>
-
                         <td>
                             {{ goodReadsRatingAverage }} based on {{ goodReadsRatingNum }} reviews
                         </td>

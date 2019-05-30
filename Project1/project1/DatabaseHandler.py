@@ -71,14 +71,22 @@ class DatabaseHandler:
         self._database.commit()
 
     def retrieveOthersReviewsOfBook(self, bookId, userId):
-        allReviews = self._database.execute("SELECT review FROM reviews WHERE book_id = :book_id EXCEPT SELECT rating, review FROM reviews WHERE user_id = :user_id",
-                                            {"book_id": bookId, "user_id": userId}).fetchall()
+        allReviews = self._database.execute(
+            "SELECT review FROM reviews WHERE book_id = :book_id AND NOT user_id = :user_id",
+            {"book_id": bookId, "user_id": userId}).fetchall()
+
         return allReviews
 
     def retrieveOthersRatingsOfBook(self, bookId, userId):
-        allRatings = self._database.execute("SELECT rating FROM reviews WHERE book_id = :book_id EXCEPT SELECT rating, review FROM reviews WHERE user_id = :user_id",
-                                            {"book_id": bookId, "user_id": userId}).fetchall()
-        return allRatings
+        othersRatings = self._database.execute(
+            "SELECT rating FROM reviews WHERE book_id = :book_id AND NOT user_id = :user_id",
+            {"book_id": bookId, "user_id": userId}).fetchall()
+
+        othersRatingsList = []
+        for rating in othersRatings:
+            othersRatingsList.append(rating[0])
+
+        return othersRatingsList
 
     def retrieveCurrentUsersReviewAndRatingOfBook(self, bookId, userId):
         currentUsersReview = self._database.execute(
@@ -86,6 +94,16 @@ class DatabaseHandler:
             {"user_id": userId, "book_id": bookId}).fetchone()
 
         return currentUsersReview
+
+    def retrieveAllRatingsForBook(self, bookId):
+        ratings = self._database.execute("SELECT rating FROM reviews WHERE book_id = :book_id",
+            {"book_id": bookId}).fetchone()
+
+        allRatingsList = []
+        for rating in ratings:
+            allRatingsList.append(rating)
+
+        return allRatingsList
 
 
 class MockTestDatabaseHandler(TestCase):
@@ -169,7 +187,8 @@ class MockTestDatabaseHandler(TestCase):
         isTaken = self.databaseHandler.isBookRatingAlreadyAdded("4", "3")
 
         self.mockDB.execute.assert_called_once()
-        self.mockDB.execute.assert_called_with("SELECT rating FROM reviews WHERE user_id = :user_id AND book_id = :book_id",
+        self.mockDB.execute.assert_called_with(
+            "SELECT rating FROM reviews WHERE user_id = :user_id AND book_id = :book_id",
             {"user_id": "4", "book_id": "3"})
 
         self.assertTrue(isTaken)
@@ -183,11 +202,6 @@ class MockTestDatabaseHandler(TestCase):
             {"user_id": "1", "book_id": "2", "rating": "5.0", "review": "goodBook"})
 
         self.mockDB.commit.assert_called_once()
-
-
-
-
-
 
 
 if __name__ == '__main__':
