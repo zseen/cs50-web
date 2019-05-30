@@ -1,6 +1,7 @@
 from unittest.mock import Mock
 from unittest import TestCase
 import unittest
+import re
 
 
 class DatabaseHandler:
@@ -35,11 +36,14 @@ class DatabaseHandler:
     def retrieveBookData(self, query):
         query = query.strip()
 
-        try:
-            int(query[:9])
-        except ValueError:
+        # isbn consists of 10 chars: 9 ints and ends with either an int or with 'X', regex also considers an ending with 'x'
+        isQueryIsbn = re.search(r'^[0-9]{9}[X]|[x]|[0-9]]', query)
+        if isQueryIsbn and query[-1] == "x":
+            query = query[:9] + "X" # capitalizes the ending 'x' so that SQL query can find the book by isbn
+        else:
             query = query.capitalize()
 
+        print(query)
         modifiedQuery = "%" + query + "%"
         books = self._database.execute(
             "SELECT title, author, year, isbn, id FROM books WHERE isbn LIKE :modifiedQuery OR title LIKE :modifiedQuery OR author LIKE :modifiedQuery",
@@ -84,7 +88,7 @@ class DatabaseHandler:
 
         othersRatingsList = []
         for rating in othersRatings:
-            othersRatingsList.append(rating[0])
+            othersRatingsList.append(rating)
 
         return othersRatingsList
 
@@ -97,7 +101,10 @@ class DatabaseHandler:
 
     def retrieveAllRatingsForBook(self, bookId):
         ratings = self._database.execute("SELECT rating FROM reviews WHERE book_id = :book_id",
-            {"book_id": bookId}).fetchone()
+                                         {"book_id": bookId}).fetchone()
+
+        if not ratings:
+            return 0
 
         allRatingsList = []
         for rating in ratings:

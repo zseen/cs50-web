@@ -21,6 +21,7 @@ if not os.getenv("DATABASE_URL"):
 # Configure session to use filesystem
 app.config["SESSION_PERMANENT"] = False
 app.config["SESSION_TYPE"] = "filesystem"
+app.config['JSON_SORT_KEYS'] = False
 Session(app)
 
 # Set up database
@@ -114,6 +115,7 @@ def search():
         return render_template("apology.html", errorMessage="Please type in something to search for.")
 
     books = databaseHandler.retrieveBookData(query)
+    print(books)
 
     if not books:
         return render_template("apology.html", errorMessage="Could not find book.")
@@ -176,8 +178,8 @@ def addBookReview(isbn):
     ratingCountGR = ratingsCountAndAverageGoodReadsDict["ratingCount"]
     ratingAverageGR = ratingsCountAndAverageGoodReadsDict["ratingAverage"]
 
-    return render_template("book.html", book=book[0], reviewsFromOthers=reviewsFromOthers, yourReview=review,
-                           yourRating=rating, averageUsersRating=averageUsersRating,
+    return render_template("book.html", book=book[0], reviewsFromOthers=reviewsFromOthers, currentUserReview=review,
+                           currentUserRating=rating, averageUsersRating=averageUsersRating,
                            goodReadsRatingAverage=ratingAverageGR, goodReadsRatingNum=ratingCountGR)
 
 
@@ -203,8 +205,12 @@ def getAPIaccess(isbn):
     book = book[0]
     bookId = book["id"]
     ratings = databaseHandler.retrieveAllRatingsForBook(bookId)
-    ratingsCount = len(ratings)
-    averageRating = sum(ratings) / len(ratings)
+    ratingsCount = 0
+    averageRating = 0
+
+    if ratings:
+        ratingsCount = len(ratings)
+        averageRating = sum(ratings) / len(ratings)
 
     return jsonify(
         title=book["title"],

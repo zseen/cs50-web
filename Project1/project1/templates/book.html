@@ -26,8 +26,8 @@
                         <td>{{ book.author }}</td>
                         <td>{{ book.year }}</td>
                         <td>{{ book.isbn }}</td>
-                        <td>{{yourReview}}</td>
-                        <td>{{yourRating}}/5</td>
+                        <td>{{ currentUserReview }}</td>
+                        <td>{{ currentUserRating }}/5</td>
                         <td>
                             {% for opinion in reviewsFromOthers %}
                                 "{{ opinion.review }}" <br>
