@@ -6,9 +6,12 @@ from sqlalchemy import create_engine
 from sqlalchemy.orm import scoped_session, sessionmaker
 
 from werkzeug.security import check_password_hash, generate_password_hash
+import requests
+
 from loginDecorator import login_required
 
 from DatabaseHandler import DatabaseHandler
+
 
 app = Flask(__name__)
 
@@ -174,6 +177,26 @@ def addBookReview(isbn):
     if ratingFromOthersList:
         averageUsersRating = sum(ratingFromOthersList) / len(ratingFromOthersList)
 
-    return render_template("book.html", book=book[0], reviewsFromOthers=reviewsFromOthers, yourReview=review, yourRating=rating, averageUsersRating=averageUsersRating)
+    ratingsCountAndAverageGoodReadsDict = getGoodReadsRating(isbn)
+    ratingCountGR = ratingsCountAndAverageGoodReadsDict["ratingCount"]
+    ratingAverageGR = ratingsCountAndAverageGoodReadsDict["ratingAverage"]
+
+
+    return render_template("book.html", book=book[0], reviewsFromOthers=reviewsFromOthers, yourReview=review, yourRating=rating, averageUsersRating=averageUsersRating,
+                           goodReadsRatingAverage=ratingAverageGR, goodReadsRatingNum=ratingCountGR)
+
+
+def getGoodReadsRating(isbn):
+    dataRequest = requests.get("https://www.goodreads.com/book/review_counts.json",
+                       params={"key": "", "isbns": isbn})
+    requestedData = (dataRequest.json())
+    bookDetails = requestedData["books"]
+    ratingCount = bookDetails[0]["work_ratings_count"]
+    ratingAverage = bookDetails[0]["average_rating"]
+
+    data = {"ratingCount": ratingCount, "ratingAverage": ratingAverage}
+    return data
+
+
 
 

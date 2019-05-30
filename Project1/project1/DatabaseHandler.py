@@ -70,10 +70,15 @@ class DatabaseHandler:
             {"user_id": user_id, "book_id": book_id, "rating": rating, "review": review})
         self._database.commit()
 
-    def retrieveOthersReviewsAndRatingsOfBook(self, bookId, userId):
-        allReviews = self._database.execute("SELECT rating, review FROM reviews WHERE book_id = :book_id EXCEPT SELECT rating, review FROM reviews WHERE user_id = :user_id",
+    def retrieveOthersReviewsOfBook(self, bookId, userId):
+        allReviews = self._database.execute("SELECT review FROM reviews WHERE book_id = :book_id EXCEPT SELECT rating, review FROM reviews WHERE user_id = :user_id",
                                             {"book_id": bookId, "user_id": userId}).fetchall()
         return allReviews
+
+    def retrieveOthersRatingsOfBook(self, bookId, userId):
+        allRatings = self._database.execute("SELECT rating FROM reviews WHERE book_id = :book_id EXCEPT SELECT rating, review FROM reviews WHERE user_id = :user_id",
+                                            {"book_id": bookId, "user_id": userId}).fetchall()
+        return allRatings
 
     def retrieveCurrentUsersReviewAndRatingOfBook(self, bookId, userId):
         currentUsersReview = self._database.execute(
@@ -81,7 +86,6 @@ class DatabaseHandler:
             {"user_id": userId, "book_id": bookId}).fetchone()
 
         return currentUsersReview
-
 
 
 class MockTestDatabaseHandler(TestCase):

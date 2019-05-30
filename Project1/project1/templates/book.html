@@ -17,6 +17,7 @@
                     <th>Your rating</th>
                     <th>What others think of this book</th>
                     <th>Average rating from BookReviewer users</th>
+                    <th>GoodReads rating</th>
                 </tr>
             </thead>
             <tbody>
@@ -43,6 +44,10 @@
                         {% else %}
                             -
                         {% endif %}
+                        </td>
+
+                        <td>
+                            {{ goodReadsRatingAverage }} based on {{ goodReadsRatingNum }} reviews
                         </td>
                     </tr>
                <tr style="height: 30px;"/>
