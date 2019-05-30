@@ -131,7 +131,6 @@ def showBookDetails(isbn):
     reviewsFromOthers = databaseHandler.retrieveOthersReviewsOfBook(bookId, userId)
     ratingsFromOthers = databaseHandler.retrieveOthersRatingsOfBook(bookId, userId)
     reviewAndRatingFromCurrentUser = databaseHandler.retrieveCurrentUsersReviewAndRatingOfBook(bookId, userId)
-    print(ratingsFromOthers)
 
     averageUsersRating = 0
     if ratingsFromOthers:
@@ -185,6 +184,7 @@ def addBookReview(isbn):
 def getGoodReadsRating(isbn):
     dataRequest = requests.get("https://www.goodreads.com/book/review_counts.json",
                                params={"key": "", "isbns": isbn})
+
     requestedData = (dataRequest.json())
     bookDetails = requestedData["books"]
     ratingCount = bookDetails[0]["work_ratings_count"]
@@ -200,7 +200,6 @@ def getAPIaccess(isbn):
     if not book:
         return render_template("apology.html", errorMessage="Invalid ISBN. "
                                                             "Please try again.")
-
     book = book[0]
     bookId = book["id"]
     ratings = databaseHandler.retrieveAllRatingsForBook(bookId)
@@ -210,7 +209,7 @@ def getAPIaccess(isbn):
     return jsonify(
         title=book["title"],
         author=book["author"],
-        year=book["year"],
+        year=int(book["year"]),
         isbn=book["isbn"],
         review_count=ratingsCount,
         average_score=averageRating
