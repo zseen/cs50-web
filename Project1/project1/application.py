@@ -114,9 +114,7 @@ def search():
     if not query:
         return render_template("apology.html", errorMessage="Please type in something to search for.")
 
-    books = databaseHandler.retrieveBookData(query)
-    print(books)
-
+    books = databaseHandler.retrieveBookDataByMultipleQueryTypes(query)
     if not books:
         return render_template("apology.html", errorMessage="Could not find book.")
 
@@ -126,35 +124,34 @@ def search():
 @app.route("/search/<isbn>", methods=["GET", "POST"])
 @login_required
 def showBookDetails(isbn):
-    book = databaseHandler.retrieveBookData(isbn)
-    bookId = book[0]["id"]
+    book = databaseHandler.retrieveBookDataByISBN(isbn)
+    bookId = book["id"]
     userId = session["id"]
 
     reviewsFromOthers = databaseHandler.retrieveOthersReviewsOfBook(bookId, userId)
     ratingsFromOthers = databaseHandler.retrieveOthersRatingsOfBook(bookId, userId)
     reviewAndRatingFromCurrentUser = databaseHandler.retrieveCurrentUsersReviewAndRatingOfBook(bookId, userId)
 
-    averageUsersRating = 0
-    if ratingsFromOthers:
-        averageUsersRating = sum(ratingsFromOthers) / len(ratingsFromOthers)
+    averageUsersRating = getAverageOfNumsList(ratingsFromOthers)
 
     ratingsCountAndAverageGoodReadsDict = getGoodReadsRating(isbn)
     ratingCountGR = ratingsCountAndAverageGoodReadsDict["ratingCount"]
     ratingAverageGR = ratingsCountAndAverageGoodReadsDict["ratingAverage"]
 
-    # "book" is list, so the book information is in the [0]th element of the list
-    return render_template("reviewBook.html", book=book[0], reviewsFromOthers=reviewsFromOthers,
-                           reviewOfCurrentUser=reviewAndRatingFromCurrentUser, averageUsersRating=averageUsersRating,
+    return render_template("reviewBook.html", book=book, reviewsFromOthers=reviewsFromOthers,
+                           reviewFromCurrentUser=reviewAndRatingFromCurrentUser, averageUsersRating=averageUsersRating,
                            goodReadsRatingAverage=ratingAverageGR, goodReadsRatingNum=ratingCountGR)
 
 
 @app.route("/addBookReview/<isbn>", methods=["GET", "POST"])
 @login_required
 def addBookReview(isbn):
-    book = databaseHandler.retrieveBookData(isbn)
+    book = databaseHandler.retrieveBookDataByISBN(isbn)
+    if not book:
+        return render_template("apology.html", errorMessage="No book found.")
 
     userId = session["id"]
-    bookId = book[0]["id"]
+    bookId = book["id"]
     review = request.form.get("review")
     rating = request.form.get("rating")
 
@@ -169,16 +166,14 @@ def addBookReview(isbn):
     reviewsFromOthers = databaseHandler.retrieveOthersReviewsOfBook(bookId, userId)
     ratingsFromOthers = databaseHandler.retrieveOthersRatingsOfBook(bookId, userId)
 
-    averageUsersRating = 0
     # current user's rating is not calculated in the average
-    if ratingsFromOthers:
-        averageUsersRating = sum(ratingsFromOthers) / len(ratingsFromOthers)
+    averageUsersRating = getAverageOfNumsList(ratingsFromOthers)
 
     ratingsCountAndAverageGoodReadsDict = getGoodReadsRating(isbn)
     ratingCountGR = ratingsCountAndAverageGoodReadsDict["ratingCount"]
     ratingAverageGR = ratingsCountAndAverageGoodReadsDict["ratingAverage"]
 
-    return render_template("book.html", book=book[0], reviewsFromOthers=reviewsFromOthers, currentUserReview=review,
+    return render_template("book.html", book=book, reviewsFromOthers=reviewsFromOthers, currentUserReview=review,
                            currentUserRating=rating, averageUsersRating=averageUsersRating,
                            goodReadsRatingAverage=ratingAverageGR, goodReadsRatingNum=ratingCountGR)
 
@@ -196,21 +191,26 @@ def getGoodReadsRating(isbn):
     return data
 
 
+def getAverageOfNumsList(numsList):
+    if numsList:
+        return sum(numsList) / len(numsList)
+    return 0
+
+
 @app.route("/api/<isbn>", methods=["GET"])
 def getAPIaccess(isbn):
-    book = databaseHandler.retrieveBookData(isbn)
+    book = databaseHandler.retrieveBookDataByISBN(isbn)
     if not book:
         return render_template("apology.html", errorMessage="Invalid ISBN. "
                                                             "Please try again.")
-    book = book[0]
     bookId = book["id"]
     ratings = databaseHandler.retrieveAllRatingsForBook(bookId)
-    ratingsCount = 0
-    averageRating = 0
 
+    ratingsCount = 0
     if ratings:
         ratingsCount = len(ratings)
-        averageRating = sum(ratings) / len(ratings)
+
+    averageRating = getAverageOfNumsList(ratings)
 
     return jsonify(
         title=book["title"],

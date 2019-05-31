@@ -33,7 +33,15 @@ class DatabaseHandler:
 
         return (preExistingUsername is not None)
 
-    def retrieveBookData(self, query):
+    def retrieveBookDataByISBN(self, isbn):
+        book = self._database.execute("SELECT title, author, year, isbn, id FROM books WHERE isbn = :isbn",
+                                                     {"isbn": isbn}).fetchone()
+        if not book:
+            return None
+
+        return book
+
+    def retrieveBookDataByMultipleQueryTypes(self, query):
         query = query.strip()
 
         # isbn consists of 10 chars: 9 ints and ends with either an int or with 'X', regex also considers an ending with 'x'
@@ -52,7 +60,13 @@ class DatabaseHandler:
         if not books:
             return None
 
-        return books
+        booksList = []
+        for book in books:
+            booksList.append(book)
+
+        print("bl:", booksList)
+
+        return booksList
 
     def isBookReviewAlreadyAdded(self, userId, bookId):
         preExistingReview = self._database.execute(
@@ -173,7 +187,7 @@ class MockTestDatabaseHandler(TestCase):
                                                        "year": "2012", "isbn": "1234567", "id": "2"}]
         self.mockDB.execute.return_value = self.mockFetchResult
 
-        bookData = self.databaseHandler.retrieveBookData("123456")
+        bookData = self.databaseHandler.retrieveBookDataByMultipleQueryTypes("123456")
 
         self.mockDB.execute.assert_called_once()
         self.mockDB.execute.assert_called_with(

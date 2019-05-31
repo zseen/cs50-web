@@ -27,9 +27,9 @@
                         <td>{{ book.isbn }}</td>
                         <td>
                             <ul>
-                                {% if reviewOfCurrentUser %}
-                                    {{reviewOfCurrentUser.review}},
-                                    {{reviewOfCurrentUser.rating}}/5
+                                {% if reviewFromCurrentUser %}
+                                    {{reviewFromCurrentUser.review}},
+                                    {{reviewFromCurrentUser.rating}}/5
                                 {% else %}
                                     You have not reviewed this book yet!
                                 <br>
