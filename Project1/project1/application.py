@@ -33,7 +33,7 @@ databaseHandler = DatabaseHandler(db)
 
 @app.route("/")
 def index():
-    return render_template("layout.html")
+    return render_template("layout.html", showMessage=True)
 
 
 @app.route("/register", methods=["GET", "POST"])
@@ -67,7 +67,7 @@ def register():
     userData = databaseHandler.retrieveUserData(username)
     session["id"] = userData["id"]
 
-    return redirect("/")
+    return render_template("layout.html", username=username, showMessage=True)
 
 
 @app.route("/login", methods=["GET", "POST"])
@@ -95,7 +95,7 @@ def login():
 
     session["id"] = userData["id"]
 
-    return redirect("/")
+    return render_template("layout.html", username=username, showMessage=True)
 
 
 @app.route("/logout", methods=["GET", "POST"])

@@ -1,4 +1,5 @@
 {% extends "layout.html" %}
+<link href="/static/styles.css" rel="stylesheet"/>
 
 {% block title %}
     {{ book.title }}
@@ -7,7 +8,7 @@
 {% block main %}
 <form action="/index" method="post">
         <table class="table table-bordered table-sm">
-            <thead>
+            <thead bgcolor="#a6a6a6">
                 <tr>
                     <th>Title</th>
                     <th>Author</th>

@@ -43,6 +43,14 @@
             </div>
         </nav>
 
+        {% if showMessage %}
+            {% if session.id %}
+                Welcome {{ username }}!
+            {% else %}
+                Welcome to BookReviewer! Log in/register to search for and rate books!
+            {% endif %}
+        {% endif %}
+
         <main class="container p-5">
             {% block main %}{% endblock %}
         </main>
