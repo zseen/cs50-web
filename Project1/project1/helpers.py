@@ -1,4 +1,4 @@
-from flask import redirect, session
+from flask import redirect, session, render_template
 from functools import wraps
 
 #This method was originally provided for the 2018 CS50 course "Finance" exercise
@@ -14,3 +14,13 @@ def login_required(f):
             return redirect("/login")
         return f(*args, **kwargs)
     return decorated_function
+
+
+def getAverageOfNumsList(numsList):
+    if numsList:
+        return sum(numsList) / len(numsList)
+    return 0
+
+
+def renderApology(errorMessage):
+    return render_template("apology.html", errorMessage=errorMessage)

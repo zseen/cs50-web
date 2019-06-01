@@ -8,7 +8,7 @@ from sqlalchemy.orm import scoped_session, sessionmaker
 from werkzeug.security import check_password_hash, generate_password_hash
 import requests
 
-from loginDecorator import login_required
+from helpers import login_required, getAverageOfNumsList, renderApology
 
 from DatabaseHandler import DatabaseHandler
 
@@ -47,19 +47,19 @@ def register():
     confirmation = request.form.get("confirmation")
 
     if not username:
-        return render_template("apology.html", errorMessage="Username not provided")
+        return renderApology("Username not provided.")
 
     if not password:
-        return render_template("apology.html", errorMessage="Password not provided.")
+        return renderApology("Password not provided.")
 
     if not confirmation:
-        return render_template("apology.html", errorMessage="Please confirm your password.")
+        return renderApology("Please confirm your password.")
 
     if password != confirmation:
-        return render_template("apology.html", errorMessage="Password mismatch.")
+        return renderApology("Password mismatch.")
 
     if databaseHandler.isUsernameTaken(username):
-        return render_template("apology.html", errorMessage="Username already taken.")
+        return renderApology("Username already taken.")
 
     hashedPW = generate_password_hash(password)
     databaseHandler.registerUser(username, hashedPW)
@@ -81,17 +81,17 @@ def login():
     password = request.form.get("password")
 
     if not username:
-        return render_template("apology.html", errorMessage="No username received.")
+        return renderApology("No username received.")
 
     if not password:
-        return render_template("apology.html", errorMessage="No password provided.")
+        return renderApology("No password provided.")
 
     userData = databaseHandler.retrieveUserData(username)
     if not userData:
-        return render_template("apology.html", errorMessage="Incorrect username.")
+        return renderApology("Incorrect username.")
 
     if not check_password_hash(userData["hashed_password"], password):
-        return render_template("apology.html", errorMessage="Incorrect password.")
+        return renderApology("Incorrect password.")
 
     session["id"] = userData["id"]
 
@@ -112,11 +112,11 @@ def search():
 
     query = request.form.get("query")
     if not query:
-        return render_template("apology.html", errorMessage="Please type in something to search for.")
+        return renderApology("Please type in something to search for.")
 
     books = databaseHandler.retrieveBookDataByMultipleQueryTypes(query)
     if not books:
-        return render_template("apology.html", errorMessage="Could not find book.")
+        return renderApology("Could not find book.")
 
     return render_template("bookSearchResults.html", books=books)
 
@@ -156,10 +156,10 @@ def addBookReview(isbn):
     rating = request.form.get("rating")
 
     if databaseHandler.isBookReviewAlreadyAdded(userId, bookId):
-        return render_template("apology.html", errorMessage="You have already submitted a review.")
+        return renderApology("You have already submitted a review.")
 
     if databaseHandler.isBookRatingAlreadyAdded(userId, bookId):
-        return render_template("apology.html", errorMessage="You have already submitted a rating.")
+        return renderApology("You have already submitted a rating.")
 
     databaseHandler.addBookReviewAndRating(rating, review, userId, bookId)
 
@@ -178,6 +178,31 @@ def addBookReview(isbn):
                            goodReadsRatingAverage=ratingAverageGR, goodReadsRatingNum=ratingCountGR)
 
 
+@app.route("/api/<isbn>", methods=["GET"])
+def getAPIaccess(isbn):
+    if request.method == "GET":
+        book = databaseHandler.retrieveBookDataByISBN(isbn)
+        if not book:
+            return renderApology("Invalid ISBN. Please try again.")
+        bookId = book["id"]
+        ratings = databaseHandler.retrieveAllRatingsForBook(bookId)
+
+        ratingsCount = 0
+        if ratings:
+            ratingsCount = len(ratings)
+
+        averageRating = getAverageOfNumsList(ratings)
+
+        return jsonify(
+            title=book["title"],
+            author=book["author"],
+            year=int(book["year"]),
+            isbn=book["isbn"],
+            review_count=ratingsCount,
+            average_score=averageRating
+        )
+
+
 def getGoodReadsRating(isbn):
     dataRequest = requests.get("https://www.goodreads.com/book/review_counts.json",
                                params={"key": "", "isbns": isbn})
@@ -191,32 +216,3 @@ def getGoodReadsRating(isbn):
     return data
 
 
-def getAverageOfNumsList(numsList):
-    if numsList:
-        return sum(numsList) / len(numsList)
-    return 0
-
-
-@app.route("/api/<isbn>", methods=["GET"])
-def getAPIaccess(isbn):
-    book = databaseHandler.retrieveBookDataByISBN(isbn)
-    if not book:
-        return render_template("apology.html", errorMessage="Invalid ISBN. "
-                                                            "Please try again.")
-    bookId = book["id"]
-    ratings = databaseHandler.retrieveAllRatingsForBook(bookId)
-
-    ratingsCount = 0
-    if ratings:
-        ratingsCount = len(ratings)
-
-    averageRating = getAverageOfNumsList(ratings)
-
-    return jsonify(
-        title=book["title"],
-        author=book["author"],
-        year=int(book["year"]),
-        isbn=book["isbn"],
-        review_count=ratingsCount,
-        average_score=averageRating
-    )
