@@ -184,6 +184,7 @@ def getAPIaccess(isbn):
         book = databaseHandler.retrieveBookDataByISBN(isbn)
         if not book:
             return renderApology("Invalid ISBN. Please try again.")
+
         bookId = book["id"]
         ratings = databaseHandler.retrieveAllRatingsForBook(bookId)
 
