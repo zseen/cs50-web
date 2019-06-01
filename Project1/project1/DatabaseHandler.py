@@ -51,7 +51,6 @@ class DatabaseHandler:
         else:
             query = query.capitalize()
 
-        print(query)
         modifiedQuery = "%" + query + "%"
         books = self._database.execute(
             "SELECT title, author, year, isbn, id FROM books WHERE isbn LIKE :modifiedQuery OR title LIKE :modifiedQuery OR author LIKE :modifiedQuery",
@@ -63,8 +62,6 @@ class DatabaseHandler:
         booksList = []
         for book in books:
             booksList.append(book)
-
-        print("bl:", booksList)
 
         return booksList
 
@@ -107,18 +104,18 @@ class DatabaseHandler:
         return othersRatingsList
 
     def retrieveCurrentUsersReviewAndRatingOfBook(self, bookId, userId):
-        currentUsersReview = self._database.execute(
+        currentUsersReviewAndRating = self._database.execute(
             "SELECT rating, review FROM reviews WHERE user_id = :user_id AND book_id = :book_id",
             {"user_id": userId, "book_id": bookId}).fetchone()
 
-        return currentUsersReview
+        return currentUsersReviewAndRating
 
     def retrieveAllRatingsForBook(self, bookId):
         ratings = self._database.execute("SELECT rating FROM reviews WHERE book_id = :book_id",
-                                         {"book_id": bookId}).fetchone()
+                                         {"book_id": bookId}).fetchall()
 
         if not ratings:
-            return 0
+            return None
 
         allRatingsList = []
         for rating in ratings:

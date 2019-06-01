@@ -22,5 +22,5 @@ def getAverageOfNumsList(numsList):
     return 0
 
 
-def renderApology(errorMessage):
-    return render_template("apology.html", errorMessage=errorMessage)
+def renderApology(errorMessage, code=400):
+    return render_template("apology.html", errorMessage=errorMessage), code

@@ -9,7 +9,6 @@ from werkzeug.security import check_password_hash, generate_password_hash
 import requests
 
 from helpers import login_required, getAverageOfNumsList, renderApology
-
 from DatabaseHandler import DatabaseHandler
 
 app = Flask(__name__)
@@ -183,7 +182,7 @@ def getAPIaccess(isbn):
     if request.method == "GET":
         book = databaseHandler.retrieveBookDataByISBN(isbn)
         if not book:
-            return renderApology("Invalid ISBN. Please try again.")
+            return renderApology("Invalid ISBN. Please try again.", code=404)
 
         bookId = book["id"]
         ratings = databaseHandler.retrieveAllRatingsForBook(bookId)
