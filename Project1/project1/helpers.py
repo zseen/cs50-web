@@ -14,13 +14,3 @@ def login_required(f):
             return redirect("/login")
         return f(*args, **kwargs)
     return decorated_function
-
-
-def getAverageOfNumsList(numsList):
-    if numsList:
-        return sum(numsList) / len(numsList)
-    return 0
-
-
-def renderApology(errorMessage, code=400):
-    return render_template("apology.html", errorMessage=errorMessage), code

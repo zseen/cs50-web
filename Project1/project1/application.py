@@ -8,7 +8,7 @@ from sqlalchemy.orm import scoped_session, sessionmaker
 from werkzeug.security import check_password_hash, generate_password_hash
 import requests
 
-from helpers import login_required, getAverageOfNumsList, renderApology
+from helpers import login_required
 from DatabaseHandler import DatabaseHandler
 
 app = Flask(__name__)
@@ -199,8 +199,7 @@ def getAPIaccess(isbn):
             year=int(book["year"]),
             isbn=book["isbn"],
             review_count=ratingsCount,
-            average_score=averageRating
-        )
+            average_score=averageRating)
 
 
 def getGoodReadsRating(isbn):
@@ -216,3 +215,11 @@ def getGoodReadsRating(isbn):
     return data
 
 
+def getAverageOfNumsList(numsList):
+    if numsList:
+        return sum(numsList) / len(numsList)
+    return 0
+
+
+def renderApology(errorMessage, code=400):
+    return render_template("apology.html", errorMessage=errorMessage), code

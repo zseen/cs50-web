@@ -35,7 +35,7 @@ class DatabaseHandler:
 
     def retrieveBookDataByISBN(self, isbn):
         book = self._database.execute("SELECT title, author, year, isbn, id FROM books WHERE isbn = :isbn",
-                                                     {"isbn": isbn}).fetchone()
+                                      {"isbn": isbn}).fetchone()
         if not book:
             return None
 
@@ -47,7 +47,7 @@ class DatabaseHandler:
         # isbn consists of 10 chars: 9 ints and ends with either an int or with 'X', regex also considers an ending with 'x'
         isQueryIsbn = re.search(r'^[0-9]{9}[X]|[x]|[0-9]]', query)
         if isQueryIsbn and query[-1] == "x":
-            query = query[:9] + "X" # capitalizes the ending 'x' so that SQL query can find the book by isbn
+            query = query[:9] + "X"  # capitalizes the ending 'x' so that SQL query can find the book by isbn
         else:
             query = query.capitalize()
 
@@ -220,6 +220,19 @@ class MockTestDatabaseHandler(TestCase):
             {"user_id": "1", "book_id": "2", "rating": "5.0", "review": "goodBook"})
 
         self.mockDB.commit.assert_called_once()
+
+    def test_retrieveAllRatingsForBook(self):
+        self.mockFetchResult = Mock()
+        self.mockFetchResult.fetchall.return_value = [1, 2, 3, 4, 5]
+        self.mockDB.execute.return_value = self.mockFetchResult
+
+        ratings = self.databaseHandler.retrieveAllRatingsForBook("67")
+
+        self.mockDB.execute.assert_called_once()
+        self.mockDB.execute.assert_called_with("SELECT rating FROM reviews WHERE book_id = :book_id",
+                                               {"book_id": "67"})
+
+        self.assertEquals([1, 2, 3, 4, 5], ratings)
 
 
 if __name__ == '__main__':
