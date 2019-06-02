@@ -97,7 +97,7 @@ class DatabaseHandler:
 
         othersRatingsList = []
         for rating in othersRatings:
-            othersRatingsList.append(rating)
+            othersRatingsList.append(rating[0])
 
         return othersRatingsList
 

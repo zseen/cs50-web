@@ -8,7 +8,7 @@ from sqlalchemy.orm import scoped_session, sessionmaker
 from werkzeug.security import check_password_hash, generate_password_hash
 import requests
 
-from helpers import login_required
+from loginDecorator import login_required
 from DatabaseHandler import DatabaseHandler
 
 app = Flask(__name__)
