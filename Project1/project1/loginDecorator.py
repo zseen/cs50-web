@@ -1,4 +1,4 @@
-from flask import redirect, session, render_template
+from flask import redirect, session
 from functools import wraps
 
 #This method was originally provided for the 2018 CS50 course "Finance" exercise
