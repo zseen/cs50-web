@@ -36,8 +36,6 @@ class DatabaseHandler:
     def retrieveBookDataByISBN(self, isbn):
         book = self._database.execute("SELECT title, author, year, isbn, id FROM books WHERE isbn = :isbn",
                                       {"isbn": isbn}).fetchone()
-        if not book:
-            return None
 
         return book
 
