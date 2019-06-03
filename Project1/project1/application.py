@@ -128,18 +128,18 @@ def showBookDetails(isbn):
     userId = session["id"]
 
     reviewsFromOthers = databaseHandler.retrieveOthersReviewsOfBook(bookId, userId)
-    ratingsFromOthers = databaseHandler.retrieveOthersRatingsOfBook(bookId, userId)
+    allRatingsForBook = databaseHandler.retrieveAllRatingsForBook(bookId)
     reviewAndRatingFromCurrentUser = databaseHandler.retrieveCurrentUsersReviewAndRatingOfBook(bookId, userId)
 
-    averageUsersRating = getAverageOfNumsList(ratingsFromOthers)
+    averageUsersRating = getAverageOfNumsList(allRatingsForBook)
 
-    ratingsCountAndAverageGoodReadsDict = getGoodReadsRating(isbn)
-    ratingCountGR = ratingsCountAndAverageGoodReadsDict["ratingCount"]
-    ratingAverageGR = ratingsCountAndAverageGoodReadsDict["ratingAverage"]
+    ratingsCountAndAverageGoodreadsDict = getGoodreadsRating(isbn)
+    ratingCountGR = ratingsCountAndAverageGoodreadsDict["ratingCount"]
+    ratingAverageGR = ratingsCountAndAverageGoodreadsDict["ratingAverage"]
 
     return render_template("reviewBook.html", book=book, reviewsFromOthers=reviewsFromOthers,
                            reviewFromCurrentUser=reviewAndRatingFromCurrentUser, averageUsersRating=averageUsersRating,
-                           goodReadsRatingAverage=ratingAverageGR, goodReadsRatingNum=ratingCountGR)
+                           goodreadsRatingAverage=ratingAverageGR, goodreadsRatingNum=ratingCountGR)
 
 
 @app.route("/addBookReview/<isbn>", methods=["GET", "POST"])
@@ -163,50 +163,50 @@ def addBookReview(isbn):
     databaseHandler.addBookReviewAndRating(rating, review, userId, bookId)
 
     reviewsFromOthers = databaseHandler.retrieveOthersReviewsOfBook(bookId, userId)
-    ratingsFromOthers = databaseHandler.retrieveOthersRatingsOfBook(bookId, userId)
+    allRatingsForBook = databaseHandler.retrieveAllRatingsForBook(bookId)
 
-    # current user's rating is not calculated in the average
-    averageUsersRating = getAverageOfNumsList(ratingsFromOthers)
+    averageUsersRating = getAverageOfNumsList(allRatingsForBook)
 
-    ratingsCountAndAverageGoodReadsDict = getGoodReadsRating(isbn)
-    ratingCountGR = ratingsCountAndAverageGoodReadsDict["ratingCount"]
-    ratingAverageGR = ratingsCountAndAverageGoodReadsDict["ratingAverage"]
+    ratingsCountAndAverageGoodreadsDict = getGoodreadsRating(isbn)
+    ratingCountGR = ratingsCountAndAverageGoodreadsDict["ratingCount"]
+    ratingAverageGR = ratingsCountAndAverageGoodreadsDict["ratingAverage"]
 
     return render_template("book.html", book=book, reviewsFromOthers=reviewsFromOthers, currentUserReview=review,
                            currentUserRating=rating, averageUsersRating=averageUsersRating,
-                           goodReadsRatingAverage=ratingAverageGR, goodReadsRatingNum=ratingCountGR)
+                           goodreadsRatingAverage=ratingAverageGR, goodreadsRatingNum=ratingCountGR)
 
 
 @app.route("/api/<isbn>", methods=["GET"])
 def getAPIaccess(isbn):
-    if request.method == "GET":
-        book = databaseHandler.retrieveBookDataByISBN(isbn)
-        if not book:
-            return renderApology("Invalid ISBN. Please try again.", code=404)
+    book = databaseHandler.retrieveBookDataByISBN(isbn)
+    if not book:
+        return renderApology("Invalid ISBN. Please try again.", code=404)
 
-        bookId = book["id"]
-        ratings = databaseHandler.retrieveAllRatingsForBook(bookId)
+    bookId = book["id"]
+    ratings = databaseHandler.retrieveAllRatingsForBook(bookId)
+    ratingsCount = len(ratings)
+    averageRating = getAverageOfNumsList(ratings)
 
-        ratingsCount = 0
-        if ratings:
-            ratingsCount = len(ratings)
-
-        averageRating = getAverageOfNumsList(ratings)
-
-        return jsonify(
-            title=book["title"],
-            author=book["author"],
-            year=int(book["year"]),
-            isbn=book["isbn"],
-            review_count=ratingsCount,
-            average_score=averageRating)
+    return jsonify(
+        title=book["title"],
+        author=book["author"],
+        year=int(book["year"]),
+        isbn=book["isbn"],
+        review_count=ratingsCount,
+        average_score=averageRating)
 
 
-def getGoodReadsRating(isbn):
+def getGoodreadsRating(isbn):
     dataRequest = requests.get("https://www.goodreads.com/book/review_counts.json",
                                params={"key": "", "isbns": isbn})
 
     requestedData = (dataRequest.json())
+    if not requestedData:
+        renderApology("Cannot find book")
+
+    if len(requestedData["books"]) > 1:
+        renderApology("Unexpected error: multiple books exist with same isbn")
+
     bookDetails = requestedData["books"]
     ratingCount = bookDetails[0]["work_ratings_count"]
     ratingAverage = bookDetails[0]["average_rating"]

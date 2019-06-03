@@ -56,7 +56,7 @@
                         </td>
                         <td>
                             {% for opinion in reviewsFromOthers %}
-                                "{{ opinion.review }}" <br>
+                                "{{ opinion }}" <br>
                             {% else %}
                                 No reviews from others yet.
                             {% endfor %}
@@ -70,7 +70,7 @@
                             {% endif %}
                         </td>
                         <td>
-                            {{ goodReadsRatingAverage }} based on {{ goodReadsRatingNum }} reviews
+                            {{ goodreadsRatingAverage }} based on {{ goodreadsRatingNum }} reviews
                         </td>
                     </tr>
                <tr style="height: 30px;"/>
