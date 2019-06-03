@@ -1,5 +1,4 @@
 {% extends "layout.html" %}
-<link href="/static/styles.css" rel="stylesheet"/>
 
 {% block title %}
     {{ book.title }}
@@ -8,7 +7,7 @@
 {% block main %}
 <form action="/index" method="post">
         <table class="table table-bordered table-sm">
-            <thead bgcolor="#a6a6a6">
+            <thead class="bookTable">
                 <tr>
                     <th>Title</th>
                     <th>Author</th>
@@ -22,32 +21,31 @@
                 </tr>
             </thead>
             <tbody>
-                    <tr>
-                        <td>{{ book.title }}</td>
-                        <td>{{ book.author }}</td>
-                        <td>{{ book.year }}</td>
-                        <td>{{ book.isbn }}</td>
-                        <td>{{ currentUserReview }}</td>
-                        <td>{{ currentUserRating }}/5</td>
-                        <td>
-                            {% for review in reviewsFromOthers %}
-                                "{{ review }}" <br>
-                            {% else %}
-                                No reviews from others yet.
-                            {% endfor %}
-                        </td>
-                        <td>
+                <tr>
+                    <td>{{ book.title }}</td>
+                    <td>{{ book.author }}</td>
+                    <td>{{ book.year }}</td>
+                    <td>{{ book.isbn }}</td>
+                    <td>{{ currentUserReview }}</td>
+                    <td>{{ currentUserRating }}/5</td>
+                    <td>
+                        {% for review in reviewsFromOthers %}
+                            "{{ review }}" <br>
+                        {% else %}
+                            No reviews from others yet.
+                        {% endfor %}
+                    </td>
+                    <td>
                         {% if averageUsersRating > 0 %}
                             {{averageUsersRating}}/5
-
                         {% else %}
                             No ratings from others yet.
                         {% endif %}
-                        </td>
-                        <td>
-                            {{ goodreadsRatingAverage }} based on {{ goodreadsRatingNum }} reviews
-                        </td>
-                    </tr>
+                    </td>
+                    <td>
+                        {{ goodreadsRatingAverage }} based on {{ goodreadsRatingNum }} reviews
+                    </td>
+                </tr>
                <tr style="height: 30px;"/>
             </tbody>
         </table>

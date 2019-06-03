@@ -1,5 +1,4 @@
 {% extends "layout.html" %}
-<link href="/static/styles.css" rel="stylesheet"/>
 
 {% block title %}
     {{ book.title }}
@@ -8,7 +7,7 @@
 {% block main %}
 <form action = "{{ url_for('addBookReview', isbn=book.isbn) }}" method="post">
         <table class="table table-bordered table-sm">
-            <thead bgcolor="#a6a6a6">
+            <thead class="bookTable">
                 <tr>
                     <th>Title</th>
                     <th>Author</th>

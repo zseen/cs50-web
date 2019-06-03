@@ -124,6 +124,9 @@ def search():
 @login_required
 def showBookDetails(isbn):
     book = databaseHandler.retrieveBookDataByISBN(isbn)
+    if not book:
+        return renderApology("Could not find book")
+
     bookId = book["id"]
     userId = session["id"]
 
