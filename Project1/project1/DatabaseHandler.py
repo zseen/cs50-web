@@ -40,19 +40,12 @@ class DatabaseHandler:
         return book
 
     def retrieveBookDataByMultipleQueryTypes(self, query):
-        query = query.strip()
+        query = query.strip().lower()
 
-        # isbn consists of 10 chars: 9 ints and ends with either an int or with 'X', regex also considers an ending with 'x'
-        isQueryIsbn = re.search(r'^[0-9]{9}[X]|[x]|[0-9]]', query)
-        if isQueryIsbn and query[-1] == "x":
-            query = query[:9] + "X"  # capitalizes the ending 'x' so that SQL query can find the book by isbn
-        else:
-            query = query.capitalize()
-
-        modifiedQuery = "%" + query + "%"
+        queryLikeClause = "%" + query + "%"
         books = self._database.execute(
-            "SELECT title, author, year, isbn, id FROM books WHERE isbn LIKE :modifiedQuery OR title LIKE :modifiedQuery OR author LIKE :modifiedQuery",
-            {'modifiedQuery': modifiedQuery}).fetchall()
+            "SELECT title, author, year, isbn, id FROM books WHERE LOWER (isbn) LIKE :queryLikeClause OR LOWER (title) LIKE :queryLikeClause OR LOWER (author) LIKE :queryLikeClause",
+            {'queryLikeClause': queryLikeClause}).fetchall()
 
         if not books:
             return None
