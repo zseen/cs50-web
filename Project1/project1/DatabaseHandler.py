@@ -211,6 +211,22 @@ class MockTestDatabaseHandler(TestCase):
 
         self.mockDB.commit.assert_called_once()
 
+    def test_retrieveCurrentUsersReviewAndRatingOfBook_correctSqlIsExecuted(self):
+        self.mockFetchResult = Mock()
+        self.mockFetchResult.fetchone.return_value = [{"rating": 4, "review": "It is a lovely book."}]
+        self.mockDB.execute.return_value = self.mockFetchResult
+
+        reviewAndRating = self.databaseHandler.retrieveCurrentUsersReviewAndRatingOfBook("9999", "1234")
+        reviewAndRatingData = reviewAndRating[0]
+
+        self.mockDB.execute.assert_called_once()
+        self.mockDB.execute.assert_called_with(
+            "SELECT rating, review FROM reviews WHERE user_id = :user_id AND book_id = :book_id",
+            {"user_id": "1234", "book_id": "9999"})
+
+        self.assertEquals("It is a lovely book.", reviewAndRatingData["review"])
+        self.assertEquals(4, reviewAndRatingData["rating"])
+
     def test_retrieveAllRatingsForBook(self):
         self.mockFetchResult = Mock()
         self.mockFetchResult.fetchall.return_value = [{"rating": 1}, {"rating": 2}, {"rating": 3}, {"rating": 4}, {"rating": 5}]
