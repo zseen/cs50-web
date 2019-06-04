@@ -182,11 +182,11 @@ class MockTestDatabaseHandler(TestCase):
         self.assertEquals("1234567", firstBook["isbn"])
         self.assertEquals("2", firstBook["id"])
 
+        self.assertEquals("ThatNiceStory", secondBook["title"])
         self.assertEquals("Amazing Author", firstBook["author"])
         self.assertEquals("1991", secondBook["year"])
         self.assertEquals("7654321", secondBook["isbn"])
         self.assertEquals("3", secondBook["id"])
-        self.assertEquals("ThatNiceStory", secondBook["title"])
 
     def test_isBookRatingAlreadyAdded_calledWithExistingRating_returnTrue(self):
         self.mockFetchResult = Mock()
