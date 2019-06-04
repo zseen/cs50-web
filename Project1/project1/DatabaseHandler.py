@@ -1,9 +1,8 @@
 from unittest.mock import Mock
 from unittest import TestCase
 import unittest
-from DatabaseHandlerHelper import DatabaseHandlerHelper
+from DatabaseHandlerHelper import extractSingleRowValuese
 
-databaseHandlerHelper = DatabaseHandlerHelper()
 
 
 class DatabaseHandler:
@@ -45,14 +44,14 @@ class DatabaseHandler:
         query = query.strip().lower()
 
         queryLikeClause = "%" + query + "%"
-        books = self._database.execute(
+        booksRow = self._database.execute(
             "SELECT title, author, year, isbn, id FROM books WHERE LOWER (isbn) LIKE :queryLikeClause OR LOWER (title) LIKE :queryLikeClause OR LOWER (author) LIKE :queryLikeClause",
             {'queryLikeClause': queryLikeClause}).fetchall()
 
-        if not books:
-            return None
+        if not booksRow:
+            return []
 
-        return books
+        return booksRow
 
     def isBookReviewAlreadyAdded(self, userId, bookId):
         preExistingReview = self._database.execute(
@@ -79,7 +78,7 @@ class DatabaseHandler:
             "SELECT review FROM reviews WHERE book_id = :book_id AND NOT user_id = :user_id",
             {"book_id": bookId, "user_id": userId}).fetchall()
 
-        rowsDataList = databaseHandlerHelper.convertSqlRowsToList(rows, "review")
+        rowsDataList = extractSingleRowValuese(rows, "review")
         return rowsDataList
 
     def retrieveOthersRatingsOfBook(self, bookId, userId):
@@ -87,7 +86,7 @@ class DatabaseHandler:
             "SELECT rating FROM reviews WHERE book_id = :book_id AND NOT user_id = :user_id",
             {"book_id": bookId, "user_id": userId}).fetchall()
 
-        rowsDataList = databaseHandlerHelper.convertSqlRowsToList(rows, "rating")
+        rowsDataList = extractSingleRowValuese(rows, "rating")
         return rowsDataList
 
     def retrieveCurrentUsersReviewAndRatingOfBook(self, bookId, userId):
@@ -101,7 +100,7 @@ class DatabaseHandler:
         rows = self._database.execute("SELECT rating FROM reviews WHERE book_id = :book_id",
                                          {"book_id": bookId}).fetchall()
 
-        rowsDataList = databaseHandlerHelper.convertSqlRowsToList(rows, "rating")
+        rowsDataList = extractSingleRowValuese(rows, "rating")
         return rowsDataList
 
 
@@ -182,49 +181,49 @@ class MockTestDatabaseHandler(TestCase):
         self.assertEquals("2012", firstBook["year"])
         self.assertEquals("1234567", firstBook["isbn"])
         self.assertEquals("2", firstBook["id"])
-        self.assertEquals("ThatNiceStory", secondBook["title"])
 
         self.assertEquals("Amazing Author", firstBook["author"])
         self.assertEquals("1991", secondBook["year"])
         self.assertEquals("7654321", secondBook["isbn"])
         self.assertEquals("3", secondBook["id"])
+        self.assertEquals("ThatNiceStory", secondBook["title"])
 
     def test_isBookRatingAlreadyAdded_calledWithExistingRating_returnTrue(self):
         self.mockFetchResult = Mock()
-        self.mockFetchResult.fetchone.return_value = [{"rating": "4.6"}]
+        self.mockFetchResult.fetchone.return_value = [{"rating": 4}]
         self.mockDB.execute.return_value = self.mockFetchResult
 
-        isTaken = self.databaseHandler.isBookRatingAlreadyAdded("4", "3")
+        isTaken = self.databaseHandler.isBookRatingAlreadyAdded("1234", "9999")
 
         self.mockDB.execute.assert_called_once()
         self.mockDB.execute.assert_called_with(
             "SELECT rating FROM reviews WHERE user_id = :user_id AND book_id = :book_id",
-            {"user_id": "4", "book_id": "3"})
+            {"user_id": "1234", "book_id": "9999"})
 
         self.assertTrue(isTaken)
 
     def test_addBookReview_correctSqlIsExecuted(self):
-        self.databaseHandler.addBookReviewAndRating("5.0", "goodBook", "1", "2")
+        self.databaseHandler.addBookReviewAndRating(5, "This is a great book.", "1", "2")
 
         self.mockDB.execute.assert_called_once()
         self.mockDB.execute.assert_called_with(
             "INSERT INTO reviews (user_id, book_id, rating, review) VALUES (:user_id, :book_id, :rating, :review)",
-            {"user_id": "1", "book_id": "2", "rating": "5.0", "review": "goodBook"})
+            {"user_id": "1", "book_id": "2", "rating": 5, "review": "This is a great book."})
 
         self.mockDB.commit.assert_called_once()
 
     def test_retrieveAllRatingsForBook(self):
         self.mockFetchResult = Mock()
-        self.mockFetchResult.fetchall.return_value = [{"rating": "1"}, {"rating": "2"}, {"rating": "3"}, {"rating": "4"}, {"rating": "5"}]
+        self.mockFetchResult.fetchall.return_value = [{"rating": 1}, {"rating": 2}, {"rating": 3}, {"rating": 4}, {"rating": 5}]
         self.mockDB.execute.return_value = self.mockFetchResult
 
-        ratings = self.databaseHandler.retrieveAllRatingsForBook("67")
+        ratings = self.databaseHandler.retrieveAllRatingsForBook("9999")
 
         self.mockDB.execute.assert_called_once()
         self.mockDB.execute.assert_called_with("SELECT rating FROM reviews WHERE book_id = :book_id",
-                                               {"book_id": "67"})
+                                               {"book_id": "9999"})
 
-        self.assertEquals(["1", "2", "3", "4", "5"], ratings)
+        self.assertEquals([1, 2, 3, 4, 5], ratings)
 
 
 if __name__ == '__main__':
