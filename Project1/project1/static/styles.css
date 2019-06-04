@@ -3,18 +3,6 @@ nav .navbar-brand
     font-size: xx-large;
 }
 
-table
-{
-    font-size: 20px;
-    color:#111;
-}
-
-th
-{
-  background-color: #b6bdc3;
-  color: black;
-}
-
 main .form-control
 {
     /* center form controls */
@@ -31,5 +19,22 @@ main
 
     /* center contents */
     text-align: center;
+}
+
+table
+{
+    font-size: 20px;
+    color:#111;
+}
+
+th
+{
+    background-color: #b6bdc3;
+    color: black;
+}
+
+#reviewBook
+{
+    margin-top: 50px;
 }
 

@@ -11,6 +11,8 @@ import requests
 from loginDecorator import login_required
 from DatabaseHandler import DatabaseHandler
 
+GOODREADS_API_URL = "https://www.goodreads.com/book/review_counts.json"
+
 app = Flask(__name__)
 
 # Check for environment variable
@@ -157,11 +159,10 @@ def addBookReview(isbn):
     review = request.form.get("review")
     rating = request.form.get("rating")
 
-    if databaseHandler.isBookReviewAlreadyAdded(userId, bookId):
-        return renderApology("You have already submitted a review.")
+    canUserAddReview = canUserAddReviewForBook(userId, bookId)
+    if not canUserAddReview:
+        return renderApology("Sorry, you have already submitted a review or a rating.")
 
-    if databaseHandler.isBookRatingAlreadyAdded(userId, bookId):
-        return renderApology("You have already submitted a rating.")
 
     databaseHandler.addBookReviewAndRating(rating, review, userId, bookId)
 
@@ -200,7 +201,7 @@ def getAPIaccess(isbn):
 
 
 def getGoodreadsRating(isbn):
-    dataRequest = requests.get("https://www.goodreads.com/book/review_counts.json",
+    dataRequest = requests.get(GOODREADS_API_URL,
                                params={"key": "", "isbns": isbn})
 
     requestedData = (dataRequest.json())
@@ -226,3 +227,8 @@ def getAverageOfNumsList(numsList):
 
 def renderApology(errorMessage, code=400):
     return render_template("apology.html", errorMessage=errorMessage), code
+
+
+def canUserAddReviewForBook(userId, bookId):
+    return not databaseHandler.isBookReviewAlreadyAdded(userId, bookId) or not databaseHandler.isBookRatingAlreadyAdded(userId, bookId)
+
