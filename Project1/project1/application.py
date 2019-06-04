@@ -11,6 +11,7 @@ import requests
 from loginDecorator import login_required
 from DatabaseHandler import DatabaseHandler
 
+
 GOODREADS_API_URL = "https://www.goodreads.com/book/review_counts.json"
 
 app = Flask(__name__)

@@ -1,8 +1,7 @@
 from unittest.mock import Mock
 from unittest import TestCase
 import unittest
-from DatabaseHandlerHelper import extractSingleRowValuese
-
+from databaseHandlerHelper import extractSingleRowValuese
 
 
 class DatabaseHandler:
