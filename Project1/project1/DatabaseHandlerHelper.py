@@ -1,6 +1,6 @@
-def extractSingleRowValuese(rows, column):
-    dataList = []
-    for data in rows:
-        dataList.append(data[column])
+def extractSingleColumnValues(rows, columnName):
+    extractedValues = []
+    for row in rows:
+        extractedValues.append(row[columnName])
 
-    return dataList
+    return extractedValues

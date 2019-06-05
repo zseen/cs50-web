@@ -230,6 +230,4 @@ def renderApology(errorMessage, code=400):
     return render_template("apology.html", errorMessage=errorMessage), code
 
 
-def canUserAddReviewForBook(userId, bookId):
-    return not databaseHandler.isBookReviewAlreadyAdded(userId, bookId) or not databaseHandler.isBookRatingAlreadyAdded(userId, bookId)
 
