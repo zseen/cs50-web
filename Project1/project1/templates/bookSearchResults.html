@@ -1,57 +1,28 @@
-<!DOCTYPE html>
+{% extends "layout.html" %}
 
-<html lang="en">
+{% block title %}
+    Search results:
+{% endblock %}
+<br>
 
-    <head>
-        <meta charset="utf-8"/>
-        <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no"/>
-        <!-- documentation at http://getbootstrap.com/docs/4.0/, alternative themes at https://bootswatch.com/4-alpha/ -->
-        <link href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta.2/css/bootstrap.min.css" rel="stylesheet"/>
-        <link href="{{ url_for('static', filename='styles.css') }}" rel="stylesheet"/>
-        <script src="https://code.jquery.com/jquery-3.1.1.min.js"></script>
-        <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.3/umd/popper.min.js"></script>
-        <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta.2/js/bootstrap.min.js"></script>
-    </head>
-    <body>
-        <nav class="navbar navbar-expand-md navbar-light bg-light border">
-            <span class="navbar-brand">BookReviewer</span>
-            <button aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation" class="navbar-toggler" data-target="#navbar" data-toggle="collapse" type="button">
-                <span class="navbar-toggler-icon"></span>
-            </button>
-            <div class="collapse navbar-collapse" id="navbar">
-                {% if session.id %}
-                    <ul class="navbar-nav ml-auto mt-2">
-                        <li class="nav-item"><a class="nav-link" href="/logout">Log Out</a></li>
-                        <li class="nav-item"><a class="nav-link" href="/search">Search</a></li>
-                    </ul>
-                {% else %}
-                    <ul class="navbar-nav ml-auto mt-2">
-                        <li class="nav-item"><a class="nav-link" href="/register">Register</a></li>
-                        <li class="nav-item"><a class="nav-link" href="/login">Log In</a></li>
-                    </ul>
-                {% endif %}
-            </div>
-        </nav>
-        <br>
-
-        <h3>
-            {% block title %}
+{% block main %}
+    <form action="/index" method="post">
+        <div class="leftAlignedText">
+            <h4>
                 Search results:
-            {% endblock %}
-        </h3>
-        <br>
+            </h4>
+            <br>
+            <ul>
+                {% for book in books %}
+                <li>
+                    <a href="{{ url_for('showBookDetails', isbn=book.isbn) }}">
+                        {{book.title}} by {{book.author}}
+                    </a>
+                </li>
+                {% endfor %}
+            </ul>
+        </div>
+    </form>
+{% endblock %}
 
-        {% block main %}
-            <form action="/index" method="post">
-                <ul>
-                    {% for book in books %}
-                    <li>
-                        <a href="{{ url_for('showBookDetails', isbn=book.isbn) }}">
-                            {{book.title}} by {{book.author}}
-                        </a>
-                    </li>
-                    {% endfor %}
-                </ul>
-            </form>
-        {% endblock %}
-    </body>
+

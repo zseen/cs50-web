@@ -52,15 +52,12 @@ class DatabaseHandler:
 
         return bookRows
 
-    def areBookReviewAndRatingAlreadyAddedByCurrentUser(self, userId, bookId):
-        preExistingReview = self._database.execute(
+    def canUserAddReviewAndRatingForBook(self, userId, bookId):
+        preExistingReviewAndRating = self._database.execute(
             "SELECT rating, review FROM reviews WHERE user_id = :user_id AND book_id = :book_id",
             {"user_id": userId, "book_id": bookId}).fetchone()
 
-        return (preExistingReview is not None)
-
-    def canUserAddReviewForBook(self, userId, bookId):
-        return not self.areBookReviewAndRatingAlreadyAddedByCurrentUser(userId, bookId)
+        return (preExistingReviewAndRating is None)
 
     def addBookReviewAndRating(self, rating, review, user_id, book_id):
         self._database.execute(
@@ -89,14 +86,14 @@ class DatabaseHandler:
             "SELECT rating, review FROM reviews WHERE user_id = :user_id AND book_id = :book_id",
             {"user_id": userId, "book_id": bookId}).fetchone()
 
-        return currentUsersReviewAndRating[0]
+        return currentUsersReviewAndRating
 
     def retrieveAllRatingsForBook(self, bookId):
         rows = self._database.execute("SELECT rating FROM reviews WHERE book_id = :book_id",
                                       {"book_id": bookId}).fetchall()
 
-        rowsDataList = extractSingleColumnValues(rows, "rating")
-        return rowsDataList
+        ratings = extractSingleColumnValues(rows, "rating")
+        return ratings
 
 
 class MockTestDatabaseHandler(TestCase):
@@ -183,19 +180,19 @@ class MockTestDatabaseHandler(TestCase):
         self.assertEquals("7654321", secondBook["isbn"])
         self.assertEquals("9999", secondBook["id"])
 
-    def test_areBookReviewAndRatingAlreadyAddedByCurrentUser_calledWithExistingRating_returnTrue(self):
+    def test_canUserAddReviewAndRatingForBook_calledWithExistingRating_returnFalse(self):
         self.mockFetchResult = Mock()
         self.mockFetchResult.fetchone.return_value = [{"rating": 4, "review": "Lovely story."}]
         self.mockDB.execute.return_value = self.mockFetchResult
 
-        areAdded = self.databaseHandler.areBookReviewAndRatingAlreadyAddedByCurrentUser("1234", "9999")
+        canAddReview = self.databaseHandler.canUserAddReviewAndRatingForBook("1234", "9999")
 
         self.mockDB.execute.assert_called_once()
         self.mockDB.execute.assert_called_with(
             "SELECT rating, review FROM reviews WHERE user_id = :user_id AND book_id = :book_id",
             {"user_id": "1234", "book_id": "9999"})
 
-        self.assertTrue(areAdded)
+        self.assertFalse(canAddReview)
 
     def test_addBookReview_correctSqlIsExecuted(self):
         self.databaseHandler.addBookReviewAndRating(5, "This is a great book.", "1234", "9999")
@@ -209,7 +206,7 @@ class MockTestDatabaseHandler(TestCase):
 
     def test_retrieveCurrentUsersReviewAndRatingOfBook_correctSqlIsExecuted(self):
         self.mockFetchResult = Mock()
-        self.mockFetchResult.fetchone.return_value = [{"rating": 4, "review": "It is a lovely book."}]
+        self.mockFetchResult.fetchone.return_value = {"rating": 4, "review": "It is a lovely book."}
         self.mockDB.execute.return_value = self.mockFetchResult
 
         reviewAndRating = self.databaseHandler.retrieveCurrentUsersReviewAndRatingOfBook("9999", "1234")

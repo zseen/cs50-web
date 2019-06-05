@@ -1,3 +1,5 @@
+/* Based on styles.css provided for the "Finance" exercise from cs50 */
+
 nav .navbar-brand
 {
     font-size: xx-large;
@@ -5,26 +7,30 @@ nav .navbar-brand
 
 main .form-control
 {
-    /* center form controls */
     display: inline-block;
-
-    /* override Bootstrap's 100% width for form controls */
     width: auto;
 }
 
 main
 {
-    /* scroll horizontally as needed */
     overflow-x: auto;
-
-    /* center contents */
     text-align: center;
+}
+
+main .leftAlignedText
+{
+    text-align: left;
+}
+
+form-group top-margin
+{
+    margin-top: 50px;
 }
 
 table
 {
     font-size: 20px;
-    color:#111;
+    color: #111;
 }
 
 th
@@ -33,8 +39,7 @@ th
     color: black;
 }
 
-#reviewBook
+tr
 {
-    margin-top: 50px;
+    height: 30px;
 }
-

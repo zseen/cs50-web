@@ -11,7 +11,6 @@ import requests
 from loginDecorator import login_required
 from DatabaseHandler import DatabaseHandler
 
-
 GOODREADS_API_URL = "https://www.goodreads.com/book/review_counts.json"
 
 app = Flask(__name__)
@@ -140,12 +139,12 @@ def showBookDetails(isbn):
     averageUsersRating = getAverageOfNumsList(allRatingsForBook)
 
     ratingsCountAndAverageGoodreadsDict = getGoodreadsRating(isbn)
-    ratingCountGR = ratingsCountAndAverageGoodreadsDict["ratingCount"]
-    ratingAverageGR = ratingsCountAndAverageGoodreadsDict["ratingAverage"]
+    goodreadsRatingCount = ratingsCountAndAverageGoodreadsDict["ratingCount"]
+    goodreadsRatingAverage = ratingsCountAndAverageGoodreadsDict["ratingAverage"]
 
     return render_template("reviewBook.html", book=book, reviewsFromOthers=reviewsFromOthers,
                            reviewFromCurrentUser=reviewAndRatingFromCurrentUser, averageUsersRating=averageUsersRating,
-                           goodreadsRatingAverage=ratingAverageGR, goodreadsRatingNum=ratingCountGR)
+                           goodreadsRatingAverage=goodreadsRatingAverage, goodreadsRatingNum=goodreadsRatingCount)
 
 
 @app.route("/addBookReview/<isbn>", methods=["GET", "POST"])
@@ -160,10 +159,9 @@ def addBookReview(isbn):
     review = request.form.get("review")
     rating = request.form.get("rating")
 
-    canUserAddReview = canUserAddReviewForBook(userId, bookId)
+    canUserAddReview = databaseHandler.canUserAddReviewAndRatingForBook(userId, bookId)
     if not canUserAddReview:
         return renderApology("Sorry, you have already submitted a review or a rating.")
-
 
     databaseHandler.addBookReviewAndRating(rating, review, userId, bookId)
 
@@ -221,13 +219,11 @@ def getGoodreadsRating(isbn):
 
 
 def getAverageOfNumsList(numsList):
-    if numsList:
-        return sum(numsList) / len(numsList)
-    return 0
+    if len(numsList) == 0:
+        return 0
+
+    return sum(numsList) / len(numsList)
 
 
 def renderApology(errorMessage, code=400):
     return render_template("apology.html", errorMessage=errorMessage), code
-
-
-
