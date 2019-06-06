@@ -17,7 +17,7 @@ main
     text-align: center;
 }
 
-main .leftAlignedText
+.leftAlignedText
 {
     text-align: left;
 }

@@ -138,9 +138,9 @@ def showBookDetails(isbn):
 
     averageUsersRating = getAverageOfNumsList(allRatingsForBook)
 
-    ratingsCountAndAverageGoodreadsDict = getGoodreadsRating(isbn)
-    goodreadsRatingCount = ratingsCountAndAverageGoodreadsDict["ratingCount"]
-    goodreadsRatingAverage = ratingsCountAndAverageGoodreadsDict["ratingAverage"]
+    goodreadsRatingsCountAndAverageDict = getRatingsDataFromGoodreads(isbn)
+    goodreadsRatingCount = goodreadsRatingsCountAndAverageDict["ratingCount"]
+    goodreadsRatingAverage = goodreadsRatingsCountAndAverageDict["ratingAverage"]
 
     return render_template("reviewBook.html", book=book, reviewsFromOthers=reviewsFromOthers,
                            reviewFromCurrentUser=reviewAndRatingFromCurrentUser, averageUsersRating=averageUsersRating,
@@ -154,23 +154,27 @@ def addBookReview(isbn):
     if not book:
         return render_template("apology.html", errorMessage="No book found.")
 
-    userId = session["id"]
     bookId = book["id"]
+
+    userId = session["id"]
     review = request.form.get("review")
     rating = request.form.get("rating")
 
-    canUserAddReview = databaseHandler.canUserAddReviewAndRatingForBook(userId, bookId)
-    if not canUserAddReview:
-        return renderApology("Sorry, you have already submitted a review or a rating.")
+    if not review or not rating:
+        return renderApology("You haven't added a review or rating.")
 
-    databaseHandler.addBookReviewAndRating(rating, review, userId, bookId)
+    canUserAddReview = databaseHandler.canUserAddReviewAndRatingForBook(bookId, userId)
+    if not canUserAddReview:
+        return renderApology("Sorry, you have already reviewed this book.")
+
+    databaseHandler.addBookReviewAndRating(rating, review, bookId, userId)
 
     reviewsFromOthers = databaseHandler.retrieveOthersReviewsOfBook(bookId, userId)
     allRatingsForBook = databaseHandler.retrieveAllRatingsForBook(bookId)
 
     averageUsersRating = getAverageOfNumsList(allRatingsForBook)
 
-    ratingsCountAndAverageGoodreadsDict = getGoodreadsRating(isbn)
+    ratingsCountAndAverageGoodreadsDict = getRatingsDataFromGoodreads(isbn)
     ratingCountGR = ratingsCountAndAverageGoodreadsDict["ratingCount"]
     ratingAverageGR = ratingsCountAndAverageGoodreadsDict["ratingAverage"]
 
@@ -199,7 +203,7 @@ def getAPIaccess(isbn):
         average_score=averageRating)
 
 
-def getGoodreadsRating(isbn):
+def getRatingsDataFromGoodreads(isbn):
     dataRequest = requests.get(GOODREADS_API_URL,
                                params={"key": "", "isbns": isbn})
 
