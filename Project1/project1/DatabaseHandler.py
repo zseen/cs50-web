@@ -66,11 +66,11 @@ class DatabaseHandler:
         self._database.commit()
 
     def retrieveOthersReviewsOfBook(self, bookId, userId):
-        rows = self._database.execute(
+        reviewRows = self._database.execute(
             "SELECT review FROM reviews WHERE book_id = :book_id AND NOT user_id = :user_id",
             {"book_id": bookId, "user_id": userId}).fetchall()
 
-        reviews = extractSingleColumnValues(rows, "review")
+        reviews = extractSingleColumnValues(reviewRows, "review")
         return reviews
 
     def retrieveCurrentUsersReviewAndRatingOfBook(self, bookId, userId):
@@ -81,10 +81,10 @@ class DatabaseHandler:
         return currentUsersReviewAndRating
 
     def retrieveAllRatingsForBook(self, bookId):
-        rows = self._database.execute("SELECT rating FROM reviews WHERE book_id = :book_id",
+        ratingRows = self._database.execute("SELECT rating FROM reviews WHERE book_id = :book_id",
                                       {"book_id": bookId}).fetchall()
 
-        ratings = extractSingleColumnValues(rows, "rating")
+        ratings = extractSingleColumnValues(ratingRows, "rating")
         return ratings
 
 
@@ -172,7 +172,7 @@ class MockTestDatabaseHandler(TestCase):
         self.assertEquals("7654321", secondBook["isbn"])
         self.assertEquals("9999", secondBook["id"])
 
-    def test_canUserAddReviewAndRatingForBook_calledWithExistingRating_returnFalse(self):
+    def test_canUserAddReviewAndRatingForBook_calledWithExistingRatingAndReview_returnFalse(self):
         self.mockFetchResult = Mock()
         self.mockFetchResult.fetchone.return_value = [{"rating": 4, "review": "Lovely story."}]
         self.mockDB.execute.return_value = self.mockFetchResult

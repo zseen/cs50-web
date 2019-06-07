@@ -1,8 +1,9 @@
 /* Based on styles.css provided for the "Finance" exercise from cs50 */
 
-nav .navbar-brand
+main
 {
-    font-size: xx-large;
+    overflow-x: auto;
+    text-align: center;
 }
 
 main .form-control
@@ -11,20 +12,19 @@ main .form-control
     width: auto;
 }
 
-main
+nav .navbar-brand
 {
-    overflow-x: auto;
-    text-align: center;
+    font-size: xx-large;
 }
 
-.leftAlignedText
-{
-    text-align: left;
-}
-
-form-group top-margin
+.large-top-margin
 {
     margin-top: 50px;
+}
+
+.left-aligned-text
+{
+    text-align: left;
 }
 
 table

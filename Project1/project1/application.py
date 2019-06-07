@@ -174,13 +174,13 @@ def addBookReview(isbn):
 
     averageUsersRating = getAverageOfNumsList(allRatingsForBook)
 
-    ratingsCountAndAverageGoodreadsDict = getRatingsDataFromGoodreads(isbn)
-    ratingCountGR = ratingsCountAndAverageGoodreadsDict["ratingCount"]
-    ratingAverageGR = ratingsCountAndAverageGoodreadsDict["ratingAverage"]
+    goodreadsRatingsCountAndAverageDict = getRatingsDataFromGoodreads(isbn)
+    goodreadsRatingCount = goodreadsRatingsCountAndAverageDict["ratingCount"]
+    goodreadsRatingAverage = goodreadsRatingsCountAndAverageDict["ratingAverage"]
 
     return render_template("book.html", book=book, reviewsFromOthers=reviewsFromOthers, currentUserReview=review,
                            currentUserRating=rating, averageUsersRating=averageUsersRating,
-                           goodreadsRatingAverage=ratingAverageGR, goodreadsRatingNum=ratingCountGR)
+                           goodreadsRatingAverage=goodreadsRatingAverage, goodreadsRatingNum=goodreadsRatingCount)
 
 
 @app.route("/api/<isbn>", methods=["GET"])
