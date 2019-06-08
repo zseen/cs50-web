@@ -1,0 +1,28 @@
+{% extends "layout.html" %}
+
+{% block title %}
+    Search results:
+{% endblock %}
+<br>
+
+{% block main %}
+    <form action="/index" method="post">
+        <div class="left-aligned-text">
+            <h4>
+                Search results:
+            </h4>
+            <br>
+            <ul>
+                {% for book in books %}
+                <li>
+                    <a href="{{ url_for('showBookDetails', isbn=book.isbn) }}">
+                        {{book.title}} by {{book.author}}
+                    </a>
+                </li>
+                {% endfor %}
+            </ul>
+        </div>
+    </form>
+{% endblock %}
+
+

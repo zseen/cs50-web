@@ -1,0 +1,77 @@
+{% extends "layout.html" %}
+
+{% block title %}
+    {{ book.title }}
+{% endblock %}
+
+{% block main %}
+<form action = "{{ url_for('addBookReview', isbn=book.isbn) }}" method="post">
+        <table class="table table-bordered table-sm">
+            <thead class="bookTable">
+                <tr>
+                    <th>Title</th>
+                    <th>Author</th>
+                    <th>Year</th>
+                    <th>ISBN</th>
+                    <th>Your thoughts on this book</th>
+                    <th>What others think of this book</th>
+                    <th>Average rating from BookReviewer users</th>
+                    <th>Goodreads rating</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>{{ book.title }}</td>
+                    <td>{{ book.author }}</td>
+                    <td>{{ book.year }}</td>
+                    <td>{{ book.isbn }}</td>
+                    <td>
+                        <ul>
+                            {% if reviewFromCurrentUser %}
+                                {{reviewFromCurrentUser.review}},
+                                {{reviewFromCurrentUser.rating}}/5
+                            {% else %}
+                                You have not reviewed this book yet!
+
+                                <div class="large-top-margin">
+                                    <label for="rating">Rating ( Out of 5 )</label>
+                                    <select class="form-control" name="rating" id="rating">
+                                        {%  for count in range(5) %}
+                                            <option value="{{ count+1 }}">{{ count+1 }}</option>
+                                        {% endfor %}
+                                    </select>
+                                </div>
+                                <div class="form-group">
+                                  <label for="comment">Review:</label>
+                                  <textarea class="form-control" rows="5" name="review"></textarea>
+                                </div>
+
+                                <div class="form-group">
+                                    <button class="btn btn-primary" type="submit">Submit</button>
+                                </div>
+                            {% endif %}
+                        </ul>
+                    </td>
+                    <td>
+                        {% for opinion in reviewsFromOthers %}
+                            "{{ opinion }}" <br>
+                        {% else %}
+                            No reviews from others yet.
+                        {% endfor %}
+
+                    </td>
+                    <td>
+                        {% if averageUsersRating > 0 %}
+                            {{averageUsersRating}}/5
+                        {% else %}
+                            No ratings from others yet.
+                        {% endif %}
+                    </td>
+                    <td>
+                        {{ goodreadsRatingAverage }} based on {{ goodreadsRatingNum }} reviews
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </form>
+{% endblock %}
