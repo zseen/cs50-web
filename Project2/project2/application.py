@@ -20,6 +20,12 @@ channelNames = []
 @app.route("/")
 def index():
     print("Got into index()")
+
+    print(session)
+
+    if "username" in session:
+        print("logged in as ", session["username"])
+
     if not "username" in session:
         print("No one logged in")
         return render_template("register.html")
@@ -28,7 +34,7 @@ def index():
 
 @app.route("/register", methods=["GET", "POST"])
 def login():
-    #session.clear()
+    session.clear()
 
     username = request.form.get("username")
     print(username)
