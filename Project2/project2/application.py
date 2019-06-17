@@ -54,7 +54,6 @@ def createChannel():
 
     channelName = request.form.get("channelName")
 
-
     if not channelName:
         return jsonify({"success": False})
 
