@@ -30,5 +30,6 @@ document.addEventListener('DOMContentLoaded', () =>
 
       request.send(userData);
       console.log("userdata sent");
+      return false;
   };
 });
