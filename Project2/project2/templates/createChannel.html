@@ -1,0 +1,15 @@
+<html>
+      <head>
+          <script src="{{ url_for('static', filename='createChannel.js') }}"></script>
+
+          <title>Create Channel</title>
+      </head>
+      <body>
+          <form id="channelCreationForm" method="post">
+              <input id="channelName" autocomplete="off" autofocus placeholder="Channel name" type="text/html">
+              <input  type="submit" value="Create!" >
+          </form>
+          <br>
+          <div id="errorMessagePlace"></div>
+      </body>
+</html>

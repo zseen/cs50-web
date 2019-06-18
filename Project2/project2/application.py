@@ -14,7 +14,7 @@ app.config['SECRET_KEY'] = 'super secret key'
 socketio = SocketIO(app)
 
 
-channelNames = []
+channelsByUser = {}
 
 
 @app.route("/")
@@ -29,7 +29,11 @@ def index():
     if not "username" in session:
         print("No one logged in")
         return render_template("register.html")
-    return render_template("layout.html", username=session["username"])
+
+    if "channel" in session:
+        return render_template("layout.html", username=session["username"], channelName=session["channel"])
+
+    return render_template("layout.html", username=session["username"], channelsList=channelsByUser)
 
 
 @app.route("/register", methods=["GET", "POST"])
@@ -58,20 +62,33 @@ def createChannel():
     if request.method == "GET":
         return render_template("createChannel.html")
 
+
+
     channelName = request.form.get("channelName")
+    currentUser = session["username"]
+
+    print("session: ", session["username"])
+    print("tryving to create: ", channelName)
 
     if not channelName:
         return jsonify({"success": False})
 
-    if channelName not in channelNames:
-        channelNames.append(channelName)
+    if currentUser in channelsByUser:
+        if channelName in channelsByUser[currentUser]:
+            return "Chatroom already exists."
+
+        channelsByUser[currentUser].append(channelName)
+    else:
+        channelsByUser[currentUser] = [channelName]
+
+    print(channelsByUser)
 
     session["channel"] = channelName
-    return render_template("layout.html")
+    return jsonify({"success": True, "channelName": channelName})
 
 @app.route("/showChannelsList", methods=["GET", "POST"])
 def showChannelsList():
-    return render_template("channels.html", channels=channelNames)
+    return render_template("channels.html", channels=channelsByUser)
 
 
 @app.route("/logout", methods=["GET", "POST"])
