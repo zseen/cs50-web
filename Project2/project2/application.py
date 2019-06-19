@@ -6,6 +6,8 @@ import os
 import requests
 
 
+from AllChannels import AllChannels
+
 from flask import Flask, jsonify, render_template, request, session, redirect
 
 app = Flask(__name__)
@@ -14,7 +16,7 @@ app.config['SECRET_KEY'] = 'super secret key'
 socketio = SocketIO(app)
 
 
-channelsByUser = {}
+allChannels = AllChannels()
 
 
 @app.route("/")
@@ -30,10 +32,10 @@ def index():
         print("No one logged in")
         return render_template("register.html")
 
-    if "channel" in session:
-        return render_template("layout.html", username=session["username"], channelName=session["channel"])
+    print(allChannels.retrieveChannels())
 
-    return render_template("layout.html", username=session["username"], channelsList=channelsByUser)
+
+    return render_template("layout.html", username=session["username"], channels=allChannels.retrieveChannels())
 
 
 @app.route("/register", methods=["GET", "POST"])
@@ -62,33 +64,29 @@ def createChannel():
     if request.method == "GET":
         return render_template("createChannel.html")
 
-
-
     channelName = request.form.get("channelName")
-    currentUser = session["username"]
 
-    print("session: ", session["username"])
-    print("tryving to create: ", channelName)
+    print("trying to create: ", channelName)
 
     if not channelName:
         return jsonify({"success": False})
 
-    if currentUser in channelsByUser:
-        if channelName in channelsByUser[currentUser]:
-            return "Chatroom already exists."
+    print("channel already exists: ", channelName in allChannels.retrieveChannels())
 
-        channelsByUser[currentUser].append(channelName)
-    else:
-        channelsByUser[currentUser] = [channelName]
+    if channelName in allChannels.retrieveChannels():
+        return jsonify({"success": False})
 
-    print(channelsByUser)
+    allChannels.addChannel(channelName)
+
+    print(allChannels.retrieveChannels())
 
     session["channel"] = channelName
     return jsonify({"success": True, "channelName": channelName})
 
-@app.route("/showChannelsList", methods=["GET", "POST"])
-def showChannelsList():
-    return render_template("channels.html", channels=channelsByUser)
+
+def enterChannel():
+    pass
+
 
 
 @app.route("/logout", methods=["GET", "POST"])

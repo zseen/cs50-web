@@ -7,6 +7,10 @@ document.addEventListener('DOMContentLoaded', () =>
       request.open('POST', '/register');
       console.log(username);
 
+      userStorage = window.localStorage;
+      userStorage.setItem(username, username)
+      console.log(userStorage);
+
       request.onload = () =>
       {
           console.log("entered request.onload");

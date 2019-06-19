@@ -6,6 +6,9 @@ document.addEventListener('DOMContentLoaded', () =>
       const channelName = document.querySelector('#channelName').value;
       request.open('POST', '/createChannel');
       console.log(channelName);
+      channelStorage = window.localStorage;
+      channelStorage.setItem(channelName, channelName)
+      console.log(channelStorage);
 
       request.onload = () =>
       {
