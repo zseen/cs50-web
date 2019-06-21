@@ -1,7 +1,9 @@
 MAX_MESSAGES_TO_STORE = 100
 
+
 class Channel:
-    def __init__(self):
+    def __init__(self, name):
+        self.name = name
         self.messagesInChannel = []
 
     def addMessage(self, message):

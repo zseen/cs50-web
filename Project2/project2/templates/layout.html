@@ -50,13 +50,14 @@
             <thead>
                 <tr>
                     <th>Channels</th>
-
                 </tr>
             </thead>
             <tbody>
                 {% for channel in channels %}
                     <tr>
-                        <td>{{ channel }}</td>
+                        <td><a href="{{ url_for('enterChannel', channelName=channel.name) }}">
+                            {{ channel.name }}
+                        </a></td>
                     </tr>
                 {% endfor %}
 

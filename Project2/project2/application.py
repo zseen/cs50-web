@@ -7,6 +7,9 @@ import requests
 
 
 from AllChannels import AllChannels
+from Channel import Channel
+from Message import Message
+
 
 from flask import Flask, jsonify, render_template, request, session, redirect
 
@@ -21,19 +24,11 @@ allChannels = AllChannels()
 
 @app.route("/")
 def index():
-    print("Got into index()")
-
-    print(session)
-
     if "username" in session:
         print("logged in as ", session["username"])
 
-    if not "username" in session:
-        print("No one logged in")
+    if "username" not in session:
         return render_template("register.html")
-
-    print(allChannels.retrieveChannels())
-
 
     return render_template("layout.html", username=session["username"], channels=allChannels.retrieveChannels())
 
@@ -43,19 +38,10 @@ def login():
     session.clear()
 
     username = request.form.get("username")
-    print(username)
-    print("Does it get here?")
-
     if not username:
         return jsonify({"success": False})
 
     session["username"] = username
-
-    print("session: ", session["username"])
-
-    if "username" in session:
-        print("login success")
-
     return jsonify({"success": True, "username": username})
 
 
@@ -66,33 +52,42 @@ def createChannel():
 
     channelName = request.form.get("channelName")
 
-    print("trying to create: ", channelName)
-
     if not channelName:
         return jsonify({"success": False})
 
-    print("channel already exists: ", channelName in allChannels.retrieveChannels())
-
-    if channelName in allChannels.retrieveChannels():
+    if allChannels.retrieveChannelByName(channelName):
         return jsonify({"success": False})
 
-    allChannels.addChannel(channelName)
-
-    print(allChannels.retrieveChannels())
+    newChannel = Channel(channelName)
+    allChannels.addChannel(newChannel)
 
     session["channel"] = channelName
-    return jsonify({"success": True, "channelName": channelName})
+    return jsonify({"success": True, "channelName": newChannel.name})
 
 
-def enterChannel():
+@app.route("/enterChannel/<channelName>", methods=["GET", "POST"])
+def enterChannel(channelName):
+    currentChannel = allChannels.retrieveChannelByName(channelName)
+    if not currentChannel:
+        return "Channel unavailable"
+
+    messagesInChannel = currentChannel.retrieveMessages()
+    # TODO
+
+
+@socketio.on('message')
+def sendMessage(message):
+    # TODO
     pass
-
 
 
 @app.route("/logout", methods=["GET", "POST"])
 def logout():
     session.clear()
     return redirect("/")
+
+if __name__ == '__main__':
+    app.run(debug=True, host="0.0.0.0")
 
 
 
