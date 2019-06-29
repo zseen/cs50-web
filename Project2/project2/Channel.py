@@ -9,7 +9,7 @@ class Channel:
     def addMessage(self, message):
         self.messagesInChannel.append(message)
         if len(self.messagesInChannel) > MAX_MESSAGES_TO_STORE:
-            self.messagesInChannel[0].remove()
+            del self.messagesInChannel[0]
 
     def retrieveMessages(self):
         return self.messagesInChannel

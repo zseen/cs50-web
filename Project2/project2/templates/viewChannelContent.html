@@ -1,0 +1,21 @@
+<head>
+    <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/socket.io/1.3.6/socket.io.min.js"></script>
+    <script src="{{ url_for('static', filename='chatroom.js') }}"></script>
+</head>
+
+<body>
+    <ul class="my-4" id="messages"> </ul>
+    <form action="javascript:void(0);" class="mt-2" method="post">
+        <div class="input-group mb-3">
+            <div class="input-group-prepend">
+                <span class="input-group-text" id="inputGroup-sizing-default"> {{ username }}'s message:  </span>
+            </div>
+            <input type="text" class="form-control"  placeholder="Type your message here">
+            <button type="submit" class="ml-1  btn btn-primary">Send</button>
+        </div>
+    </form>
+</body>
+
+
+
+

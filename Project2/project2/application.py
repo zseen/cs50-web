@@ -2,6 +2,7 @@ import os
 
 from flask import Flask, request
 from flask_socketio import SocketIO, emit
+from datetime import datetime
 import os
 import requests
 
@@ -71,15 +72,33 @@ def enterChannel(channelName):
     if not currentChannel:
         return "Channel unavailable"
 
-    messagesInChannel = currentChannel.retrieveMessages()
-    # TODO
+    session["channel"] = channelName
+
+    return render_template("viewChannelContent.html", channelName=channelName, username=session["username"])
 
 
-@socketio.on('message')
-def sendMessage(message):
-    # TODO
-    pass
+@socketio.on("submit message")
+def message(data):
+    print(data)
+    selection = data["selection"]
+    time = datetime.now().strftime("%Y-%m-%d %H:%M")
 
+    response_dict = {"selection": selection, "time": time, "username": session["username"]}
+    currentChannel = allChannels.retrieveChannelByName(session["channel"])
+
+    currentChannel.addMessage(response_dict)
+
+    print("message:", response_dict)
+    emit("cast message", {**response_dict, **{"chatName": str(session["channel"])}}, broadcast=True)
+
+
+@app.route("/listmessages", methods=["POST"])
+def listmessages():
+    currentChannel = allChannels.retrieveChannelByName(session["channel"])
+    messages = currentChannel.retrieveMessages()
+    print("messages in listMessage", messages)
+
+    return jsonify({**{"message": messages}, **{"chatName": session["channel"]}})
 
 @app.route("/logout", methods=["GET", "POST"])
 def logout():
