@@ -80,25 +80,24 @@ def enterChannel(channelName):
 @socketio.on("submit message")
 def message(data):
     print(data)
-    selection = data["selection"]
+    newMessage = data["newMessage"]
     time = datetime.now().strftime("%Y-%m-%d %H:%M")
 
-    response_dict = {"selection": selection, "time": time, "username": session["username"]}
+    response_dict = {"newMessage": newMessage, "time": time, "username": session["username"]}
     currentChannel = allChannels.retrieveChannelByName(session["channel"])
 
     currentChannel.addMessage(response_dict)
 
-    print("message:", response_dict)
-    emit("cast message", {**response_dict, **{"chatName": str(session["channel"])}}, broadcast=True)
+    emit("cast message", {**response_dict, **{"chatroomName": str(session["channel"])}}, broadcast=True)
 
 
-@app.route("/listmessages", methods=["POST"])
-def listmessages():
+@app.route("/showMessagesInChannel", methods=["POST"])
+def showMessagesInChannel():
     currentChannel = allChannels.retrieveChannelByName(session["channel"])
     messages = currentChannel.retrieveMessages()
     print("messages in listMessage", messages)
 
-    return jsonify({**{"message": messages}, **{"chatName": session["channel"]}})
+    return jsonify({**{"messages": messages}, **{"chatroomName": session["channel"]}})
 
 @app.route("/logout", methods=["GET", "POST"])
 def logout():
