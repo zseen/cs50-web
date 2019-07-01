@@ -7,7 +7,7 @@ class Channel:
         self.messagesInChannel = []
 
     def addMessage(self, message):
-        self.messagesInChannel.append(message)
+        self.messagesInChannel.append(message.__dict__)
         if len(self.messagesInChannel) > MAX_MESSAGES_TO_STORE:
             del self.messagesInChannel[0]
 
