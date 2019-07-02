@@ -1,33 +1,24 @@
 import os
 
-from flask import Flask, request
+from flask import Flask, jsonify, render_template, request, session, redirect
 from flask_socketio import SocketIO, emit
 from datetime import datetime
-import os
-import requests
-
 
 from AllChannels import AllChannels
 from Channel import Channel
 from Message import Message
 
 
-from flask import Flask, jsonify, render_template, request, session, redirect
-
 app = Flask(__name__)
 #app.config["SECRET_KEY"] = os.getenv("SECRET_KEY")
 app.config['SECRET_KEY'] = 'super secret key'
 socketio = SocketIO(app)
-
 
 allChannels = AllChannels()
 
 
 @app.route("/")
 def index():
-    if "username" in session:
-        print("logged in as ", session["username"])
-
     if "username" not in session:
         return render_template("register.html")
 
@@ -35,7 +26,7 @@ def index():
 
 
 @app.route("/register", methods=["GET", "POST"])
-def login():
+def register():
     session.clear()
 
     username = request.form.get("username")
@@ -73,12 +64,11 @@ def enterChannel(channelName):
         return "Channel unavailable"
 
     session["channel"] = channelName
-
     return render_template("viewChannelContent.html", channelName=channelName, username=session["username"])
 
 
 @socketio.on("submit message")
-def message(data):
+def sendMessage(data):
     newMessage = Message(data["newMessage"], session["username"], datetime.now().strftime("%Y-%m-%d %H:%M"))
 
     currentChannel = allChannels.retrieveChannelByName(session["channel"])

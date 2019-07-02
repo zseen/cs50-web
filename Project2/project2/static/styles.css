@@ -1,0 +1,47 @@
+/* Based on styles.css provided for the "Finance" exercise from cs50 */
+
+main
+{
+    overflow-x: auto;
+    text-align: center;
+}
+
+main .form-control
+{
+    display: inline-block;
+    width: auto;
+}
+
+nav .navbar-brand
+{
+    font-size: xx-large;
+}
+
+.large-top-margin
+{
+    margin-top: 50px;
+}
+
+.left-aligned-text
+{
+    text-align: left;
+}
+
+table
+{
+    font-size: 20px;
+    color: #111;
+}
+
+th
+{
+    background-color: #b6bdc3;
+    color: black;
+}
+
+tr
+{
+    height: 30px;
+}
+
+body {background-color: coral;}
