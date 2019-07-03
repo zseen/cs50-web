@@ -6,8 +6,6 @@
     <head>
         <meta charset="utf-8"/>
         <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no"/>
-
-        <!-- documentation at http://getbootstrap.com/docs/4.0/, alternative themes at https://bootswatch.com/4-alpha/ -->
         <link href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta.2/css/bootstrap.min.css" rel="stylesheet"/>
 
         <script src="https://code.jquery.com/jquery-3.1.1.min.js"></script>
@@ -26,7 +24,7 @@
             <div class="collapse navbar-collapse" id="navbar">
                 {% if session.username %}
                     <ul class="navbar-nav ml-auto mt-2">
-                        <li class="nav-item">Logged in as {{ username }}</li>
+                        <li class="nav-item"><a class="nav-link">Logged in as {{ username }}</a></li>
                         <li class="nav-item"><a class="nav-link" href="/logout">Log Out</a></li>
                         <li class="nav-item"><a class="nav-link" href="/createChannel">Create Channel</a></li>
                     </ul>
@@ -41,21 +39,23 @@
             Welcome {{ username }}!
         {% endif %}
 
-        <table class="table table-bordered table-sm">
-            <thead>
-                <tr>
-                    <th>Channels available</th>
-                </tr>
-            </thead>
-            <tbody>
-                {% for channel in channels %}
+        {% if channels %}
+            <table class="table table-bordered table-sm">
+                <thead>
                     <tr>
-                        <td><a href="{{ url_for('enterChannel', channelName=channel.name) }}">
-                            {{ channel.name }}
-                        </a></td>
+                        <th>Channels available</th>
                     </tr>
-                {% endfor %}
-            </tbody>
-        </table>
+                </thead>
+                <tbody>
+                    {% for channel in channels %}
+                        <tr>
+                            <td><a href="{{ url_for('enterChannel', channelName=channel.name) }}">
+                                {{ channel.name }}
+                            </a></td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        {% endif %}
     </body>
 </html>

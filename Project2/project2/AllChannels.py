@@ -1,16 +1,18 @@
 class AllChannels:
     def __init__(self):
-        self.channels = {}
+        self._channels = {}
 
     def addChannel(self, channel):
-        self.channels[channel] = []
+        self._channels[channel] = []
 
     def retrieveChannels(self):
-        return self.channels
+        return self._channels
 
     def retrieveChannelByName(self, channelName):
-        for channel in self.channels:
+        for channel in self._channels:
             if channel.name == channelName:
                 return channel
         return None
 
+    def isChannelNameAvailable(self, channelName):
+        return self.retrieveChannelByName(channelName) is None
