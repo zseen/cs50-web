@@ -1,5 +1,3 @@
-
-
 <head>
     <script type="text/javascript" src="https://cdn.socket.io/socket.io-1.0.0.js"></script>
     <script src="{{ url_for('static', filename='chatroom.js') }}"></script>
@@ -12,7 +10,7 @@
     <form action="javascript:void(0);" class="mt-2" method="post">
         <div class="input-group mb-3">
             <div class="input-group-prepend">
-                <span class="input-group-text" id="sender"> {{ username }}'s message:  </span>
+                <span class="sender"> {{ username }}'s message:  </span>
             </div>
             <input type="text" class="form-control"  placeholder="Type your message here">
             <button type="submit" class="ml-1  btn btn-primary">Send</button>

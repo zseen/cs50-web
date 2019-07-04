@@ -1,18 +1,17 @@
-document.addEventListener('DOMContentLoaded', () => {
-
+document.addEventListener('DOMContentLoaded', () =>
+{
     const request = new XMLHttpRequest();
     request.open("POST", "/showMessagesInChannel");
 
-    request.onload = () => {
-        const messagingData = JSON.parse(request.responseText);
-        localStorage.setItem("chatroomName", messagingData["chatroomName"])
+    request.onload = () =>
+    {
+        const parsedResponse = JSON.parse(request.responseText);
+        localStorage.setItem("chatroomName", parsedResponse["chatroomName"]);
 
-        for (let i = 0; i < messagingData["messages"].length; i++) {
-            const messageLine = document.createElement('li');
-            const singleMessageData = messagingData["messages"][i];
-            document.querySelector('#messagesToDisplay').append(messageLine);
-
-            displayMessagesOnEachLine(singleMessageData, messageLine);
+        for (let i = 0; i < parsedResponse["messages"].length; i++)
+        {
+            const message = parsedResponse["messages"][i];
+            renderMessageInLine(message);
         }
     };
     request.send();
@@ -20,28 +19,33 @@ document.addEventListener('DOMContentLoaded', () => {
 
     var socket = io.connect(location.protocol + '//' + document.domain + ':' + location.port);
 
-    socket.on('connect', () => {
-
-        document.querySelector('button').onclick = function () {
+    socket.on('connect', () =>
+    {
+        document.querySelector('button').onclick = function ()
+        {
             const newMessage = document.querySelector('input').value;
             this.form.reset();
             socket.emit('submit message', {'newMessage': newMessage});
         };
     });
 
-    socket.on ('cast message', messagingData => {
-        if (messagingData["chatroomName"] === localStorage.chatroomName) {
-            const messageLine  = document.createElement('li');
-            document.querySelector('#messagesToDisplay').append(messageLine );
-
-            displayMessagesOnEachLine(messagingData["newMessage"], messageLine);
+    socket.on ('cast message', parsedResponse =>
+    {
+        if (parsedResponse["chatroomName"] === localStorage.chatroomName)
+        {
+            renderMessageInLine(parsedResponse["newMessage"]);
         }
     });
 });
 
 
-function displayMessagesOnEachLine(message, line)
+function renderMessageInLine(message)
 {
-    line.innerHTML = `<strong>${message.sender}</strong> at <small>${message.time}</small> : <span class="mx-4"><big>${message.text}</big></span>`;
+    const messageLine  = document.createElement('li');
+    document.querySelector('#messagesToDisplay').append(messageLine);
+    messageLine.innerHTML = `<strong>${message.sender}</strong> at <small>${message.time}</small> : <span class="mx-4">
+    <big>${message.text}</big></span>`;
 }
+
+
 

@@ -1,25 +1,28 @@
 from flask import Flask, jsonify, render_template, request, session, redirect
 from flask_socketio import SocketIO, emit
-from datetime import datetime
+from time import strftime
+import os
 
-from AllChannels import AllChannels
+from ChannelCollection import ChannelCollection
 from Channel import Channel
 from Message import Message
 
 app = Flask(__name__)
 
-app.config['SECRET_KEY'] = 'secretkey'
+app.secret_key = os.urandom(24)
 socketio = SocketIO(app)
 
-allChannels = AllChannels()
+channelCollection = ChannelCollection()
 
 
 @app.route("/")
 def index():
+    print("you are in index")
     if "username" not in session:
         return render_template("register.html")
 
-    return render_template("layout.html", username=session["username"], channels=allChannels.retrieveChannels())
+    return render_template("layout.html", username=session["username"],
+                           channels=channelCollection.retrieveAllChannelNames())
 
 
 @app.route("/register", methods=["GET", "POST"])
@@ -43,10 +46,10 @@ def createChannel():
     if not channelName:
         return jsonify({"success": False, "errorMessage": "Please submit a username."})
 
-    if not allChannels.isChannelNameAvailable(channelName):
+    if not channelCollection.isChannelNameAvailable(channelName):
         return jsonify({"success": False, "errorMessage": "Channel already exists with this name."})
 
-    allChannels.addChannel(Channel(channelName))
+    channelCollection.addChannel(channelName, Channel(channelName))
 
     session["channel"] = channelName
     return jsonify({"success": True, "channelName": channelName})
@@ -54,7 +57,7 @@ def createChannel():
 
 @app.route("/enterChannel/<channelName>", methods=["GET", "POST"])
 def enterChannel(channelName):
-    currentChannel = allChannels.retrieveChannelByName(channelName)
+    currentChannel = channelCollection.retrieveChannelByName(channelName)
     if not currentChannel:
         return render_template("apology.html", errorMessage="Channel not found")
 
@@ -64,20 +67,22 @@ def enterChannel(channelName):
 
 @socketio.on("submit message")
 def sendMessage(data):
-    newMessage = Message(data["newMessage"], session["username"], datetime.now().strftime("%Y-%m-%d %H:%M"))
+    messageTime = strftime("%Y-%m-%d %H:%M:%S")
+    newMessage = Message(data["newMessage"], session["username"], messageTime)
 
-    currentChannel = allChannels.retrieveChannelByName(session["channel"])
+    currentChannel = channelCollection.retrieveChannelByName(session["channel"])
     currentChannel.addMessage(newMessage)
+    serializedNewMessage = currentChannel.serializeMessage(newMessage)
 
-    emit("cast message", {"newMessage": newMessage.__dict__, "chatroomName": str(session["channel"])}, broadcast=True)
+    emit("cast message", {"newMessage": serializedNewMessage, "chatroomName": session["channel"]}, broadcast=True)
 
 
 @app.route("/showMessagesInChannel", methods=["POST"])
 def showMessagesInChannel():
-    currentChannel = allChannels.retrieveChannelByName(session["channel"])
-    messages = currentChannel.retrieveMessages()
+    currentChannel = channelCollection.retrieveChannelByName(session["channel"])
+    serializedMessages = currentChannel.serializeAllMessages()
 
-    return jsonify({"messages": messages, "chatroomName": session["channel"]})
+    return jsonify({"messages": serializedMessages, "chatroomName": session["channel"]})
 
 
 @app.route("/logout", methods=["GET", "POST"])

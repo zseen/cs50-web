@@ -12,26 +12,21 @@ main .form-control
     width: auto;
 }
 
-#sender
+nav .navbar-brand
+{
+    font-size: xx-large;
+}
+
+.sender
 {
     font-size: 15px;
     font-family: helvetica;
     color: black;
 }
 
-nav .navbar-brand
-{
-    font-size: xx-large;
-}
-
 .large-top-margin
 {
     margin-top: 50px;
-}
-
-.left-aligned-text
-{
-    text-align: left;
 }
 
 table
