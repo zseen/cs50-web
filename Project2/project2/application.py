@@ -19,22 +19,30 @@ channelNames = []
 
 @app.route("/")
 def index():
-    return render_template("layout.html")
+    print("Got into index()")
+    if not "username" in session:
+        print("No one logged in")
+        return render_template("register.html")
+    return render_template("layout.html", username=session["username"])
 
 
 @app.route("/register", methods=["GET", "POST"])
 def login():
-    session.clear()
-    if request.method == "GET":
-        return render_template("register.html")
+    #session.clear()
 
     username = request.form.get("username")
     print(username)
+    print("Does it get here?")
 
     if not username:
         return jsonify({"success": False})
 
     session["username"] = username
+
+    print("session: ", session["username"])
+
+    if "username" in session:
+        print("login success")
 
     return jsonify({"success": True, "username": username})
 

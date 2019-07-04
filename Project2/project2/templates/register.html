@@ -1,14 +1,15 @@
-{% extends "layout.html" %}
+<html>
+      <head>
+          <script src="{{ url_for('static', filename='register.js') }}"></script>
 
-{% block title %}
-    Register
-{% endblock %}
-
-{% block main %}
-    <form action="/register" method="post">
-        <div class="form-group">
-            <input autocomplete="off" autofocus class="form-control" name="username" placeholder="Username" type="text"/>
-        </div>
-        <button class="btn btn-primary" type="submit">Register</button>
-    </form>
-{% endblock %}
+          <title>Register</title>
+      </head>
+      <body>
+          <form id="form">
+              <input id="username" autocomplete="off" autofocus placeholder="Username" type="text">
+              <input  type="submit" value="Register" >
+          </form>
+          <br>
+          <div id="result"></div>
+      </body>
+</html>

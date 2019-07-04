@@ -1,15 +1,53 @@
+<!-- Based on the "Finance" exercise from cs50 -->
+
 <!DOCTYPE html>
-<html>
+
+<html lang="en">
+
     <head>
-        <script src="{{ url_for('static', filename='register.js') }}"></script>
-        <title>Flack</title>
+        <meta charset="utf-8"/>
+        <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no"/>
+
+        <!-- documentation at http://getbootstrap.com/docs/4.0/, alternative themes at https://bootswatch.com/4-alpha/ -->
+        <link href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta.2/css/bootstrap.min.css" rel="stylesheet"/>
+
+        <!--<link href="/static/styles.css" rel="stylesheet"/> -->
+
+        <script src="https://code.jquery.com/jquery-3.1.1.min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.3/umd/popper.min.js"></script>
+        <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta.2/js/bootstrap.min.js"></script>
+
+        <title>Flack: {% block title %}{% endblock %}</title>
+
     </head>
+
     <body>
-        <form id="form">
-            <input id="username" autocomplete="off" autofocus placeholder="Username" type="text">
-            <input type="submit" value="Register">
-        </form>
-        <br>
-        <div id="result"></div>
+
+        <nav class="navbar navbar-expand-md navbar-light bg-light border">
+            <span class="red">Flack</span>
+            <button aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation" class="navbar-toggler" data-target="#navbar" data-toggle="collapse" type="button">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbar">
+                {% if session.username %}
+                    <ul class="navbar-nav ml-auto mt-2">
+                        <li class="nav-item"><a class="nav-link" href="/logout">Log Out</a></li>
+                        <li class="nav-item"><a class="nav-link" href="/createChannel">Create Channel</a></li>
+                    </ul>
+                {% else %}
+                    <ul class="navbar-nav ml-auto mt-2">
+                        <li class="nav-item"><a class="nav-link" href="/register">Register</a></li>
+                    </ul>
+                {% endif %}
+            </div>
+        </nav>
+        {% if session.username %}
+            Welcome {{ username }}!
+        {% endif %}
+        <main class="container p-5">
+            {% block main %}{% endblock %}
+        </main>
+
     </body>
+
 </html>

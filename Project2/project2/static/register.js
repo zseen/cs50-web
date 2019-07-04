@@ -29,7 +29,7 @@
 
           // Send request
           request.send(userData);
-          return false;
-      };
 
+          return window.location.pathname = '/layout.html';
+      };
   });
