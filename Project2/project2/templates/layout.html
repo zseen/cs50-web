@@ -39,7 +39,7 @@
             Welcome {{ username }}!
         {% endif %}
 
-        {% if channels %}
+        {% if channelNames %}
             <table class="table table-bordered table-sm">
                 <thead>
                     <tr>
@@ -47,10 +47,10 @@
                     </tr>
                 </thead>
                 <tbody>
-                    {% for channel in channels %}
+                    {% for channelName in channelNames %}
                         <tr>
                             <td><a href="{{ url_for('enterChannel', channelName=channel) }}">
-                                {{ channel }}
+                                {{ channelName }}
                             </a></td>
                         </tr>
                     {% endfor %}

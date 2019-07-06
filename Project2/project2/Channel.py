@@ -4,22 +4,14 @@ MAX_MESSAGES_TO_STORE = 100
 class Channel:
     def __init__(self, name):
         self._name = name
-        self._messagesInChannel = []
+        self._messages = []
 
     def addMessage(self, message):
-        self._messagesInChannel.append(message)
-        if len(self._messagesInChannel) > MAX_MESSAGES_TO_STORE:
-            del self._messagesInChannel[0]
+        self._messages.append(message)
+        if len(self._messages) > MAX_MESSAGES_TO_STORE:
+            del self._messages[0]
 
     def retrieveMessages(self):
-        return self._messagesInChannel
+        return self._messages
 
-    def serializeMessage(self, message):
-        return message.__dict__
 
-    def serializeAllMessages(self):
-        serializedMessages = []
-        for message in self._messagesInChannel:
-            serializedMessages.append(message.__dict__)
-
-        return serializedMessages
