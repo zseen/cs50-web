@@ -1,6 +1,6 @@
 from flask import Flask, jsonify, render_template, request, session, redirect
 from flask_socketio import SocketIO, emit
-from time import strftime
+from datetime import datetime
 import os
 
 from ChannelCollection import ChannelCollection
@@ -67,7 +67,7 @@ def enterChannel(channelName):
 
 @socketio.on("submit message")
 def sendMessage(data):
-    messageTime = strftime("%Y-%m-%d %H:%M:%S")
+    messageTime = datetime.now().isoformat()
     newMessage = Message(data["newMessage"], session["username"], messageTime)
 
     currentChannel = channelCollection.retrieveChannelByName(session["channelName"])

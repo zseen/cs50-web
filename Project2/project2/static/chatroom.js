@@ -43,7 +43,13 @@ function renderMessageInLine(message)
 {
     const messageLine  = document.createElement('li');
     document.querySelector('#messagesToDisplay').append(messageLine);
-    messageLine.innerHTML = `<strong>${message.sender}</strong> at <small>${message.time}</small> : <span class="mx-4">
+
+    var options = { year: 'numeric', month: 'long', day: 'numeric', hour: 'numeric', minute: 'numeric', second: 'numeric' };
+    var today  = new Date();
+    console.log(today.toLocaleDateString("en-GB", options))
+    timeStamp = today.toLocaleDateString("en-GB", options)
+
+    messageLine.innerHTML = `<strong>${message.sender}</strong> at <small>${timeStamp}</small> : <span class="mx-4">
     <big>${message.text}</big></span>`;
 }
 
