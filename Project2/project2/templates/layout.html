@@ -11,6 +11,7 @@
         <script src="https://code.jquery.com/jquery-3.1.1.min.js"></script>
         <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.3/umd/popper.min.js"></script>
         <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta.2/js/bootstrap.min.js"></script>
+        <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='styles.css')}}" />
 
         <title>Flack: {% block title %}{% endblock %}</title>
     </head>
@@ -40,22 +41,24 @@
         {% endif %}
 
         {% if channelNames %}
-            <table class="table table-bordered table-sm">
-                <thead>
-                    <tr>
-                        <th>Channels available</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {% for channelName in channelNames %}
+            <div class="large-top-margin">
+                <table class="table table-bordered table-sm">
+                    <thead>
                         <tr>
-                            <td><a href="{{ url_for('enterChannel', channelName=channelName) }}">
-                                {{ channelName }}
-                            </a></td>
+                            <th>Channels available</th>
                         </tr>
-                    {% endfor %}
-                </tbody>
-            </table>
+                    </thead>
+                    <tbody>
+                        {% for channelName in channelNames %}
+                            <tr>
+                                <td><a href="{{ url_for('enterChannel', channelName=channelName) }}">
+                                    {{ channelName }}
+                                </a></td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
         {% endif %}
     </body>
 </html>

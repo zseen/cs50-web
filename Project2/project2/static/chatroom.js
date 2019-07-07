@@ -47,7 +47,8 @@ function renderMessageInLine(message)
     const messageLine = document.createElement('li');
     document.querySelector('#messagesToDisplay').append(messageLine);
 
-    var timestampFormat = {
+    var timestampFormat =
+    {
         year: 'numeric',
         month: 'long',
         day: 'numeric',
@@ -55,6 +56,7 @@ function renderMessageInLine(message)
         minute: 'numeric',
         second: 'numeric'
     };
+
     var date = new Date(message.time);
     var timestamp = date.toLocaleDateString("en-GB", timestampFormat)
 
