@@ -21,15 +21,18 @@ document.addEventListener('DOMContentLoaded', () =>
 
     socket.on('connect', () =>
     {
-        document.querySelector('button').onclick = function ()
+        document.querySelector('button').onclick = function()
         {
             const newMessage = document.querySelector('input').value;
             this.form.reset();
-            socket.emit('submit message', {'newMessage': newMessage});
+            socket.emit('submit message',
+            {
+                'newMessage': newMessage
+            });
         };
     });
 
-    socket.on ('cast message', parsedResponse =>
+    socket.on('cast message', parsedResponse =>
     {
         if (parsedResponse["chatroomName"] === localStorage.chatroomName)
         {
@@ -41,17 +44,22 @@ document.addEventListener('DOMContentLoaded', () =>
 
 function renderMessageInLine(message)
 {
-    const messageLine  = document.createElement('li');
+    const messageLine = document.createElement('li');
     document.querySelector('#messagesToDisplay').append(messageLine);
 
-    var options = { year: 'numeric', month: 'long', day: 'numeric', hour: 'numeric', minute: 'numeric', second: 'numeric' };
-    var today  = new Date();
-    console.log(today.toLocaleDateString("en-GB", options))
-    timeStamp = today.toLocaleDateString("en-GB", options)
+    var timestampFormat = {
+        year: 'numeric',
+        month: 'long',
+        day: 'numeric',
+        hour: 'numeric',
+        minute: 'numeric',
+        second: 'numeric'
+    };
+    var date = new Date(message.time);
+    var timestamp = date.toLocaleDateString("en-GB", timestampFormat)
 
-    messageLine.innerHTML = `<strong>${message.sender}</strong> at <small>${timeStamp}</small> : <span class="mx-4">
-    <big>${message.text}</big></span>`;
+    messageLine.innerHTML = `<strong>${message.sender}
+                            </strong> at
+                            <small>${timestamp}</small> : <span class="mx-4">
+                            <big>${message.text}</big></span>`;
 }
-
-
-

@@ -1,16 +1,17 @@
 <html>
-      <head>
-          <script src="{{ url_for('static', filename='register.js') }}"></script>
-          <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.0/css/bootstrap.min.css">
-          <title>Register</title>
-      </head>
-      <body>
-          <h3>Welcome to Flack!</h3>
-          <form id="registrationForm" method="post">
-              <input id="username" autocomplete="off" autofocus placeholder="Username" type="text">
-              <input type="submit" class="ml-1  btn btn-primary" value="Register" >
-          </form>
-          <br>
-          <div id="errorMessagePlace"></div>
-      </body>
+    <head>
+        <script src="{{ url_for('static', filename='register.js') }}"></script>
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.0/css/bootstrap.min.css">
+        <title>Register</title>
+    </head>
+
+<body>
+        <h3>Welcome to Flack!</h3>
+        <form id="registrationForm" method="post">
+            <input id="username" autocomplete="off" autofocus placeholder="Username" type="text">
+            <input type="submit" class="ml-1 btn btn-primary" value="Register">
+        </form>
+        <br>
+        <div id="errorMessagePlace"></div>
+    </body>
 </html>

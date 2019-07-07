@@ -2,7 +2,7 @@
     <script type="text/javascript" src="https://cdn.socket.io/socket.io-1.0.0.js"></script>
     <script src="{{ url_for('static', filename='chatroom.js') }}"></script>
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.0/css/bootstrap.min.css">
-    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='styles.css')}}"/>
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='styles.css')}}" />
 </head>
 
 <body>
@@ -12,14 +12,10 @@
             <div class="input-group-prepend">
                 <span class="sender"> {{ username }}'s message:  </span>
             </div>
-            <input type="text" class="form-control"  placeholder="Type your message here">
-            <button type="submit" class="ml-1  btn btn-primary">Send</button>
+            <input type="text" class="form-control" placeholder="Type your message here">
+            <button type="submit" class="ml-1 btn btn-primary">Send</button>
         </div>
         <br>
-        <input type="button" class="ml-1  btn btn-primary" value="Back" onclick="history.back()">
+        <input type="button" class="ml-1 btn btn-primary" value="Back" onclick="history.back()">
     </form>
 </body>
-
-
-
-
