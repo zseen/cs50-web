@@ -13,5 +13,3 @@ class Channel:
 
     def retrieveMessages(self):
         return self._messages
-
-
