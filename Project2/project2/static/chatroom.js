@@ -23,11 +23,11 @@ document.addEventListener('DOMContentLoaded', () =>
     {
         document.querySelector('button').onclick = function()
         {
-            const newMessage = document.querySelector('input').value;
+            const messageText = document.querySelector('input').value;
             this.form.reset();
             socket.emit('submit message',
             {
-                'newMessage': newMessage
+                'messageText': messageText
             });
         };
     });
@@ -36,7 +36,7 @@ document.addEventListener('DOMContentLoaded', () =>
     {
         if (parsedResponse["chatroomName"] === localStorage.chatroomName)
         {
-            renderMessageInLine(parsedResponse["newMessage"]);
+            renderMessageInLine(parsedResponse["messageText"]);
         }
     });
 });
@@ -60,8 +60,9 @@ function renderMessageInLine(message)
     var date = new Date(message.time);
     var timestamp = date.toLocaleDateString("en-GB", timestampFormat)
 
-    messageLine.innerHTML = `<strong>${message.sender}
-                            </strong> at
-                            <small>${timestamp}</small> : <span class="mx-4">
-                            <big>${message.text}</big></span>`;
+    messageLine.innerHTML = `<strong>${message.sender}</strong>
+                            at
+                            <small>${timestamp}</small>
+                            :
+                            <span class="mx-4"><big>${message.text}</big></span>`;
 }

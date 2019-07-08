@@ -13,7 +13,7 @@ app = Flask(__name__)
 app.secret_key = os.urandom(24)
 socketio = SocketIO(app)
 
-channelCollection = ChannelCollection()
+allChannels = ChannelCollection()
 
 
 @app.route("/")
@@ -22,7 +22,7 @@ def index():
         return render_template("register.html")
 
     return render_template("layout.html", username=session["username"],
-                           channelNames=channelCollection.retrieveAllChannelNames())
+                           channelNames=allChannels.retrieveAllChannelNames())
 
 
 @app.route("/register", methods=["GET", "POST"])
@@ -31,7 +31,7 @@ def register():
 
     username = request.form.get("username")
     if not username:
-        return jsonify({"success": False, "errorMessage": "Please submit a channel name."})
+        return jsonify({"success": False, "errorMessage": "Please submit a user name."})
 
     session["username"] = username
     return jsonify({"success": True, "username": username})
@@ -44,20 +44,20 @@ def createChannel():
 
     channelName = request.form.get("channelName")
     if not channelName:
-        return jsonify({"success": False, "errorMessage": "Please submit a username."})
+        return jsonify({"success": False, "errorMessage": "Please submit a channel name."})
 
-    if not channelCollection.isChannelNameAvailable(channelName):
+    if not allChannels.isChannelNameAvailable(channelName):
         return jsonify({"success": False, "errorMessage": "Channel already exists with this name."})
 
-    channelCollection.addChannel(channelName, Channel(channelName))
-
+    allChannels.addChannel(channelName, Channel(channelName))
     session["channelName"] = channelName
+
     return jsonify({"success": True, "channelName": channelName})
 
 
 @app.route("/enterChannel/<channelName>", methods=["GET", "POST"])
 def enterChannel(channelName):
-    currentChannel = channelCollection.retrieveChannelByName(channelName)
+    currentChannel = allChannels.retrieveChannelByName(channelName)
     if not currentChannel:
         return render_template("apology.html", errorMessage="Channel not found")
 
@@ -68,18 +68,18 @@ def enterChannel(channelName):
 @socketio.on("submit message")
 def sendMessage(data):
     messageTime = datetime.now().isoformat()
-    newMessage = Message(data["newMessage"], session["username"], messageTime)
+    newMessage = Message(data["messageText"], session["username"], messageTime)
 
-    currentChannel = channelCollection.retrieveChannelByName(session["channelName"])
+    currentChannel = allChannels.retrieveChannelByName(session["channelName"])
     currentChannel.addMessage(newMessage)
     newMessageDict = MessageToDictConverter.convertMessageToDict(newMessage)
 
-    emit("cast message", {"newMessage": newMessageDict, "chatroomName": session["channelName"]}, broadcast=True)
+    emit("cast message", {"messageText": newMessageDict, "chatroomName": session["channelName"]}, broadcast=True)
 
 
 @app.route("/showMessagesInChannel", methods=["POST"])
 def showMessagesInChannel():
-    currentChannel = channelCollection.retrieveChannelByName(session["channelName"])
+    currentChannel = allChannels.retrieveChannelByName(session["channelName"])
 
     messages = currentChannel.retrieveMessages()
     messagesConvertedToDictsList = MessageToDictConverter.convertAllMessagesToDict(messages)

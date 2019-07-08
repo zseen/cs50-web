@@ -12,4 +12,4 @@ class ChannelCollection:
         return self._channelNameToChannel[channelName]
 
     def isChannelNameAvailable(self, channelName):
-        return channelName not in self._channelNameToChannel.keys()
+        return (channelName not in self._channelNameToChannel.keys())
