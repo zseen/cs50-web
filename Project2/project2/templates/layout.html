@@ -38,9 +38,7 @@
         </nav>
         {% if session.username %}
             Welcome {{ username }}!
-        {% endif %}
 
-        {% if channelNames %}
             <div class="large-top-margin">
                 <table class="table table-bordered table-sm">
                     <thead>
@@ -49,6 +47,7 @@
                         </tr>
                     </thead>
                     <tbody>
+                    {% if channelNames %}
                         {% for channelName in channelNames %}
                             <tr>
                                 <td><a href="{{ url_for('enterChannel', channelName=channelName) }}">
@@ -56,6 +55,11 @@
                                 </a></td>
                             </tr>
                         {% endfor %}
+                    {% else %}
+                        <tr>
+                            <td> No channels at the moment. Why not <a href="/createChannel">create one?</a></td>
+                        </tr>
+                    {% endif %}
                     </tbody>
                 </table>
             </div>

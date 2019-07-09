@@ -19,7 +19,10 @@ allChannels = ChannelCollection()
 @app.route("/")
 def index():
     if "username" not in session:
-        return render_template("register.html")
+        return render_template("layout.html")
+
+    if "channelName" in session:
+        return render_template("viewChannelContent.html", channelName=session["channelName"], username=session["username"])
 
     return render_template("layout.html", username=session["username"],
                            channelNames=allChannels.retrieveAllChannelNames())
@@ -27,6 +30,8 @@ def index():
 
 @app.route("/register", methods=["GET", "POST"])
 def register():
+    if request.method == "GET":
+        return render_template("register.html")
     session.clear()
 
     username = request.form.get("username")
