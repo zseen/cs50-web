@@ -9,7 +9,7 @@ def index(request):
     return render(request, "index.html")
 
 
-def register(request):
+def register_view(request):
     if request.method == "GET":
         return render(request, "register.html")
 
