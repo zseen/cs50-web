@@ -19,13 +19,15 @@ def register_view(request):
     email = request.POST["email"]
     password = request.POST["password"]
 
-    user = User.objects.create_user(firstname, lastname, username, email, password)
+    user = User.objects.create_user(username, email, password)
+    user.first_name = firstname
+    user.last_name = lastname
     user.save()
     if user:
         login(request, user)
         return HttpResponseRedirect(reverse("index"))
     else:
-        return render(request, "register.html", {"message": "Invalid credentials."})
+        return render(request, "register.html", {"message": "Please provide a unique username or another account exists with this email."})
 
 
 def login_view(request):
@@ -39,7 +41,7 @@ def login_view(request):
         login(request, user)
         return HttpResponseRedirect(reverse("index"))
     else:
-        return render(request, "login.html", {"message": "Invalid credentials."})
+        return render(request, "login.html", {"message": "Invalid username or password."})
 
 
 def logout_view(request):

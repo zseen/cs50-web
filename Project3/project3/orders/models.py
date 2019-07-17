@@ -3,36 +3,36 @@ from django.db import models
 
 class SicilianPizza(models.Model):
     name = models.CharField(max_length=64)
-    small = models.CharField(max_length=64)
-    large = models.CharField(max_length=64)
+    smallPrice = models.DecimalField(max_digits=4, decimal_places=2)
+    largePrice = models.DecimalField(max_digits=4, decimal_places=2)
 
     def __str__(self):
-        return f"{self.name}"
+        return f"{self.name} - {self.smallPrice} - {self.largePrice}"
 
 
 class RegularPizza(models.Model):
     name = models.CharField(max_length=64)
-    small = models.DecimalField(max_digits=4, decimal_places=2)
-    large = models.DecimalField(max_digits=4, decimal_places=2)
+    smallPrice = models.DecimalField(max_digits=4, decimal_places=2)
+    largePrice = models.DecimalField(max_digits=4, decimal_places=2)
 
     def __str__(self):
-        return f"{self.name} - {self.small} -{self.large}"
+        return f"{self.name} - {self.smallPrice} - {self.largePrice}"
 
 
-class Toppings(models.Model):
+class Topping(models.Model):
     name = models.CharField(max_length=64)
 
     def __str__(self):
         return f"{self.name}"
 
 
-class Subs(models.Model):
+class Sub(models.Model):
     name = models.CharField(max_length=64)
-    small = models.DecimalField(max_digits=4, decimal_places=2, null=True, blank=True)
-    large = models.DecimalField(max_digits=4, decimal_places=2)
+    smallPrice = models.DecimalField(max_digits=4, decimal_places=2, blank=True)
+    largePrice = models.DecimalField(max_digits=4, decimal_places=2)
 
     def __str__(self):
-        return f"{self.name} - {self.small} -{self.large}"
+        return f"{self.name} - {self.smallPrice} -{self.largePrice}"
 
 
 class Pasta(models.Model):
@@ -43,7 +43,7 @@ class Pasta(models.Model):
         return f"{self.name} - {self.price}"
 
 
-class Salads(models.Model):
+class Salad(models.Model):
     name = models.CharField(max_length=64)
     price = models.DecimalField(max_digits=4, decimal_places=2)
 
@@ -51,10 +51,10 @@ class Salads(models.Model):
         return f"{self.name} - {self.price}"
 
 
-class DinnerPlatters(models.Model):
+class DinnerPlatter(models.Model):
     name = models.CharField(max_length=64)
-    small = models.DecimalField(max_digits=4, decimal_places=2)
-    large = models.DecimalField(max_digits=4, decimal_places=2)
+    smallPrice = models.DecimalField(max_digits=4, decimal_places=2)
+    largePrice = models.DecimalField(max_digits=4, decimal_places=2)
 
     def __str__(self):
-        return f"{self.name} - {self.small} -{self.large}"
+        return f"{self.name} - {self.smallPrice} - {self.largePrice}"
