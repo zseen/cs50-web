@@ -27,7 +27,7 @@ def register_view(request):
         login(request, user)
         return HttpResponseRedirect(reverse("index"))
     else:
-        return render(request, "register.html", {"message": "Please provide a unique username or another account exists with this email."})
+        return render(request, "register.html", {"message": "Please provide a unique username and email."})
 
 
 def login_view(request):
