@@ -4,9 +4,14 @@ from django.http import HttpResponse, HttpResponseRedirect
 from django.shortcuts import render
 from django.urls import reverse
 
+from .models import Food
 
 def index(request):
-    return render(request, "index.html")
+    context = {
+        "foods": Food.objects.all()
+    }
+
+    return render(request, "index.html", context)
 
 
 def register_view(request):
