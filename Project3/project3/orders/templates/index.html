@@ -6,13 +6,48 @@
 
 {% block body %}
     Menu:
-    <ul>
-          {% for food in foods %}
+    <br>
+        Regular Pizzas:
+        <ul>
+            {% for pizza in regularPizzas %}
+                  <li>
+                      {{ pizza.name }}, small: {{ pizza.smallPrice }}, large: {{ pizza.largePrice }}
+                  </li>
+            {% endfor %}
+        </ul>
+
+        Sicilian Pizzas:
+        <ul>
+        {% for pizza in sicilianPizzas %}
               <li>
-                  {{ food.name }}
+                  {{ pizza.name }}, small: {{ pizza.smallPrice }}, large: {{ pizza.largePrice }}
+              </li>
+        {% endfor %}
+        </ul>
+
+        Toppings:
+        <ul>
+        {% for topping in toppings %}
+              <li>
+                  {{ topping.name }}
+              </li>
+        {% endfor %}
+        </ul>
+
+        Pasta:
+        <ul>
+          {% for pasta in pastas %}
+              <li>
+                  {{ pasta.name }}, {{ pasta.price }}
               </li>
           {% endfor %}
-      </ul>
+        </ul>
+
+
+
+
+
+
 {% endblock %}
 
 

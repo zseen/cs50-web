@@ -4,11 +4,14 @@ from django.http import HttpResponse, HttpResponseRedirect
 from django.shortcuts import render
 from django.urls import reverse
 
-from .models import Food
+from .models import RegularPizza, SicilianPizza, Pasta, Topping
 
 def index(request):
     context = {
-        "foods": Food.objects.all()
+        "regularPizzas": RegularPizza.objects.all(),
+        "sicilianPizzas": SicilianPizza.objects.all(),
+        "pastas": Pasta.objects.all(),
+        "toppings": Topping.objects.all()
     }
 
     return render(request, "index.html", context)
