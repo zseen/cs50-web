@@ -16,14 +16,14 @@ class Migration(migrations.Migration):
             name='Food',
             fields=[
                 ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('name', models.CharField(default='SOME STRING', max_length=64)),
+                ('name', models.CharField(default='Name', max_length=64)),
             ],
         ),
         migrations.CreateModel(
             name='OnePriceFood',
             fields=[
                 ('food_ptr', models.OneToOneField(auto_created=True, on_delete=django.db.models.deletion.CASCADE, parent_link=True, primary_key=True, serialize=False, to='orders.Food')),
-                ('price', models.DecimalField(decimal_places=2, default='SOME STRING', max_digits=4, null=True)),
+                ('price', models.DecimalField(decimal_places=2, default='0.00', max_digits=4, null=True)),
             ],
             bases=('orders.food',),
         ),
@@ -38,8 +38,8 @@ class Migration(migrations.Migration):
             name='TwoPriceFood',
             fields=[
                 ('food_ptr', models.OneToOneField(auto_created=True, on_delete=django.db.models.deletion.CASCADE, parent_link=True, primary_key=True, serialize=False, to='orders.Food')),
-                ('smallPrice', models.DecimalField(decimal_places=2, default='SOME STRING', max_digits=4, null=True)),
-                ('largePrice', models.DecimalField(decimal_places=2, default='SOME STRING', max_digits=4, null=True)),
+                ('smallPrice', models.DecimalField(decimal_places=2, default='0.00', max_digits=4, null=True)),
+                ('largePrice', models.DecimalField(decimal_places=2, default='0.00', max_digits=4, null=True)),
             ],
             bases=('orders.food',),
         ),
