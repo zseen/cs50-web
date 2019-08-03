@@ -5,49 +5,62 @@
 {% endblock %}
 
 {% block body %}
-    Menu:
+<h4>Menu:</h4>
     <br>
-        Regular Pizzas:
-        <ul>
-            {% for pizza in regularPizzas %}
-                  <li>
-                      {{ pizza.name }}, small: {{ pizza.smallPrice }}, large: {{ pizza.largePrice }}
-                  </li>
-            {% endfor %}
-        </ul>
+        Regular pizzas:<br>
+            <ul>
+                {% for pizza in regularPizzas %}
+                    <li>{{ pizza.name }}, small: {{ pizza.smallPrice }}, big: {{ pizza.largePrice }}</li>
+                {% endfor %}
+            </ul>
+        <br>
 
-        Sicilian Pizzas:
-        <ul>
-        {% for pizza in sicilianPizzas %}
-              <li>
-                  {{ pizza.name }}, small: {{ pizza.smallPrice }}, large: {{ pizza.largePrice }}
-              </li>
-        {% endfor %}
-        </ul>
+        Sicilian pizzas:<br>
+            <ul>
+                {% for pizza in sicilianPizzas %}
+                    <li>{{ pizza.name }}, small: {{ pizza.smallPrice }}, big: {{ pizza.largePrice }}</li>
+                {% endfor %}
+            </ul>
+        <br>
 
-        Toppings:
-        <ul>
-        {% for topping in toppings %}
-              <li>
-                  {{ topping.name }}
-              </li>
-        {% endfor %}
-        </ul>
+        Toppings:<br>
+            <ul>
+                {% for topping in toppings %}
+                    <li>{{ topping.name }}</li>
+                {% endfor %}
+            </ul>
+        <br>
 
-        Pasta:
-        <ul>
-          {% for pasta in pastas %}
-              <li>
-                  {{ pasta.name }}, {{ pasta.price }}
-              </li>
-          {% endfor %}
-        </ul>
+        Subs:<br>
+            <ul>
+                {% for sub in subs %}
+                    <li>{{ sub.name }}, small: {{ sub.smallPrice }}, big: {{ sub.largePrice }}</li>
+                {% endfor %}
+            </ul>
+        <br>
 
+        Pasta:<br>
+            <ul>
+                {% for pasta in pastas %}
+                    <li>{{ pasta.name }}, {{ pasta.price }}</li>
+                {% endfor %}
+            </ul>
+        <br>
 
+        Salads:<br>
+            <ul>
+                {% for salad in salads %}
+                    <li>{{ salad.name }}, small: {{ salad.smallPrice }}, big: {{ salad.largePrice }}</li>
+                {% endfor %}
+            </ul>
+        <br>
 
-
-
-
+        Dinner platters:<br>
+            <ul>
+                {% for platter in dinnerPlatters %}
+                    <li>{{ platter.name }}, small: {{ platter.smallPrice }}, big: {{ platter.largePrice }}</li>
+                {% endfor %}
+            </ul>
 {% endblock %}
 
 

@@ -6,12 +6,12 @@ class Food(models.Model):
 
 
 class OnePriceFood(Food):
-    price = models.DecimalField(max_digits=4, decimal_places=2, null= True, default='0.00')
+    price = models.DecimalField(max_digits=4, decimal_places=2, null=True, default='0.00')
 
 
 class TwoPriceFood(Food):
-    smallPrice = models.DecimalField(max_digits=4, decimal_places=2, null= True, default='0.00')
-    largePrice = models.DecimalField(max_digits=4, decimal_places=2, null= True, default='0.00')
+    smallPrice = models.DecimalField(max_digits=4, decimal_places=2, null=True, default='0.00')
+    largePrice = models.DecimalField(max_digits=4, decimal_places=2, null=True, default='0.00')
 
 
 class SicilianPizza(TwoPriceFood):
