@@ -4,9 +4,21 @@ from django.http import HttpResponse, HttpResponseRedirect
 from django.shortcuts import render
 from django.urls import reverse
 
+from .models import RegularPizza, SicilianPizza, Topping, Pasta, DinnerPlatter, Salad, Sub
+
 
 def index(request):
-    return render(request, "index.html")
+    context = {
+        "regularPizzas": RegularPizza.objects.all(),
+        "sicilianPizzas": SicilianPizza.objects.all(),
+        "toppings": Topping.objects.all(),
+        "pastas": Pasta.objects.all(),
+        "dinnerPlatters": DinnerPlatter.objects.all(),
+        "salads": Salad.objects.all(),
+        "subs": Sub.objects.all()
+    }
+
+    return render(request, "index.html", context)
 
 
 def register_view(request):
