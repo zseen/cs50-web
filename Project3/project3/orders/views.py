@@ -1,24 +1,18 @@
 from django.contrib.auth.models import User
 from django.contrib.auth import authenticate, login, logout
 from django.http import HttpResponse, HttpResponseRedirect
-from django.shortcuts import render
+from django.shortcuts import render, redirect
 from django.urls import reverse
 
-from .models import RegularPizza, SicilianPizza, Topping, Pasta, DinnerPlatter, Salad, Sub
+from .models import RegularPizza, SicilianPizza, Topping, Pasta, DinnerPlatter, Salad, Sub, Order2, Food, OnePriceFood
+
 
 
 def index(request):
-    context = {
-        "regularPizzas": RegularPizza.objects.all(),
-        "sicilianPizzas": SicilianPizza.objects.all(),
-        "toppings": Topping.objects.all(),
-        "pastas": Pasta.objects.all(),
-        "dinnerPlatters": DinnerPlatter.objects.all(),
-        "salads": Salad.objects.all(),
-        "subs": Sub.objects.all()
-    }
+    if not request.user:
+        return render(request, "login.html")
 
-    return render(request, "index.html", context)
+    return render(request, "index.html")
 
 
 def register_view(request):
@@ -59,3 +53,27 @@ def login_view(request):
 def logout_view(request):
     logout(request)
     return render(request, "index.html")
+
+
+def menu(request):
+    context={
+        "user": request.user,
+        "pastas": Pasta.objects.all(),
+        "regularPizzas": RegularPizza.objects.all(),
+        "order": Order2.objects.filter(user=request.user)
+
+    }
+    return render(request, "menu.html", context)
+
+
+def add(request, category, name, price):
+    userOrder = Order2(user=request.user, number=1, category=category, name=name, price=price)
+    userOrder.save()
+
+    context = {
+        "user": request.user,
+        "pastas": Pasta.objects.all(),
+        "regularPizzas": RegularPizza.objects.all(),
+        "order": Order2.objects.filter(user=request.user)
+    }
+    return render(request, "menu.html", context)
