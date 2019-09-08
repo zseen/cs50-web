@@ -61,8 +61,6 @@ def menu(request):
         "pastas": Pasta.objects.all(),
         "regularPizzas": RegularPizza.objects.all(),
         "order": Order.objects.filter(user=request.user),
-
-
     }
     return render(request, "menu.html", context)
 

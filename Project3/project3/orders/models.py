@@ -4,10 +4,10 @@ from django.contrib.auth.models import User
 
 class Food(models.Model):
     name = models.CharField(max_length=64, default='Name')
-    category = models.CharField(max_length=64, default='Category')
+
 
     def __str__(self):
-        return f"{self.name} - {self.category}"
+        return f"{self.name}"
 
 
 class OnePriceFood(Food):
@@ -26,31 +26,31 @@ class TwoPriceFood(Food):
 
 
 class SicilianPizza(TwoPriceFood):
-    pass
+    category = models.CharField(max_length=64, default='Sicilian pizza')
 
 
 class RegularPizza(TwoPriceFood):
-    pass
+    category = models.CharField(max_length=64, default='Regular pizza')
 
 
 class Topping(Food):
-    pass
+    category = models.CharField(max_length=64, default='Topping')
 
 
 class Sub(TwoPriceFood):
-    pass
+    category = models.CharField(max_length=64, default='Sub')
 
 
 class Pasta(OnePriceFood):
-    pass
+    category = models.CharField(max_length=64, default='Pasta')
 
 
 class Salad(OnePriceFood):
-    pass
+    category = models.CharField(max_length=64, default='Salad')
 
 
 class DinnerPlatter(TwoPriceFood):
-    pass
+    category = models.CharField(max_length=64, default='Dinner platter')
 
 
 class Order(models.Model):
