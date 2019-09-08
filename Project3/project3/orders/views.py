@@ -4,7 +4,7 @@ from django.http import HttpResponse, HttpResponseRedirect
 from django.shortcuts import render, redirect
 from django.urls import reverse
 
-from .models import RegularPizza, SicilianPizza, Topping, Pasta, DinnerPlatter, Salad, Sub, Order2, Food, OnePriceFood
+from .models import RegularPizza, SicilianPizza, Topping, Pasta, DinnerPlatter, Salad, Sub, Order, Food, OnePriceFood
 
 
 
@@ -60,20 +60,21 @@ def menu(request):
         "user": request.user,
         "pastas": Pasta.objects.all(),
         "regularPizzas": RegularPizza.objects.all(),
-        "order": Order2.objects.filter(user=request.user)
+        "order": Order.objects.filter(user=request.user),
+
 
     }
     return render(request, "menu.html", context)
 
 
 def add(request, category, name, price):
-    userOrder = Order2(user=request.user, number=1, category=category, name=name, price=price)
+    userOrder = Order(user=request.user, number=1, category=category, name=name, price=price)
     userOrder.save()
 
     context = {
         "user": request.user,
         "pastas": Pasta.objects.all(),
         "regularPizzas": RegularPizza.objects.all(),
-        "order": Order2.objects.filter(user=request.user)
+        "order": Order.objects.filter(user=request.user)
     }
     return render(request, "menu.html", context)

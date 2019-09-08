@@ -20,7 +20,7 @@
                 {% for pasta in pastas %}
                 <tr>
                     <td>{{pasta.name}}</td>
-                    <td>${{pasta.price}}<a href="{% url 'add' 'pasta' pasta.name pasta.price %}">add</a></td>
+                    <td>${{pasta.price}}<a href="{% url 'add' pasta.category pasta.name pasta.price %}">+</a></td>
                 </tr>
                 {% endfor %}
             </tbody>
@@ -39,8 +39,8 @@
                 {% for pizza in regularPizzas %}
                 <tr>
                     <td>{{pizza.name}}</td>
-                    <td>${{pizza.smallPrice}}<a href="{% url 'add' 'pizza' pizza.name pizza.smallPrice %}">add</a></td>
-                    <td>${{pizza.largePrice}}<a href="{% url 'add' 'pizza' pizza.name pizza.largePrice %}">add</a></td>
+                    <td>${{pizza.smallPrice}}<a href="{% url 'add' pizza.category pizza.name pizza.smallPrice %}">+</a></td>
+                    <td>${{pizza.largePrice}}<a href="{% url 'add' pizza.category pizza.name pizza.largePrice %}">+</a></td>
                 </tr>
                 {% endfor %}
             </tbody>
@@ -51,9 +51,12 @@
 <div>
     <h5>Your order:</h5>
     {% for food in order %}
-        {{food.name}}, {{food.price}}<br>
+        {{food.category}}, {{food.name}}, {{food.price}}<br>
     {% endfor %}
 </div>
+
+
+
 
 {% endblock %}
 

@@ -4,9 +4,10 @@ from django.contrib.auth.models import User
 
 class Food(models.Model):
     name = models.CharField(max_length=64, default='Name')
+    category = models.CharField(max_length=64, default='Category')
 
     def __str__(self):
-        return f"{self.name}"
+        return f"{self.name} - {self.category}"
 
 
 class OnePriceFood(Food):
@@ -52,7 +53,7 @@ class DinnerPlatter(TwoPriceFood):
     pass
 
 
-class Order2(models.Model):
+class Order(models.Model):
     user=models.ForeignKey(User,on_delete=models.CASCADE)
     number=models.IntegerField()
     category=models.CharField(max_length=64,null=True)
