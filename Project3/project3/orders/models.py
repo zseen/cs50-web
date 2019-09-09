@@ -54,22 +54,22 @@ class DinnerPlatter(TwoPriceFood):
 
 class Order(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
-    number = models.IntegerField()
+    orderNumber = models.IntegerField()
+    status = models.CharField(max_length=64, default='Sizzling in the kitchen')
+
+    def __str__(self):
+        return f"{self.user} - {self.orderNumber} - {self.status}"
+
+
+class OrderItem(models.Model):
+    user = models.ForeignKey(Order, on_delete=models.CASCADE)
+    amount = models.IntegerField()
     category = models.CharField(max_length=64, null=True)
     name = models.CharField(max_length=64)
     price = models.DecimalField(max_digits=4, decimal_places=2)
 
     def __str__(self):
         return f"{self.category} - {self.name} - ${self.price}"
-
-
-class UserOrder(models.Model):
-    user = models.ForeignKey(User, on_delete=models.CASCADE)
-    orderNumber = models.IntegerField()
-    status = models.CharField(max_length=64, default='Sizzling in the kitchen')
-
-    def __str__(self):
-        return f"{self.user} - {self.orderNumber} - {self.status}"
 
 
 class OrderCounter(models.Model):
