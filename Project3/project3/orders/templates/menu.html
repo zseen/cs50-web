@@ -45,19 +45,15 @@
                 {% endfor %}
             </tbody>
         </table>
-
-
 <br>
 <div>
     <h5>Your order:</h5>
     {% for food in order %}
-        {{food.category}}, {{food.name}}, {{food.price}}<br>
+        {{food.category}}, {{food.name}}, ${{food.price}}<br>
     {% endfor %}
+
+    Total: {{total}}
 </div>
-
-
-
-
 {% endblock %}
 
 

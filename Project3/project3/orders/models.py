@@ -5,7 +5,6 @@ from django.contrib.auth.models import User
 class Food(models.Model):
     name = models.CharField(max_length=64, default='Name')
 
-
     def __str__(self):
         return f"{self.name}"
 
@@ -54,11 +53,27 @@ class DinnerPlatter(TwoPriceFood):
 
 
 class Order(models.Model):
-    user=models.ForeignKey(User,on_delete=models.CASCADE)
-    number=models.IntegerField()
-    category=models.CharField(max_length=64,null=True)
-    name=models.CharField(max_length=64)
-    price=models.DecimalField(max_digits=4,decimal_places=2)
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    number = models.IntegerField()
+    category = models.CharField(max_length=64, null=True)
+    name = models.CharField(max_length=64)
+    price = models.DecimalField(max_digits=4, decimal_places=2)
 
     def __str__(self):
-        return f"{self.name} - ${self.price} "
+        return f"{self.category} - {self.name} - ${self.price}"
+
+
+class UserOrder(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    orderNumber = models.IntegerField()
+    status = models.CharField(max_length=64, default='Sizzling in the kitchen')
+
+    def __str__(self):
+        return f"{self.user} - {self.orderNumber} - {self.status}"
+
+
+class OrderCounter(models.Model):
+    counter = models.IntegerField()
+
+    def __str__(self):
+        return f"Order number: {self.counter}"
