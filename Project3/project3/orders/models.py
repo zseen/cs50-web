@@ -62,8 +62,8 @@ class Order(models.Model):
 
 
 class OrderItem(models.Model):
-    user = models.ForeignKey(Order, on_delete=models.CASCADE)
-    amount = models.IntegerField()
+    order = models.ForeignKey(Order, on_delete=models.CASCADE)
+    orderNumber = models.IntegerField()
     category = models.CharField(max_length=64, null=True)
     name = models.CharField(max_length=64)
     price = models.DecimalField(max_digits=4, decimal_places=2)
