@@ -48,11 +48,14 @@
 <br>
 <div>
     <h5>Your order:</h5>
-    {% for food in order %}
-        {{food.category}}, {{food.name}}, ${{food.price}}<br>
-    {% endfor %}
-
-    Total: ${{total}}
+    {% if user.is_authenticated %}
+        {% for food in order %}
+            {{food.category}}, {{food.name}}, ${{food.price}}<br>
+        {% endfor %}
+        Total: ${{total}}
+    {% else %}
+         Please <a href="/login">log in</a> to order. No account yet? Register <a href="/register">here!</a>
+    {%endif%}
 </div>
 {% endblock %}
 
