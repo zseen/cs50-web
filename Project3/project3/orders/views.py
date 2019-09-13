@@ -5,9 +5,8 @@ from django.shortcuts import render, redirect
 from django.urls import reverse
 from django.db.models import Sum
 
-from .models import RegularPizza, SicilianPizza, Topping, Pasta, DinnerPlatter, Salad, Sub, OrderItem, Food, \
-    OnePriceFood, \
-    Order, OrderCounter
+from .models import RegularPizza, SicilianPizza, Topping, Pasta, DinnerPlatter, Salad, Sub, OrderItem, Order, \
+    OrderCounter
 
 INITIATED = 'Sizzling in the kitchen'
 
@@ -38,14 +37,13 @@ def register_view(request):
         return render(request, "register.html", {"message": "Please provide a unique username and email."})
 
 
-def assignOrderNumberToOrder(user):
+def createNewOrderForUser(user):
     orderCounter = OrderCounter.objects.first()
-    orderNumber = orderCounter
-    orderNumberInOrder = Order(user=user, orderNumber=orderCounter.counter)
-    orderNumberInOrder.save()
+    newUserOrder = Order(user=user, orderNumber=orderCounter.counter)
+    newUserOrder.save()
     orderCounter.counter += 1
     orderCounter.save()
-    return orderNumber
+    return newUserOrder
 
 
 def login_view(request):
@@ -70,39 +68,40 @@ def logout_view(request):
 def menu(request):
     context = {
         "pastas": Pasta.objects.all(),
-        "regularPizzas": RegularPizza.objects.all()}
+        "regularPizzas": RegularPizza.objects.all()
+    }
 
     if request.user.is_authenticated:
         try:
-            orderNumber = Order.objects.get(user=request.user, status=INITIATED).orderNumber
+            order = Order.objects.get(user=request.user, status=INITIATED)
         except Order.DoesNotExist:
-            orderNumber = assignOrderNumberToOrder(request.user)
-
-        totalPrice = OrderItem.objects.filter(orderNumber=orderNumber).aggregate(Sum('price'))['price__sum']
+            order = createNewOrderForUser(request.user)
 
         context["user"] = request.user
-        context["order"] = OrderItem.objects.filter(orderNumber=orderNumber)
-        context["total"] = totalPrice
+        context["order"] = OrderItem.objects.filter(order=order)
+        context["total"] = getTotalOrderPrice(order)
 
     return render(request, "menu.html", context)
+
+
+def getTotalOrderPrice(order):
+    return OrderItem.objects.filter(order=order).aggregate(Sum('price'))['price__sum']
 
 
 def add(request, category, name, price):
     context = {
         "pastas": Pasta.objects.all(),
-        "regularPizzas": RegularPizza.objects.all()}
+        "regularPizzas": RegularPizza.objects.all()
+    }
 
     order = Order.objects.get(user=request.user, status=INITIATED)
-    orderNumber = Order.objects.get(user=request.user, status=INITIATED).orderNumber
 
-    orderItem = OrderItem(order=order, orderNumber=orderNumber, category=category, name=name, price=price)
+    orderItem = OrderItem(order=order, category=category, name=name, price=price)
     orderItem.save()
-
-    totalPrice = OrderItem.objects.filter(orderNumber=orderNumber).aggregate(Sum('price'))['price__sum']
 
     if request.user.is_authenticated:
         context["user"] = request.user
-        context["order"] = OrderItem.objects.filter(orderNumber=orderNumber)
-        context["total"] = totalPrice
+        context["order"] = OrderItem.objects.filter(order=order)
+        context["total"] = getTotalOrderPrice(order)
 
     return render(request, "menu.html", context)
