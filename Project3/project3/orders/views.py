@@ -4,11 +4,14 @@ from django.http import HttpResponse, HttpResponseRedirect
 from django.shortcuts import render, redirect
 from django.urls import reverse
 from django.db.models import Sum
+from enum import Enum
 
 from .models import RegularPizza, SicilianPizza, Topping, Pasta, DinnerPlatter, Salad, Sub, OrderItem, Order, \
     OrderCounter
 
-INITIATED = 'Sizzling in the kitchen'
+
+class OrderState(Enum):
+    INITIATED = 'Sizzling in the kitchen'
 
 
 def index(request):
@@ -73,7 +76,7 @@ def menu(request):
 
     if request.user.is_authenticated:
         try:
-            order = Order.objects.get(user=request.user, status=INITIATED)
+            order = Order.objects.get(user=request.user, status=OrderState.INITIATED.value)
         except Order.DoesNotExist:
             order = createNewOrderForUser(request.user)
 
@@ -94,7 +97,7 @@ def add(request, category, name, price):
         "regularPizzas": RegularPizza.objects.all()
     }
 
-    order = Order.objects.get(user=request.user, status=INITIATED)
+    order = Order.objects.get(user=request.user, status=OrderState.INITIATED.value)
 
     orderItem = OrderItem(order=order, category=category, name=name, price=price)
     orderItem.save()
