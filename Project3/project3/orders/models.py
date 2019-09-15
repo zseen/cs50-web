@@ -1,4 +1,7 @@
 from django.db import models
+from django.contrib.auth.models import User
+
+from .helpers.orderState import OrderState
 
 
 class Food(models.Model):
@@ -24,28 +27,54 @@ class TwoPriceFood(Food):
 
 
 class SicilianPizza(TwoPriceFood):
-    pass
+    category = models.CharField(max_length=64, default='Sicilian pizza')
 
 
 class RegularPizza(TwoPriceFood):
-    pass
+    category = models.CharField(max_length=64, default='Regular pizza')
 
 
 class Topping(Food):
-    pass
+    category = models.CharField(max_length=64, default='Topping')
 
 
 class Sub(TwoPriceFood):
-    pass
+    category = models.CharField(max_length=64, default='Sub')
 
 
 class Pasta(OnePriceFood):
-    pass
+    category = models.CharField(max_length=64, default='Pasta')
 
 
 class Salad(OnePriceFood):
-    pass
+    category = models.CharField(max_length=64, default='Salad')
 
 
 class DinnerPlatter(TwoPriceFood):
-    pass
+    category = models.CharField(max_length=64, default='Dinner platter')
+
+
+class Order(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    orderNumber = models.IntegerField()
+    status = models.CharField(max_length=64, default=OrderState.INITIATED.value)
+
+    def __str__(self):
+        return f"{self.user} - {self.orderNumber} - {self.status}"
+
+
+class OrderItem(models.Model):
+    order = models.ForeignKey(Order, on_delete=models.CASCADE)
+    category = models.CharField(max_length=64, null=True)
+    name = models.CharField(max_length=64)
+    price = models.DecimalField(max_digits=4, decimal_places=2)
+
+    def __str__(self):
+        return f"{self.category} - {self.name} - ${self.price}"
+
+
+class OrderCounter(models.Model):
+    counter = models.IntegerField()
+
+    def __str__(self):
+        return f"Order number: {self.counter}"
