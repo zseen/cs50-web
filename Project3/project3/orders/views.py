@@ -3,15 +3,9 @@ from django.contrib.auth import authenticate, login, logout
 from django.http import HttpResponse, HttpResponseRedirect
 from django.shortcuts import render, redirect
 from django.urls import reverse
-from django.db.models import Sum
-from enum import Enum
 
-from .models import RegularPizza, SicilianPizza, Topping, Pasta, DinnerPlatter, Salad, Sub, OrderItem, Order, \
-    OrderCounter
-
-
-class OrderState(Enum):
-    INITIATED = 'Sizzling in the kitchen'
+from .models import RegularPizza, SicilianPizza, Topping, Pasta, DinnerPlatter, Salad, Sub, OrderItem, Order
+from .helpers.orderUtils import OrderState, getCurrentOrderForUser, getTotalOrderPrice
 
 
 def index(request):
@@ -40,15 +34,6 @@ def register_view(request):
         return render(request, "register.html", {"message": "Please provide a unique username and email."})
 
 
-def createNewOrderForUser(user):
-    orderCounter = OrderCounter.objects.first()
-    newUserOrder = Order(user=user, orderNumber=orderCounter.counter)
-    newUserOrder.save()
-    orderCounter.counter += 1
-    orderCounter.save()
-    return newUserOrder
-
-
 def login_view(request):
     if request.method == "GET":
         return render(request, "login.html")
@@ -75,20 +60,13 @@ def menu(request):
     }
 
     if request.user.is_authenticated:
-        try:
-            order = Order.objects.get(user=request.user, status=OrderState.INITIATED.value)
-        except Order.DoesNotExist:
-            order = createNewOrderForUser(request.user)
+        order = getCurrentOrderForUser(request.user)
 
         context["user"] = request.user
         context["order"] = OrderItem.objects.filter(order=order)
         context["total"] = getTotalOrderPrice(order)
 
     return render(request, "menu.html", context)
-
-
-def getTotalOrderPrice(order):
-    return OrderItem.objects.filter(order=order).aggregate(Sum('price'))['price__sum']
 
 
 def add(request, category, name, price):

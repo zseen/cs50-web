@@ -1,6 +1,8 @@
 from django.db import models
 from django.contrib.auth.models import User
 
+from .helpers.orderState import OrderState
+
 
 class Food(models.Model):
     name = models.CharField(max_length=64, default='Name')
@@ -55,7 +57,7 @@ class DinnerPlatter(TwoPriceFood):
 class Order(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     orderNumber = models.IntegerField()
-    status = models.CharField(max_length=64, default='Sizzling in the kitchen')
+    status = models.CharField(max_length=64, default=OrderState.INITIATED.value)
 
     def __str__(self):
         return f"{self.user} - {self.orderNumber} - {self.status}"
