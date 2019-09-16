@@ -86,3 +86,29 @@ def add(request, category, name, price):
         context["total"] = getTotalOrderPrice(order)
 
     return render(request, "menu.html", context)
+
+
+def checkoutOrder(request):
+    order = Order.objects.get(user=request.user, status=OrderState.INITIATED.value)
+    context = dict()
+    context["user"] = request.user
+    context["order"] = OrderItem.objects.filter(order=order)
+    context["total"] = getTotalOrderPrice(order)
+
+    return render(request, "userOrder.html", context)
+
+
+def confirmOrder(request):
+    userOrder = Order.objects.get(user=request.user, status=OrderState.INITIATED.value)
+    userOrder.status = OrderState.CONFIRMED.value
+    userOrder.save()
+
+    return render(request, "index.html", {"message": "Thank you, your order has been placed!"})
+
+
+def manageOrders(request):
+    context = {
+        "orders": Order.objects.filter(status=OrderState.CONFIRMED.value)
+    }
+
+    return render(request, "orders.html", context)

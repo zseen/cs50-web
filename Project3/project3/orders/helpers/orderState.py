@@ -2,4 +2,5 @@ from enum import Enum
 
 
 class OrderState(Enum):
-    INITIATED = 'Sizzling in the kitchen'
+    INITIATED = 'In the shopping cart'
+    CONFIRMED = 'Sizzling in the kitchen'

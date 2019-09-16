@@ -1,0 +1,12 @@
+{% extends "base.html" %}
+{% block title %}
+Your order!
+{% endblock %}
+{% block body %}
+ <h5>Your order:</h5>
+    {% for food in order %}
+        {{food.category}}, {{food.name}}, ${{food.price}}<br>
+    {% endfor %}
+    Total: ${{total}}
+    <a href="{% url 'confirmOrder' %}">Order!</a>
+{% endblock %}
