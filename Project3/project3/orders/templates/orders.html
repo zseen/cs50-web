@@ -5,8 +5,13 @@
 {% endblock %}
 
 {% block body %}
-    {% for order in orders%}
-        {{order}}<br>
+    {% for orderAndItem in ordersAndItems %}
+        {{orderAndItem.order}}: <br>
+        {% for food in orderAndItem.foodInOrder %}
+        <ul>
+            <li>{{food}}</li>
+        </ul>
+        {% endfor %}
+    {% endfor %}
 
-    {%endfor%}
 {% endblock %}
