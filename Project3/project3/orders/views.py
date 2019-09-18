@@ -5,7 +5,7 @@ from django.shortcuts import render, redirect
 from django.urls import reverse
 
 from .models import RegularPizza, SicilianPizza, Topping, Pasta, DinnerPlatter, Salad, Sub, OrderItem, Order
-from .helpers.orderUtils import OrderState, getCurrentOrderForUser, getTotalOrderPrice, FoodInOrderLister, FoodToAllOrdersLister
+from .helpers.orderUtils import OrderState, getCurrentOrderForUser, getTotalOrderPrice, FoodInAllOrdersFinder
 
 
 def index(request):
@@ -89,11 +89,12 @@ def add(request, category, name, price):
 
 
 def checkoutOrder(request):
-    order = Order.objects.get(user=request.user, status=OrderState.INITIATED.value)
-    context = dict()
-    context["user"] = request.user
-    context["order"] = OrderItem.objects.filter(order=order)
-    context["total"] = getTotalOrderPrice(order)
+    userOrder = Order.objects.get(user=request.user, status=OrderState.INITIATED.value)
+    context = {
+        "user": request.user,
+        "order": OrderItem.objects.filter(order=userOrder),
+        "total": getTotalOrderPrice(userOrder)
+    }
 
     return render(request, "userOrder.html", context)
 
@@ -106,15 +107,14 @@ def confirmOrder(request):
     return render(request, "index.html", {"message": "Thank you, your order has been placed!"})
 
 
-def manageOrders(request):
+def viewConfirmedOrders(request):
     allOrders = Order.objects.filter(status=OrderState.CONFIRMED.value)
 
-    m = FoodToAllOrdersLister()
-    z = m.getFoodToAllOrdersList(allOrders)
-
+    foodInAllOrdersFinder = FoodInAllOrdersFinder()
+    ordersWithFoods = foodInAllOrdersFinder.getFoodToAllOrdersList(allOrders)
 
     context = {
-        "ordersAndItems": z
+        "ordersWithFoods": ordersWithFoods
     }
 
     return render(request, "orders.html", context)

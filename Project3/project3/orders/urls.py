@@ -11,6 +11,6 @@ urlpatterns = [
     path("add/<str:category>/<str:name>/<str:price>", views.add, name="add"),
     path("checkoutOrder", views.checkoutOrder, name="checkoutOrder"),
     path("confirmOrder", views.confirmOrder, name="confirmOrder"),
-    path("manageOrders", views.manageOrders, name="manageOrders")
+    path("viewConfirmedOrders", views.viewConfirmedOrders, name="viewConfirmedOrders")
 
 ]
