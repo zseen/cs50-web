@@ -27,25 +27,21 @@ def getTotalOrderPrice(order):
 class OrderDetails:
     def __init__(self, order):
         self._order = order
-        self._orderItemsInOrder = []
 
     def getOrderItemsInOrder(self):
+        orderItemsInOrder = []
         for orderItem in OrderItem.objects.all():
             if orderItem.order.orderNumber == self._order.orderNumber:
-                self._orderItemsInOrder.append(orderItem)
-        return self._orderItemsInOrder
+                orderItemsInOrder.append(orderItem)
+        return orderItemsInOrder
 
     def getOrder(self):
         return self._order
 
 
-class AllOrderDetails:
-    def __init__(self):
-        self._orderItemsToAllOrdersList = []
-
-    def getOrderItemsToAllOrdersList(self, orders):
-        for order in orders:
-            userOrder = OrderDetails(order)
-            userOrder.getOrderItemsInOrder()
-            self._orderItemsToAllOrdersList.append(userOrder)
-        return self._orderItemsToAllOrdersList
+def getOrderItemsToAllOrdersList(orders):
+    allOrderDetailsList = []
+    for order in orders:
+        orderDetail = OrderDetails(order)
+        allOrderDetailsList.append(orderDetail)
+    return allOrderDetailsList

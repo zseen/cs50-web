@@ -5,9 +5,9 @@
 {% endblock %}
 
 {% block body %}
-    {% for orderWithOrderItems in ordersWithOrderItems %}
-        {{orderWithOrderItems.getOrder}}: <br>
-        {% for orderItem in orderWithOrderItems.getOrderItemsInOrder %}
+    {% for orderDetail in allOrderDetailsList %}
+        {{orderDetail.getOrder}}: <br>
+        {% for orderItem in orderDetail.getOrderItemsInOrder %}
         <ul>
             <li>{{orderItem}}</li>
         </ul>
