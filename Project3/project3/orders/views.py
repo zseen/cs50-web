@@ -9,7 +9,10 @@ from .helpers.orderUtils import OrderState, getCurrentOrderForUser, getTotalOrde
 
 
 def index(request):
-    return render(request, "index.html")
+    message = {
+        "specPizza": "Special Pizza: tomato base, grilled broccoli, courgette, sweetcorn, tomato, cashew 'mozzarella'!"
+    }
+    return render(request, "index.html", message)
 
 
 def register_view(request):
