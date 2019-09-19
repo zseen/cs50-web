@@ -96,7 +96,7 @@ def checkoutOrder(request):
         "total": getTotalOrderPrice(userOrder)
     }
 
-    return render(request, "userOrder.html", context)
+    return render(request, "checkout.html", context)
 
 
 def confirmOrder(request):
