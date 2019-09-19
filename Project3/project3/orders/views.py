@@ -88,6 +88,24 @@ def add(request, category, name, price):
     return render(request, "menu.html", context)
 
 
+def deleteItemFromCart(request, category, name, price):
+    context = {
+        "pastas": Pasta.objects.all(),
+        "regularPizzas": RegularPizza.objects.all()
+    }
+
+    order = getCurrentOrderForUser(request.user)
+
+    itemToRemove = OrderItem.objects.filter(order=order, category=category, name=name, price=price).last()
+    itemToRemove.delete()
+
+    context["user"] = request.user
+    context["order"] = OrderItem.objects.filter(order=order)
+    context["total"] = getTotalOrderPrice(order)
+
+    return render(request, "menu.html", context)
+
+
 def checkoutOrder(request):
     userOrder = Order.objects.get(user=request.user, status=OrderState.INITIATED.value)
     context = {
