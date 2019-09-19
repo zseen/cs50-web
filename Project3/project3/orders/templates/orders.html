@@ -5,11 +5,11 @@
 {% endblock %}
 
 {% block body %}
-    {% for orderWithFoods in ordersWithFoods %}
-        {{orderWithFoods.getOrder}}: <br>
-        {% for food in orderWithFoods.getFoodInOrder %}
+    {% for orderWithOrderItems in ordersWithOrderItems %}
+        {{orderWithOrderItems.getOrder}}: <br>
+        {% for orderItem in orderWithOrderItems.getOrderItemsInOrder %}
         <ul>
-            <li>{{food}}</li>
+            <li>{{orderItem}}</li>
         </ul>
         {% endfor %}
     {% endfor %}

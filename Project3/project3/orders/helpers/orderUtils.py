@@ -24,33 +24,28 @@ def getTotalOrderPrice(order):
     return OrderItem.objects.filter(order=order).aggregate(Sum('price'))['price__sum']
 
 
-class FoodInOrderFinder:
+class OrderDetails:
     def __init__(self, order):
         self._order = order
-        self._foodInOrder = []
+        self._orderItemsInOrder = []
 
-    def findAllFoodInOrder(self):
+    def getOrderItemsInOrder(self):
         for orderItem in OrderItem.objects.all():
             if orderItem.order.orderNumber == self._order.orderNumber:
-                self._foodInOrder.append(orderItem)
-
-    def getFoodInOrder(self):
-        return self._foodInOrder
+                self._orderItemsInOrder.append(orderItem)
+        return self._orderItemsInOrder
 
     def getOrder(self):
         return self._order
 
 
-class FoodInAllOrdersFinder:
+class AllOrderDetails:
     def __init__(self):
-        self._foodToAllOrdersList = []
+        self._orderItemsToAllOrdersList = []
 
-    def _findFoodInAllOrders(self, orders):
+    def getOrderItemsToAllOrdersList(self, orders):
         for order in orders:
-            userOrder = FoodInOrderFinder(order)
-            userOrder.findAllFoodInOrder()
-            self._foodToAllOrdersList.append(userOrder)
-
-    def getFoodToAllOrdersList(self, orders):
-        self._findFoodInAllOrders(orders)
-        return self._foodToAllOrdersList
+            userOrder = OrderDetails(order)
+            userOrder.getOrderItemsInOrder()
+            self._orderItemsToAllOrdersList.append(userOrder)
+        return self._orderItemsToAllOrdersList

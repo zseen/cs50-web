@@ -5,7 +5,7 @@ from django.shortcuts import render, redirect
 from django.urls import reverse
 
 from .models import RegularPizza, SicilianPizza, Topping, Pasta, DinnerPlatter, Salad, Sub, OrderItem, Order
-from .helpers.orderUtils import OrderState, getCurrentOrderForUser, getTotalOrderPrice, FoodInAllOrdersFinder
+from .helpers.orderUtils import OrderState, getCurrentOrderForUser, getTotalOrderPrice, AllOrderDetails
 
 
 def index(request):
@@ -110,11 +110,11 @@ def confirmOrder(request):
 def viewConfirmedOrders(request):
     allOrders = Order.objects.filter(status=OrderState.CONFIRMED.value)
 
-    foodInAllOrdersFinder = FoodInAllOrdersFinder()
-    ordersWithFoods = foodInAllOrdersFinder.getFoodToAllOrdersList(allOrders)
+    foodInAllOrdersFinder = AllOrderDetails()
+    ordersWithOrderItems = foodInAllOrdersFinder.getOrderItemsToAllOrdersList(allOrders)
 
     context = {
-        "ordersWithFoods": ordersWithFoods
+        "ordersWithOrderItems": ordersWithOrderItems
     }
 
     return render(request, "orders.html", context)
