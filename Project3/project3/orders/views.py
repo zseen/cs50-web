@@ -5,7 +5,7 @@ from django.shortcuts import render, redirect
 from django.urls import reverse
 
 from .models import RegularPizza, SicilianPizza, Topping, Pasta, DinnerPlatter, Salad, Sub, OrderItem, Order
-from .helpers.orderUtils import OrderState, getCurrentOrderForUser, getTotalOrderPrice
+from .helpers.orderUtils import OrderState, getCurrentOrderForUser, getTotalOrderPrice, getAllOrderDetails
 
 
 def index(request):
@@ -86,3 +86,34 @@ def add(request, category, name, price):
         context["total"] = getTotalOrderPrice(order)
 
     return render(request, "menu.html", context)
+
+
+def checkoutOrder(request):
+    userOrder = Order.objects.get(user=request.user, status=OrderState.INITIATED.value)
+    context = {
+        "user": request.user,
+        "order": OrderItem.objects.filter(order=userOrder),
+        "total": getTotalOrderPrice(userOrder)
+    }
+
+    return render(request, "checkout.html", context)
+
+
+def confirmOrder(request):
+    userOrder = Order.objects.get(user=request.user, status=OrderState.INITIATED.value)
+    userOrder.status = OrderState.CONFIRMED.value
+    userOrder.save()
+
+    return render(request, "index.html", {"message": "Thank you, your order has been placed!"})
+
+
+def manageConfirmedOrdersAdmin(request):
+    allOrders = Order.objects.filter(status=OrderState.CONFIRMED.value)
+
+    allOrderDetailsList = getAllOrderDetails(allOrders)
+
+    context = {
+        "allOrderDetailsList": allOrderDetailsList
+    }
+
+    return render(request, "manageConfirmedOrdersAdmin.html", context)

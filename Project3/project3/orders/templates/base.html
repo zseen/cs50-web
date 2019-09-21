@@ -21,7 +21,11 @@
                 <a class="nav-link" href="/menu">Menu</a>
                 {% if user.is_authenticated %}
                 <ul class="navbar-nav ml-auto mt-2">
+                    Hello {{user}}!
                     <li class="nav-item">
+                        {% if user.is_superuser %}
+                            <a href="{% url 'manageConfirmedOrdersAdmin' %}">Orders manager</a>
+                        {% endif %}
                         <a class="nav-link" href="/logout">Log Out</a>
                     </li>
                 </ul>

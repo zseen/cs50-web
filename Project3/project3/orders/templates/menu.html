@@ -41,12 +41,15 @@ Pizza!
 </table>
 <br>
 <div>
-    <h5>Your order:</h5>
+    <h5>Your cart:</h5>
     {% if user.is_authenticated %}
         {% for food in order %}
             {{food.category}}, {{food.name}}, ${{food.price}}<br>
         {% endfor %}
+        {% if order %}
         Total: ${{total}}
+        <a href="{% url 'checkoutOrder' %}">Checkout order</a>
+        {% endif %}
     {% else %}
         Please <a href="/login">log in</a> to order. No account yet? Register <a href="/register">here!</a>
     {%endif%}

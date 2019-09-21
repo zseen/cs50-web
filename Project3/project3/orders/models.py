@@ -70,7 +70,7 @@ class OrderItem(models.Model):
     price = models.DecimalField(max_digits=4, decimal_places=2)
 
     def __str__(self):
-        return f"{self.category} - {self.name} - ${self.price}"
+        return f"{self.category} - {self.name} - {self.order.status} - ${self.price}"
 
 
 class OrderCounter(models.Model):
