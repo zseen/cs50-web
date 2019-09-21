@@ -13,12 +13,13 @@
         <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta.2/js/bootstrap.min.js"></script>
         <title>{% block title %}{% endblock %}</title>
     </head>
-    <body>
+<body>
         <nav class="navbar navbar-expand-md navbar-light bg-light border">
             <span class="navbar-brand">Pizza!</span>
             <button aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation" class="navbar-toggler" data-target="#navbar" data-toggle="collapse" type="button">
             <span class="navbar-toggler-icon"></span>
             </button>
+
             <div class="collapse navbar-collapse" id="navbar">
                 <a class="nav-link" href="/menu">Menu</a>
                  <a class="nav-link" href="{% url 'index' %}">Home</a>
@@ -43,9 +44,14 @@
                 </ul>
                 {% endif %}
             </div>
+
         </nav>
+
         {% block body %}
+
+
         {% endblock %}
     </body>
-    <img id='pizzaBackground' src="{% static 'pizzaBackground.jpg' %}">
+<div id="container"></div>
+
 </html>

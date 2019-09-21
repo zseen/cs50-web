@@ -1,11 +1,22 @@
 
 
-body {
-  background: #pizzaBackground;
+body{
+  background-color: #111;
+  background-position:center;
+  z-index:0;
 }
 
 table
 {
     font-size: 20px;
     color: #111;
+}
+
+#message{
+    color: #101;
+    font-size: 50px;
+    z-index:1;
+
+
+
 }
