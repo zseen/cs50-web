@@ -39,7 +39,7 @@ class OrderDetails:
         return self._order
 
 
-def getOrderItemsToAllOrdersList(orders):
+def getAllOrderDetails(orders):
     allOrderDetailsList = []
     for order in orders:
         orderDetail = OrderDetails(order)
