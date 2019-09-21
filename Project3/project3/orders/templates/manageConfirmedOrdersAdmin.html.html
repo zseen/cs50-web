@@ -1,0 +1,16 @@
+{% extends "base.html" %}
+
+{% block title %}
+    Pending orders
+{% endblock %}
+
+{% block body %}
+    {% for orderDetail in allOrderDetailsList %}
+        {{orderDetail.getOrder}}: <br>
+        {% for orderItem in orderDetail.getOrderItemsInOrder %}
+        <ul>
+            <li>{{orderItem}}</li>
+        </ul>
+        {% endfor %}
+    {% endfor %}
+{% endblock %}

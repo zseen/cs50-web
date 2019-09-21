@@ -5,7 +5,7 @@ Pizza!
 {% block body %}
 <h4>Menu:</h4>
 <br>
-<table>
+<table class="menu">
     <thead class='thead-light'>
         <tr >
             <th>Pasta</th>
@@ -21,7 +21,7 @@ Pizza!
         {% endfor %}
     </tbody>
 </table>
-<table>
+<table class="menu">
     <thead class='thead-light'>
         <tr>
             <th>Regular Pizza</th>
@@ -40,7 +40,7 @@ Pizza!
     </tbody>
 </table>
 <br>
-<div>
+<div class="menu">
     <h5>Your cart:</h5>
     {% if user.is_authenticated %}
         {% for food in order %}
