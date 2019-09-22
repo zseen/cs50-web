@@ -1,0 +1,29 @@
+{% extends "base.html" %}
+
+{% block title %}
+    Pizza!
+{% endblock %}
+
+{% block body %}
+<div class="grayish-background">
+    Your current orders:<br>
+    {% for pendingOrder in pendingOrders %}
+        {{ pendingOrder.getOrder }}
+        {% for orderItem in pendingOrder.getOrderItemsInOrder %}
+        <ul>
+            <li>{{orderItem}}</li>
+        </ul>
+        {% endfor %}
+    {% endfor %}
+
+    Your previous orders:<br>
+    {% for completedOrder in completedOrders %}
+        {{ completedOrder.getOrder }}
+        {% for orderItem in completedOrder.getOrderItemsInOrder %}
+        <ul>
+            <li>{{orderItem}}</li>
+        </ul>
+        {% endfor %}
+    {% endfor %}
+</div>
+{% endblock %}

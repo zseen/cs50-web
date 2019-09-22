@@ -146,3 +146,18 @@ def completeOrderAdmin(request, orderNumber):
     order.save()
 
     return manageConfirmedOrdersAdmin(request)
+
+
+def displayUserOwnOrders(request):
+    userPendingOrders = Order.objects.filter(user=request.user, status=OrderState.CONFIRMED.value)
+    pendingOrdersDetailsList = getAllOrderDetails(userPendingOrders)
+
+    userCompletedOrders = Order.objects.filter(user=request.user, status=OrderState.COMPLETED.value)
+    completedOrdersDetailsList = getAllOrderDetails(userCompletedOrders)
+
+    context = {
+        "pendingOrders": pendingOrdersDetailsList,
+        "completedOrders": completedOrdersDetailsList
+    }
+
+    return render(request, "userOwnOrders.html", context)
