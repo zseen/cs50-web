@@ -138,3 +138,11 @@ def manageConfirmedOrdersAdmin(request):
     }
 
     return render(request, "manageConfirmedOrdersAdmin.html", context)
+
+
+def completeOrderAdmin(request, orderNumber):
+    order = Order.objects.get(orderNumber=int(orderNumber))
+    order.status = OrderState.COMPLETED.value
+    order.save()
+
+    return manageConfirmedOrdersAdmin(request)

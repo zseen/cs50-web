@@ -12,5 +12,6 @@ urlpatterns = [
     path("deleteItemFromCart/<str:category>/<str:name>/<str:price>", views.deleteItemFromCart, name="deleteItemFromCart"),
     path("checkoutOrder", views.checkoutOrder, name="checkoutOrder"),
     path("confirmOrder", views.confirmOrder, name="confirmOrder"),
-    path("manageConfirmedOrdersAdmin", views.manageConfirmedOrdersAdmin, name="manageConfirmedOrdersAdmin")
+    path("manageConfirmedOrdersAdmin", views.manageConfirmedOrdersAdmin, name="manageConfirmedOrdersAdmin"),
+    path("completeOrderAdmin/<str:orderNumber>", views.completeOrderAdmin, name="completeOrderAdmin")
 ]
