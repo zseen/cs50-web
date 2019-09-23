@@ -150,14 +150,14 @@ def completeOrderAdmin(request, orderNumber):
 
 def displayUserOwnOrders(request):
     userPendingOrders = Order.objects.filter(user=request.user, status=OrderState.CONFIRMED.value)
-    pendingOrdersDetailsList = getAllOrderDetails(userPendingOrders)
+    pendingOrderDetailsList = getAllOrderDetails(userPendingOrders)
 
     userCompletedOrders = Order.objects.filter(user=request.user, status=OrderState.COMPLETED.value)
-    completedOrdersDetailsList = getAllOrderDetails(userCompletedOrders)
+    completedOrderDetailsList = getAllOrderDetails(userCompletedOrders)
 
     context = {
-        "pendingOrders": pendingOrdersDetailsList,
-        "completedOrders": completedOrdersDetailsList
+        "pendingOrders": pendingOrderDetailsList,
+        "completedOrders": completedOrderDetailsList
     }
 
     return render(request, "userOwnOrders.html", context)
