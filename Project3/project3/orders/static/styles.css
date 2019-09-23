@@ -1,0 +1,27 @@
+body {
+    display: block;
+    background-image: url("pizzaBackground.jpg");
+}
+
+
+#message{
+    color: #f8f9fa;
+    text-shadow: 2px 0 0 #111, 0 -1px 0 #111, 0 2px 0 #111, -1px 0 0 #111;
+    font-size: 22pt;
+    margin-top: 200px;
+    margin-left: 240px;
+    margin-right: 200px;
+    background-color: #a5a2a27d;
+}
+
+
+.menu
+{
+    font-size: 16pt;
+    background-color: #f8f9fa9e;
+    margin-left: 300px;
+}
+
+.grayish-background{
+    background-color: #a5a2a27d;
+}

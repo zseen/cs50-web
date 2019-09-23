@@ -9,8 +9,10 @@ urlpatterns = [
     path("register", views.register_view, name="register"),
     path("menu", views.menu, name="menu"),
     path("add/<str:category>/<str:name>/<str:price>", views.add, name="add"),
+    path("deleteItemFromCart/<str:category>/<str:name>/<str:price>", views.deleteItemFromCart, name="deleteItemFromCart"),
     path("checkoutOrder", views.checkoutOrder, name="checkoutOrder"),
     path("confirmOrder", views.confirmOrder, name="confirmOrder"),
-    path("manageConfirmedOrdersAdmin", views.manageConfirmedOrdersAdmin, name="manageConfirmedOrdersAdmin")
-
+    path("manageConfirmedOrdersAdmin", views.manageConfirmedOrdersAdmin, name="manageConfirmedOrdersAdmin"),
+    path("completeOrderAdmin/<str:orderNumber>", views.completeOrderAdmin, name="completeOrderAdmin"),
+    path("displayUserOwnOrders", views.displayUserOwnOrders, name="displayUserOwnOrders")
 ]

@@ -9,7 +9,10 @@ from .helpers.orderUtils import OrderState, getCurrentOrderForUser, getTotalOrde
 
 
 def index(request):
-    return render(request, "index.html")
+    message = {
+        "specPizza": "Special Pizza: tomato base, grilled broccoli, courgette, sweetcorn, tomato, cashew 'mozzarella'!"
+    }
+    return render(request, "index.html", message)
 
 
 def register_view(request):
@@ -88,6 +91,24 @@ def add(request, category, name, price):
     return render(request, "menu.html", context)
 
 
+def deleteItemFromCart(request, category, name, price):
+    context = {
+        "pastas": Pasta.objects.all(),
+        "regularPizzas": RegularPizza.objects.all()
+    }
+
+    order = getCurrentOrderForUser(request.user)
+
+    itemToRemove = OrderItem.objects.filter(order=order, category=category, name=name, price=price).last()
+    itemToRemove.delete()
+
+    context["user"] = request.user
+    context["order"] = OrderItem.objects.filter(order=order)
+    context["total"] = getTotalOrderPrice(order)
+
+    return render(request, "menu.html", context)
+
+
 def checkoutOrder(request):
     userOrder = Order.objects.get(user=request.user, status=OrderState.INITIATED.value)
     context = {
@@ -117,3 +138,26 @@ def manageConfirmedOrdersAdmin(request):
     }
 
     return render(request, "manageConfirmedOrdersAdmin.html", context)
+
+
+def completeOrderAdmin(request, orderNumber):
+    order = Order.objects.get(orderNumber=int(orderNumber))
+    order.status = OrderState.COMPLETED.value
+    order.save()
+
+    return manageConfirmedOrdersAdmin(request)
+
+
+def displayUserOwnOrders(request):
+    userPendingOrders = Order.objects.filter(user=request.user, status=OrderState.CONFIRMED.value)
+    pendingOrderDetailsList = getAllOrderDetails(userPendingOrders)
+
+    userCompletedOrders = Order.objects.filter(user=request.user, status=OrderState.COMPLETED.value)
+    completedOrderDetailsList = getAllOrderDetails(userCompletedOrders)
+
+    context = {
+        "pendingOrders": pendingOrderDetailsList,
+        "completedOrders": completedOrderDetailsList
+    }
+
+    return render(request, "userOwnOrders.html", context)
