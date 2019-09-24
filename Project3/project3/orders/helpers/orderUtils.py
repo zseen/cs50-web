@@ -46,31 +46,38 @@ def getAllOrderDetails(orders):
         allOrderDetailsList.append(orderDetail)
     return allOrderDetailsList
 
-def getToppingAllowance(pizzaName):
-    toppingAllowance = 0
-    if pizzaName == "1 topping":
-        toppingAllowance = 1
-    elif pizzaName == "2 toppings":
-        toppingAllowance = 2
-    elif pizzaName == "3 toppings":
-        toppingAllowance = 3
-
-    return toppingAllowance
-
-def getPizzaToPutToppingOn(order):
-    pizzaToTop = None
-    orderDetails = OrderDetails(order)
-    orderItemsInOrder = orderDetails.getOrderItemsInOrder()
-    for item in orderItemsInOrder:
-        if item.category == "Regular pizza" and item.toppingAllowance != 0:
-            pizzaToTop = item
-    return pizzaToTop
-
 
 class PizzaOrderHandler:
-    def __init__(self, pizza):
-        self.pizza = pizza
+    def __init__(self):
+        self.pizza = None
 
-    def addPizza(self, pizza):
-        pass
+    def getCurrentPizza(self):
+        return self.pizza
+
+    def createPizzaOrderItem(self, order, category, name, price):
+        toppingAllowance = self.getToppingAllowance()
+        self.pizza = OrderItem(order=order, category=category, name=name, price=price, toppingAllowance=toppingAllowance)
+        self.pizza.save()
+
+    def getToppingAllowance(self):
+        toppingAllowance = 0
+        if self.pizza.name == "1 topping":
+            toppingAllowance = 1
+        elif self.pizza.name == "2 toppings":
+            toppingAllowance = 2
+        elif self.pizza.name == "3 toppings":
+            toppingAllowance = 3
+
+        return toppingAllowance
+
+    def decreaseToppingAllowance(self):
+        self.pizza.toppingAllowance -= 1
+        self.pizza.save()
+
+    def getRemainingToppingAllowanceMessage(self):
+        message = "You can add " + str(self.pizza.toppingAllowance) + " more topping(s)."
+        if self.pizza.toppingAllowance == 0:
+            message = "All toppings added!"
+        return message
+
 
