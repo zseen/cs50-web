@@ -39,13 +39,36 @@ Pizza!
         {% endfor %}
     </tbody>
 </table>
+
+<table class="menu">
+    <thead class='thead-light'>
+        <tr >
+            <th>Toppings</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for topping in toppings %}
+        <tr>
+            <td>{{topping.name}}{% if user.is_authenticated %}<a href="{% url 'add' topping.category topping.name '0' %}">+</a>{% endif %}</td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
 <br>
 <div class="menu">
     <h5>Your cart:</h5>
     {% if user.is_authenticated %}
         {% for food in order %}
-    {{food.category}}, {{food.name}}, ${{food.price}}<a href="{% url 'deleteItemFromCart' food.category food.name food.price %}"> -</a><br>
+            {{food.category}}, {{food.name}}, ${{food.price}}<a href="{% url 'deleteItemFromCart' food.category food.name food.price %}"> -</a><br>
+            <!--{% if food.category == "Regular pizza" and food.name != "Cheese" %}-->
+                <!--Choose {{food.toppingAllowance}} topping(s)!<br>-->
+
+
+
+
+            <!--{% endif %}-->
         {% endfor %}
+    {{toppingWarning}}<br>
         {% if order %}
         Total: ${{total}}
         <a href="{% url 'checkoutOrder' %}">Checkout order</a>

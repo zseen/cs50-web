@@ -68,6 +68,7 @@ class OrderItem(models.Model):
     category = models.CharField(max_length=64, null=True)
     name = models.CharField(max_length=64)
     price = models.DecimalField(max_digits=4, decimal_places=2)
+    toppingAllowance = models.IntegerField(null=True, blank=True)
 
     def __str__(self):
         return f"{self.category} - {self.name} - {self.order.status} - ${self.price}"

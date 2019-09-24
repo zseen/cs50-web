@@ -5,7 +5,7 @@ from django.shortcuts import render, redirect
 from django.urls import reverse
 
 from .models import RegularPizza, SicilianPizza, Topping, Pasta, DinnerPlatter, Salad, Sub, OrderItem, Order
-from .helpers.orderUtils import OrderState, getCurrentOrderForUser, getTotalOrderPrice, getAllOrderDetails
+from .helpers.orderUtils import OrderState, getCurrentOrderForUser, getTotalOrderPrice, getAllOrderDetails, getToppingAllowance, OrderDetails, getPizzaToPutToppingOn
 
 
 def index(request):
@@ -59,7 +59,8 @@ def logout_view(request):
 def menu(request):
     context = {
         "pastas": Pasta.objects.all(),
-        "regularPizzas": RegularPizza.objects.all()
+        "regularPizzas": RegularPizza.objects.all(),
+        "toppings": Topping.objects.all()
     }
 
     if request.user.is_authenticated:
@@ -75,13 +76,34 @@ def menu(request):
 def add(request, category, name, price):
     context = {
         "pastas": Pasta.objects.all(),
-        "regularPizzas": RegularPizza.objects.all()
+        "regularPizzas": RegularPizza.objects.all(),
+        "toppings": Topping.objects.all()
     }
 
     order = Order.objects.get(user=request.user, status=OrderState.INITIATED.value)
 
-    orderItem = OrderItem(order=order, category=category, name=name, price=price)
-    orderItem.save()
+    if category == "Regular pizza":
+        toppingAllowance = getToppingAllowance(name)
+        orderItem = OrderItem(order=order, category=category, name=name, price=price, toppingAllowance=toppingAllowance)
+        orderItem.save()
+        context["toppingWarning"] = "You have " + str(orderItem.toppingAllowance) + " toppings left."
+    elif category == "Topping" and not getPizzaToPutToppingOn(order):
+        context["toppingWarning"] = "Sorry, you need to order an eligible pizza to put toppings on."
+    else:
+        orderItem = OrderItem(order=order, category=category, name=name, price=price)
+        orderItem.save()
+
+    pizzaItem = getPizzaToPutToppingOn(order)
+
+    if category == "Topping" and pizzaItem and pizzaItem.toppingAllowance > 1:
+        pizzaItem.toppingAllowance -= 1
+        pizzaItem.save()
+        context["toppingWarning"] = "You have " + str(pizzaItem.toppingAllowance) + " toppings left."
+    elif category == "Topping" and pizzaItem and pizzaItem.toppingAllowance == 1 :
+        pizzaItem.toppingAllowance -= 1
+        pizzaItem.save()
+        context["toppingWarning"] = "All toppings added"
+
 
     if request.user.is_authenticated:
         context["user"] = request.user
@@ -94,7 +116,8 @@ def add(request, category, name, price):
 def deleteItemFromCart(request, category, name, price):
     context = {
         "pastas": Pasta.objects.all(),
-        "regularPizzas": RegularPizza.objects.all()
+        "regularPizzas": RegularPizza.objects.all(),
+        "toppings": Topping.objects.all()
     }
 
     order = getCurrentOrderForUser(request.user)
