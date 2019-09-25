@@ -6,9 +6,10 @@ from django.urls import reverse
 
 from .models import RegularPizza, SicilianPizza, Topping, Pasta, DinnerPlatter, Salad, Sub, OrderItem, Order
 from .helpers.orderUtils import OrderState, getCurrentOrderForUser, getTotalOrderPrice, getAllOrderDetails, \
-     PizzaOrderHandler
+    PizzaOrderHandler
 
 pizzaOrderHandler = PizzaOrderHandler()
+
 
 def index(request):
     message = {
@@ -62,6 +63,7 @@ def menu(request):
     context = {
         "pastas": Pasta.objects.all(),
         "regularPizzas": RegularPizza.objects.all(),
+        "sicilianPizzas": SicilianPizza.objects.all(),
         "toppings": Topping.objects.all()
     }
 
@@ -79,23 +81,24 @@ def add(request, category, name, price):
     context = {
         "pastas": Pasta.objects.all(),
         "regularPizzas": RegularPizza.objects.all(),
+        "sicilianPizzas": SicilianPizza.objects.all(),
         "toppings": Topping.objects.all()
     }
 
     order = Order.objects.get(user=request.user, status=OrderState.INITIATED.value)
 
-    if category == "Regular pizza":
+    if category == "Regular pizza" or category == "Sicilian pizza":
         pizzaOrderHandler.createPizzaOrderItem(order, category, name, price)
-        context["toppingWarning"]= pizzaOrderHandler.getRemainingToppingAllowanceMessage()
+        context["toppingInformationMessage"] = pizzaOrderHandler.getRemainingToppingAllowanceMessage()
     elif category == "Topping":
         currentPizza = pizzaOrderHandler.getCurrentPizza()
         if currentPizza and pizzaOrderHandler.canCurrentPizzaBeTopped():
             toppingOrderItem = OrderItem(order=order, category=category, name=name, price=price)
             toppingOrderItem.save()
             pizzaOrderHandler.decreaseToppingAllowance()
-            context["toppingWarning"] = pizzaOrderHandler.getRemainingToppingAllowanceMessage()
+            context["toppingInformationMessage"] = pizzaOrderHandler.getRemainingToppingAllowanceMessage()
         else:
-            context["toppingWarning"] = "Please order an eligible pizza to put topping on."
+            context["toppingInformationMessage"] = "Please order an eligible pizza to put topping on."
     else:
         orderItem = OrderItem(order=order, category=category, name=name, price=price)
         orderItem.save()
@@ -112,6 +115,7 @@ def deleteItemFromCart(request, category, name, price):
     context = {
         "pastas": Pasta.objects.all(),
         "regularPizzas": RegularPizza.objects.all(),
+        "sicilianPizzas": SicilianPizza.objects.all(),
         "toppings": Topping.objects.all()
     }
 
@@ -119,6 +123,10 @@ def deleteItemFromCart(request, category, name, price):
 
     itemToRemove = OrderItem.objects.filter(order=order, category=category, name=name, price=price).last()
     itemToRemove.delete()
+
+    if category == "Topping" and pizzaOrderHandler.getCurrentPizza():
+        pizzaOrderHandler.increaseToppingAllowance()
+        context["toppingInformationMessage"] = pizzaOrderHandler.getRemainingToppingAllowanceMessage()
 
     context["user"] = request.user
     context["order"] = OrderItem.objects.filter(order=order)

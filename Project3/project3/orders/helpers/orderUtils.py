@@ -56,7 +56,8 @@ class PizzaOrderHandler:
 
     def createPizzaOrderItem(self, order, category, name, price):
         toppingAllowance = self.getInitialToppingAllowance(name)
-        self.pizza = OrderItem(order=order, category=category, name=name, price=price, toppingAllowance=toppingAllowance)
+        self.pizza = OrderItem(order=order, category=category, name=name, price=price,
+                               toppingAllowance=toppingAllowance)
         self.pizza.save()
 
     def decreaseToppingAllowance(self):
@@ -77,6 +78,9 @@ class PizzaOrderHandler:
     def canCurrentPizzaBeTopped(self):
         return self.pizza.toppingAllowance > 0
 
+    def increaseToppingAllowance(self):
+        self.pizza.toppingAllowance += 1
+
     @staticmethod
     def getInitialToppingAllowance(pizzaName):
         toppingAllowance = 0
@@ -88,6 +92,3 @@ class PizzaOrderHandler:
             toppingAllowance = 3
 
         return toppingAllowance
-
-
-
