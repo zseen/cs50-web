@@ -6,7 +6,7 @@ from django.urls import reverse
 
 from .models import RegularPizza, SicilianPizza, Topping, Pasta, DinnerPlatter, Salad, Sub, OrderItem, Order
 from .helpers.orderUtils import OrderState, getCurrentOrderForUser, getTotalOrderPrice, getAllOrderDetails, \
-    getToppingAllowance, OrderDetails, getPizzaToPutToppingOn, PizzaOrderHandler
+     PizzaOrderHandler
 
 pizzaOrderHandler = PizzaOrderHandler()
 
@@ -88,8 +88,8 @@ def add(request, category, name, price):
         pizzaOrderHandler.createPizzaOrderItem(order, category, name, price)
         context["toppingWarning"]= pizzaOrderHandler.getRemainingToppingAllowanceMessage()
     elif category == "Topping":
-        pizzaItem = pizzaOrderHandler.getCurrentPizza()
-        if pizzaItem:
+        currentPizza = pizzaOrderHandler.getCurrentPizza()
+        if currentPizza and pizzaOrderHandler.canCurrentPizzaBeTopped():
             toppingOrderItem = OrderItem(order=order, category=category, name=name, price=price)
             toppingOrderItem.save()
             pizzaOrderHandler.decreaseToppingAllowance()

@@ -55,29 +55,39 @@ class PizzaOrderHandler:
         return self.pizza
 
     def createPizzaOrderItem(self, order, category, name, price):
-        toppingAllowance = self.getToppingAllowance()
+        toppingAllowance = self.getInitialToppingAllowance(name)
         self.pizza = OrderItem(order=order, category=category, name=name, price=price, toppingAllowance=toppingAllowance)
         self.pizza.save()
 
-    def getToppingAllowance(self):
+    def decreaseToppingAllowance(self):
+        if self.pizza.toppingAllowance > 0:
+            self.pizza.toppingAllowance -= 1
+            self.pizza.save()
+
+    def getRemainingToppingAllowanceMessage(self):
+        message = "You can add " + str(self.pizza.toppingAllowance) + " more topping(s)."
+
+        if self.pizza.name == "Cheese":
+            message = ""
+        elif self.pizza.toppingAllowance == 0:
+            message = "All toppings added!"
+
+        return message
+
+    def canCurrentPizzaBeTopped(self):
+        return self.pizza.toppingAllowance > 0
+
+    @staticmethod
+    def getInitialToppingAllowance(pizzaName):
         toppingAllowance = 0
-        if self.pizza.name == "1 topping":
+        if pizzaName == "1 topping":
             toppingAllowance = 1
-        elif self.pizza.name == "2 toppings":
+        elif pizzaName == "2 toppings":
             toppingAllowance = 2
-        elif self.pizza.name == "3 toppings":
+        elif pizzaName == "3 toppings":
             toppingAllowance = 3
 
         return toppingAllowance
 
-    def decreaseToppingAllowance(self):
-        self.pizza.toppingAllowance -= 1
-        self.pizza.save()
-
-    def getRemainingToppingAllowanceMessage(self):
-        message = "You can add " + str(self.pizza.toppingAllowance) + " more topping(s)."
-        if self.pizza.toppingAllowance == 0:
-            message = "All toppings added!"
-        return message
 
 

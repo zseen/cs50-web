@@ -59,16 +59,15 @@ Pizza!
     <h5>Your cart:</h5>
     {% if user.is_authenticated %}
         {% for food in order %}
-            {{food.category}}, {{food.name}}, ${{food.price}}<a href="{% url 'deleteItemFromCart' food.category food.name food.price %}"> -</a><br>
-            <!--{% if food.category == "Regular pizza" and food.name != "Cheese" %}-->
-                <!--Choose {{food.toppingAllowance}} topping(s)!<br>-->
-
-
-
-
-            <!--{% endif %}-->
+            {% if food.category == "Topping" %}
+                <ul >
+                    <li style="font-size:12px">{{food.name}}</li><br>
+                </ul>
+            {% else %}
+                {{food.category}}, {{food.name}}, ${{food.price}}<a href="{% url 'deleteItemFromCart' food.category food.name food.price %}"> -</a><br>
+            {% endif %}
         {% endfor %}
-    {{toppingWarning}}<br>
+    <p style="font-size:12px">{{toppingWarning}}<br></p>
         {% if order %}
         Total: ${{total}}
         <a href="{% url 'checkoutOrder' %}">Checkout order</a>
