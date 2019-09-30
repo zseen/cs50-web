@@ -1,5 +1,5 @@
 from django.db.models import Sum
-from orders.models import Order, OrderItem, OrderCounter
+from orders.models import Order, OrderItem, OrderCounter, ToppingOrderItem
 from .orderState import OrderState
 
 
@@ -80,6 +80,20 @@ class PizzaOrderHandler:
 
     def increaseToppingAllowance(self):
         self.pizza.toppingAllowance += 1
+
+    @staticmethod
+    def allPizzasToToppingsInOrder(order):
+        regularPizzasInOrder = OrderItem.objects.filter(order=order, category="Regular pizza")
+        sicilianPizzasInOrder = OrderItem.objects.filter(order=order, category="Sicilian pizza")
+
+        pizzaToToppings = dict()
+        for pizza in regularPizzasInOrder:
+            pizzaToToppings[pizza] = ToppingOrderItem.objects.filter(orderItem=pizza)
+
+        for pizza in sicilianPizzasInOrder:
+            pizzaToToppings[pizza] = ToppingOrderItem.objects.filter(orderItem=pizza)
+
+        return pizzaToToppings
 
     @staticmethod
     def getInitialToppingAllowance(pizzaName):

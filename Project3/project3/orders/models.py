@@ -74,6 +74,15 @@ class OrderItem(models.Model):
         return f"{self.category} - {self.name} - {self.order.status} - ${self.price}"
 
 
+class ToppingOrderItem(models.Model):
+    orderItem = models.ForeignKey(OrderItem, on_delete=models.CASCADE)
+    category = models.CharField(max_length=64, null=True)
+    name = models.CharField(max_length=64)
+
+    def __str__(self):
+        return f"{self.category} - {self.name}"
+
+
 class OrderCounter(models.Model):
     counter = models.IntegerField()
 

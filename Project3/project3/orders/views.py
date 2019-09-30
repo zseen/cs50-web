@@ -4,7 +4,8 @@ from django.http import HttpResponse, HttpResponseRedirect
 from django.shortcuts import render, redirect
 from django.urls import reverse
 
-from .models import RegularPizza, SicilianPizza, Topping, Pasta, DinnerPlatter, Salad, Sub, OrderItem, Order
+from .models import RegularPizza, SicilianPizza, Topping, Pasta, DinnerPlatter, Salad, Sub, OrderItem, Order, \
+    ToppingOrderItem
 from .helpers.orderUtils import OrderState, getCurrentOrderForUser, getTotalOrderPrice, getAllOrderDetails, \
     PizzaOrderHandler
 
@@ -93,7 +94,7 @@ def add(request, category, name, price):
     elif category == "Topping":
         currentPizza = pizzaOrderHandler.getCurrentPizza()
         if currentPizza and pizzaOrderHandler.canCurrentPizzaBeTopped():
-            toppingOrderItem = OrderItem(order=order, category=category, name=name, price=price)
+            toppingOrderItem = ToppingOrderItem(orderItem=currentPizza, category=category, name=name)
             toppingOrderItem.save()
             pizzaOrderHandler.decreaseToppingAllowance()
             context["toppingInformationMessage"] = pizzaOrderHandler.getRemainingToppingAllowanceMessage()
@@ -103,10 +104,15 @@ def add(request, category, name, price):
         orderItem = OrderItem(order=order, category=category, name=name, price=price)
         orderItem.save()
 
+    pizzasToToppingsInOrder = pizzaOrderHandler.allPizzasToToppingsInOrder(order)
+    currentPizza = pizzaOrderHandler.getCurrentPizza()
+
     if request.user.is_authenticated:
         context["user"] = request.user
         context["order"] = OrderItem.objects.filter(order=order)
         context["total"] = getTotalOrderPrice(order)
+        context["pizzasToToppingsInOrder"] = pizzasToToppingsInOrder
+        context["currentPizza"] = currentPizza
 
     return render(request, "menu.html", context)
 
@@ -121,16 +127,23 @@ def deleteItemFromCart(request, category, name, price):
 
     order = getCurrentOrderForUser(request.user)
 
-    itemToRemove = OrderItem.objects.filter(order=order, category=category, name=name, price=price).last()
-    itemToRemove.delete()
-
-    if category == "Topping" and pizzaOrderHandler.getCurrentPizza():
+    if category == "Topping":
+        toppingToRemove = ToppingOrderItem.objects.filter(category=category, name=name).last()
+        toppingToRemove.delete()
         pizzaOrderHandler.increaseToppingAllowance()
         context["toppingInformationMessage"] = pizzaOrderHandler.getRemainingToppingAllowanceMessage()
+    else:
+        itemToRemove = OrderItem.objects.filter(order=order, category=category, name=name, price=price).last()
+        itemToRemove.delete()
+
+    pizzasToToppingsInOrder = pizzaOrderHandler.allPizzasToToppingsInOrder(order)
+    currentPizza = pizzaOrderHandler.getCurrentPizza()
 
     context["user"] = request.user
     context["order"] = OrderItem.objects.filter(order=order)
     context["total"] = getTotalOrderPrice(order)
+    context["pizzasToToppingsInOrder"] = pizzasToToppingsInOrder
+    context["currentPizza"] = currentPizza
 
     return render(request, "menu.html", context)
 

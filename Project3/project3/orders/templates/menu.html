@@ -77,10 +77,17 @@ Pizza!
     <h5>Your cart:</h5>
     {% if user.is_authenticated %}
         {% for food in order %}
-            {% if food.category == "Topping" %}
-                <ul >
-                    <li style="font-size:12px">{{food.name}}<a href="{% url 'deleteItemFromCart' food.category food.name food.price %}"> -</a></li><br>
-                </ul>
+            {% if food.category == "Regular pizza" or food.category == "Sicilian pizza" %}
+                {% for pizzaItem, toppings in pizzasToToppingsInOrder.items %}
+                    {% if pizzaItem == food %}
+                        {{pizzaItem.category}}, {{pizzaItem.name}}, ${{pizzaItem.price}}<a href="{% url 'deleteItemFromCart' food.category food.name food.price %}"> -</a><br>
+                    {% for topping in toppings %}
+                        <ul>
+                            <li style="font-size:12px">{{topping.name}}{% if pizzaItem == currentPizza %}<a href="{% url 'deleteItemFromCart' topping.category topping.name '0' %}"> -</a>{% endif %}</li><br>
+                        </ul>
+                    {%endfor%}
+                    {% endif %}
+                {%endfor%}
             {% else %}
                 {{food.category}}, {{food.name}}, ${{food.price}}<a href="{% url 'deleteItemFromCart' food.category food.name food.price %}"> -</a><br>
             {% endif %}
