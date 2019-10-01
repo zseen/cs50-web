@@ -82,7 +82,7 @@ class PizzaOrderHandler:
         self.pizza.toppingAllowance += 1
 
     @staticmethod
-    def allPizzasToToppingsInOrder(order):
+    def getAllPizzasToToppingsInOrder(order):
         regularPizzasInOrder = OrderItem.objects.filter(order=order, category="Regular pizza")
         sicilianPizzasInOrder = OrderItem.objects.filter(order=order, category="Sicilian pizza")
 

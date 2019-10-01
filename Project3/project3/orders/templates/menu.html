@@ -85,9 +85,9 @@ Pizza!
                         <ul>
                             <li style="font-size:12px">{{topping.name}}{% if pizzaItem == currentPizza %}<a href="{% url 'deleteItemFromCart' topping.category topping.name '0' %}"> -</a>{% endif %}</li><br>
                         </ul>
-                    {%endfor%}
+                    {% endfor %}
                     {% endif %}
-                {%endfor%}
+                {% endfor %}
             {% else %}
                 {{food.category}}, {{food.name}}, ${{food.price}}<a href="{% url 'deleteItemFromCart' food.category food.name food.price %}"> -</a><br>
             {% endif %}

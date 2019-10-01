@@ -5,7 +5,20 @@ Your order!
 {% block body %}
  <h5>Your order:</h5>
     {% for food in order %}
+        {% if food.category == "Regular pizza" or food.category == "Sicilian pizza" %}
+            {% for pizzaItem, toppings in pizzasToOrder.items %}
+                {% if pizzaItem == food %}
+                    {{pizzaItem.category}}, {{pizzaItem.name}}, ${{pizzaItem.price}}<br>
+                 {% for topping in toppings %}
+                        <ul>
+                            <li style="font-size:12px">{{topping.name}}</li><br>
+                        </ul>
+                    {% endfor %}
+                {% endif %}
+            {% endfor %}
+        {% else %}
         {{food.category}}, {{food.name}}, ${{food.price}}<br>
+        {% endif %}
     {% endfor %}
     Total: ${{total}}
     <a href="{% url 'confirmOrder' %}">Order!</a>

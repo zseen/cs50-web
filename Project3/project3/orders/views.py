@@ -71,8 +71,11 @@ def menu(request):
     if request.user.is_authenticated:
         order = getCurrentOrderForUser(request.user)
 
+        pizzasToToppingsInOrder = pizzaOrderHandler.getAllPizzasToToppingsInOrder(order)
+
         context["user"] = request.user
         context["order"] = OrderItem.objects.filter(order=order)
+        context["pizzasToToppingsInOrder"] = pizzasToToppingsInOrder
         context["total"] = getTotalOrderPrice(order)
 
     return render(request, "menu.html", context)
@@ -104,7 +107,7 @@ def add(request, category, name, price):
         orderItem = OrderItem(order=order, category=category, name=name, price=price)
         orderItem.save()
 
-    pizzasToToppingsInOrder = pizzaOrderHandler.allPizzasToToppingsInOrder(order)
+    pizzasToToppingsInOrder = pizzaOrderHandler.getAllPizzasToToppingsInOrder(order)
     currentPizza = pizzaOrderHandler.getCurrentPizza()
 
     if request.user.is_authenticated:
@@ -136,7 +139,7 @@ def deleteItemFromCart(request, category, name, price):
         itemToRemove = OrderItem.objects.filter(order=order, category=category, name=name, price=price).last()
         itemToRemove.delete()
 
-    pizzasToToppingsInOrder = pizzaOrderHandler.allPizzasToToppingsInOrder(order)
+    pizzasToToppingsInOrder = pizzaOrderHandler.getAllPizzasToToppingsInOrder(order)
     currentPizza = pizzaOrderHandler.getCurrentPizza()
 
     context["user"] = request.user
@@ -150,10 +153,13 @@ def deleteItemFromCart(request, category, name, price):
 
 def checkoutOrder(request):
     userOrder = Order.objects.get(user=request.user, status=OrderState.INITIATED.value)
+    pizzasToOrder = pizzaOrderHandler.getAllPizzasToToppingsInOrder(userOrder)
+
     context = {
         "user": request.user,
         "order": OrderItem.objects.filter(order=userOrder),
-        "total": getTotalOrderPrice(userOrder)
+        "total": getTotalOrderPrice(userOrder),
+        "pizzasToOrder": pizzasToOrder
     }
 
     return render(request, "checkout.html", context)
@@ -183,6 +189,14 @@ def completeOrderAdmin(request, orderNumber):
     order = Order.objects.get(orderNumber=int(orderNumber))
     order.status = OrderState.COMPLETED.value
     order.save()
+
+    return manageConfirmedOrdersAdmin(request)
+
+
+def markOrderDeliveredAdmin(request):
+    userOrder = Order.objects.get(user=request.user, status=OrderState.COMPLETED.value)
+    userOrder.status = OrderState.DELIVERED.value
+    userOrder.save()
 
     return manageConfirmedOrdersAdmin(request)
 
