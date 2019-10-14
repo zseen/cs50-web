@@ -6,8 +6,8 @@ from django.urls import reverse
 
 from .models import RegularPizza, SicilianPizza, Topping, Pasta, DinnerPlatter, Salad, Sub, OrderItem, Order, \
     ToppingOrderItem
-from .helpers.orderUtils import OrderState, getCurrentOrderForUser, getTotalOrderPrice, getAllOrderDetails, \
-    PizzaOrderHandler
+from .helpers.orderUtils import OrderState, getCurrentOrderForUser, getTotalOrderPrice, getAllOrderDetails
+from .helpers.PizzaOrderHandler import PizzaOrderHandler
 
 pizzaOrderHandler = PizzaOrderHandler()
 
@@ -93,14 +93,14 @@ def add(request, category, name, price):
 
     if category == "Regular pizza" or category == "Sicilian pizza":
         pizzaOrderHandler.createPizzaOrderItem(order, category, name, price)
-        context["toppingInformationMessage"] = pizzaOrderHandler.getRemainingToppingAllowanceMessage()
+        context["toppingInformationMessage"] = "You can choose " + str(pizzaOrderHandler.getRemainingToppingAllowance()) + " toppings(s)."
     elif category == "Topping":
         currentPizza = pizzaOrderHandler.getCurrentPizza()
-        if currentPizza and pizzaOrderHandler.canCurrentPizzaBeTopped():
+        if currentPizza and pizzaOrderHandler.isCurrentPizzaToppable():
             toppingOrderItem = ToppingOrderItem(orderItem=currentPizza, category=category, name=name)
             toppingOrderItem.save()
             pizzaOrderHandler.decreaseToppingAllowance()
-            context["toppingInformationMessage"] = pizzaOrderHandler.getRemainingToppingAllowanceMessage()
+            context["toppingInformationMessage"] ="You can add " + str(pizzaOrderHandler.getRemainingToppingAllowance()) + " more topping(s)."
         else:
             context["toppingInformationMessage"] = "Please order an eligible pizza to put topping on."
     else:
@@ -134,7 +134,7 @@ def deleteItemFromCart(request, category, name, price):
         toppingToRemove = ToppingOrderItem.objects.filter(category=category, name=name).last()
         toppingToRemove.delete()
         pizzaOrderHandler.increaseToppingAllowance()
-        context["toppingInformationMessage"] = pizzaOrderHandler.getRemainingToppingAllowanceMessage()
+        context["toppingInformationMessage"] = pizzaOrderHandler.getRemainingToppingAllowance()
     else:
         itemToRemove = OrderItem.objects.filter(order=order, category=category, name=name, price=price).last()
         itemToRemove.delete()
