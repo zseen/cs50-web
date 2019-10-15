@@ -5,7 +5,7 @@ from django.shortcuts import render, redirect
 from django.urls import reverse
 
 from .models import RegularPizza, SicilianPizza, Topping, Pasta, DinnerPlatter, Salad, Sub, OrderItem, Order, \
-    ToppingOrderItem
+    ToppingOrderItem, FoodOrderItem
 from .helpers.orderUtils import OrderState, getCurrentOrderForUser, getTotalOrderPrice, getAllOrderDetails
 from .helpers.PizzaOrderHandler import PizzaOrderHandler
 
@@ -74,7 +74,7 @@ def menu(request):
         pizzasToToppingsInOrder = pizzaOrderHandler.getAllPizzasToToppingsInOrder(order)
 
         context["user"] = request.user
-        context["order"] = OrderItem.objects.filter(order=order)
+        context["order"] = FoodOrderItem.objects.filter(order=order)
         context["pizzasToToppingsInOrder"] = pizzasToToppingsInOrder
         context["total"] = getTotalOrderPrice(order)
 
@@ -97,22 +97,22 @@ def add(request, category, name, price):
     elif category == "Topping":
         currentPizza = pizzaOrderHandler.getCurrentPizza()
         if currentPizza and pizzaOrderHandler.isCurrentPizzaToppable():
-            toppingOrderItem = ToppingOrderItem(orderItem=currentPizza, category=category, name=name)
+            toppingOrderItem = ToppingOrderItem(foodOrderItem=currentPizza, category=category, name=name)
             toppingOrderItem.save()
             pizzaOrderHandler.decreaseToppingAllowance()
-            context["toppingInformationMessage"] ="You can add " + str(pizzaOrderHandler.getRemainingToppingAllowance()) + " more topping(s)."
+            context["toppingInformationMessage"] = "You can add " + str(pizzaOrderHandler.getRemainingToppingAllowance()) + " more topping(s)."
         else:
             context["toppingInformationMessage"] = "Please order an eligible pizza to put topping on."
     else:
-        orderItem = OrderItem(order=order, category=category, name=name, price=price)
-        orderItem.save()
+        foodOrderItem = FoodOrderItem(order=order, category=category, name=name, price=price)
+        foodOrderItem.save()
 
     pizzasToToppingsInOrder = pizzaOrderHandler.getAllPizzasToToppingsInOrder(order)
     currentPizza = pizzaOrderHandler.getCurrentPizza()
 
     if request.user.is_authenticated:
         context["user"] = request.user
-        context["order"] = OrderItem.objects.filter(order=order)
+        context["order"] = FoodOrderItem.objects.filter(order=order)
         context["total"] = getTotalOrderPrice(order)
         context["pizzasToToppingsInOrder"] = pizzasToToppingsInOrder
         context["currentPizza"] = currentPizza
@@ -134,16 +134,16 @@ def deleteItemFromCart(request, category, name, price):
         toppingToRemove = ToppingOrderItem.objects.filter(category=category, name=name).last()
         toppingToRemove.delete()
         pizzaOrderHandler.increaseToppingAllowance()
-        context["toppingInformationMessage"] = pizzaOrderHandler.getRemainingToppingAllowance()
+        context["toppingInformationMessage"] = "You can add " + str(pizzaOrderHandler.getRemainingToppingAllowance()) + " more topping(s)."
     else:
-        itemToRemove = OrderItem.objects.filter(order=order, category=category, name=name, price=price).last()
+        itemToRemove = FoodOrderItem.objects.filter(order=order, category=category, name=name, price=price).last()
         itemToRemove.delete()
 
     pizzasToToppingsInOrder = pizzaOrderHandler.getAllPizzasToToppingsInOrder(order)
     currentPizza = pizzaOrderHandler.getCurrentPizza()
 
     context["user"] = request.user
-    context["order"] = OrderItem.objects.filter(order=order)
+    context["order"] = FoodOrderItem.objects.filter(order=order)
     context["total"] = getTotalOrderPrice(order)
     context["pizzasToToppingsInOrder"] = pizzasToToppingsInOrder
     context["currentPizza"] = currentPizza
@@ -157,7 +157,7 @@ def checkoutOrder(request):
 
     context = {
         "user": request.user,
-        "order": OrderItem.objects.filter(order=userOrder),
+        "order": FoodOrderItem.objects.filter(order=userOrder),
         "total": getTotalOrderPrice(userOrder),
         "pizzasToOrder": pizzasToOrder
     }

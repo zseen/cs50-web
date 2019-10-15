@@ -1,4 +1,4 @@
-from orders.models import Order, OrderItem, OrderCounter, ToppingOrderItem
+from orders.models import Order, OrderItem, OrderCounter, ToppingOrderItem, FoodOrderItem
 from enum import Enum
 
 
@@ -22,7 +22,7 @@ class PizzaOrderHandler:
 
     def createPizzaOrderItem(self, order, category, name, price):
         toppingAllowance = self.getInitialToppingAllowance(name)
-        self.pizza = OrderItem(order=order, category=category, name=name, price=price,
+        self.pizza = FoodOrderItem(order=order, category=category, name=name, price=price,
                                toppingAllowance=toppingAllowance)
         self.pizza.save()
 
@@ -44,9 +44,9 @@ class PizzaOrderHandler:
     def getAllPizzasToToppingsInOrder(order):
         pizzaToToppings = dict()
         for pizzaCategory in [PizzaCategory.REGULAR_PIZZA.value, PizzaCategory.SICILIAN_PIZZA.value]:
-            pizzas = OrderItem.objects.filter(order=order, category=pizzaCategory)
+            pizzas = FoodOrderItem.objects.filter(order=order, category=pizzaCategory)
             for pizza in pizzas:
-                pizzaToToppings[pizza] = ToppingOrderItem.objects.filter(orderItem=pizza)
+                pizzaToToppings[pizza] = ToppingOrderItem.objects.filter(foodOrderItem=pizza)
 
         return pizzaToToppings
 
