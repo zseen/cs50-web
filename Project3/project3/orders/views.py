@@ -9,24 +9,17 @@ from .models import RegularPizza, SicilianPizza, Topping, Pasta, DinnerPlatter, 
 from .helpers.orderUtils import OrderState, getCurrentOrderForUser, getTotalOrderPrice, getAllOrderDetails
 from .helpers.PizzaOrderHandler import PizzaOrderHandler
 
-from .helpers.WebpageRenderer import NumbersAndColours
-from .helpers.WebpageRenderer import listAllOnePriceFood
+#from .helpers.WebpageRenderer import NumbersAndColours
+from .helpers.WebpageRenderer import listAllOnePriceFood, listAllTwoPriceFood
 
 pizzaOrderHandler = PizzaOrderHandler()
 
 
 def index(request):
-    # message = {
-    #     "specPizza": "Special Pizza: tomato base, grilled broccoli, courgette, sweetcorn, tomato, cashew 'mozzarella'!"
-    # }
-
-    allOnePriceFood = listAllOnePriceFood()
-    typeOfAllOnePriceFood = str(type(allOnePriceFood))
-
     message = {
-        "categoriesAndFoods": allOnePriceFood,
-        "type": typeOfAllOnePriceFood
+        "specPizza": "Special Pizza: tomato base, grilled broccoli, courgette, sweetcorn, tomato, cashew 'mozzarella'!"
     }
+
     return render(request, "index.html", message)
 
 
@@ -72,12 +65,12 @@ def logout_view(request):
 
 
 def menu(request):
-    allFood = [RegularPizza.objects.all(), SicilianPizza.objects.all(), Pasta.objects.all()]
+    allOnePriceFood = listAllOnePriceFood()
+    allTwoPriceFood = listAllTwoPriceFood()
+
     context = {
-        "OnePriceFood": OnePriceFood.objects.all(),
-        "TwoPriceFood": TwoPriceFood.objects.all(),
-        "toppings": Topping.objects.all(),
-        "allFood": allFood
+        "onePriceFoods": allOnePriceFood,
+        "twoPriceFoods": allTwoPriceFood
     }
 
     if request.user.is_authenticated:
@@ -94,11 +87,12 @@ def menu(request):
 
 
 def add(request, category, name, price):
+    allOnePriceFood = listAllOnePriceFood()
+    allTwoPriceFood = listAllTwoPriceFood()
+
     context = {
-        "pastas": Pasta.objects.all(),
-        "regularPizzas": RegularPizza.objects.all(),
-        "sicilianPizzas": SicilianPizza.objects.all(),
-        "toppings": Topping.objects.all()
+        "onePriceFoods": allOnePriceFood,
+        "twoPriceFoods": allTwoPriceFood
     }
 
     order = Order.objects.get(user=request.user, status=OrderState.INITIATED.value)
