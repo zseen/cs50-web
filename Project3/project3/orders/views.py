@@ -5,16 +5,27 @@ from django.shortcuts import render, redirect
 from django.urls import reverse
 
 from .models import RegularPizza, SicilianPizza, Topping, Pasta, DinnerPlatter, Salad, Sub, OrderItem, Order, \
-    ToppingOrderItem, FoodOrderItem
+    ToppingOrderItem, FoodOrderItem, OnePriceFood, TwoPriceFood
 from .helpers.orderUtils import OrderState, getCurrentOrderForUser, getTotalOrderPrice, getAllOrderDetails
 from .helpers.PizzaOrderHandler import PizzaOrderHandler
+
+from .helpers.WebpageRenderer import NumbersAndColours
+from .helpers.WebpageRenderer import listAllOnePriceFood
 
 pizzaOrderHandler = PizzaOrderHandler()
 
 
 def index(request):
+    # message = {
+    #     "specPizza": "Special Pizza: tomato base, grilled broccoli, courgette, sweetcorn, tomato, cashew 'mozzarella'!"
+    # }
+
+    allOnePriceFood = listAllOnePriceFood()
+    typeOfAllOnePriceFood = str(type(allOnePriceFood))
+
     message = {
-        "specPizza": "Special Pizza: tomato base, grilled broccoli, courgette, sweetcorn, tomato, cashew 'mozzarella'!"
+        "categoriesAndFoods": allOnePriceFood,
+        "type": typeOfAllOnePriceFood
     }
     return render(request, "index.html", message)
 
@@ -61,11 +72,12 @@ def logout_view(request):
 
 
 def menu(request):
+    allFood = [RegularPizza.objects.all(), SicilianPizza.objects.all(), Pasta.objects.all()]
     context = {
-        "pastas": Pasta.objects.all(),
-        "regularPizzas": RegularPizza.objects.all(),
-        "sicilianPizzas": SicilianPizza.objects.all(),
-        "toppings": Topping.objects.all()
+        "OnePriceFood": OnePriceFood.objects.all(),
+        "TwoPriceFood": TwoPriceFood.objects.all(),
+        "toppings": Topping.objects.all(),
+        "allFood": allFood
     }
 
     if request.user.is_authenticated:

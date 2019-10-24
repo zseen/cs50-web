@@ -5,72 +5,15 @@ Pizza!
 {% block body %}
 <h4>Menu:</h4>
 <br>
-<table class="menu">
-    <thead class='thead-light'>
-        <tr >
-            <th>Pasta</th>
-            <th>Price</th>
-        </tr>
-    </thead>
-    <tbody>
-        {% for pasta in pastas %}
-        <tr>
-            <td>{{pasta.name}}</td>
-            <td>${{pasta.price}}{% if user.is_authenticated %}<a href="{% url 'add' pasta.category pasta.name pasta.price %}">+</a>{% endif %}</td>
-        </tr>
-        {% endfor %}
-    </tbody>
-</table>
-<table class="menu">
-    <thead class='thead-light'>
-        <tr>
-            <th>Regular Pizza</th>
-            <th>Small</th>
-            <th>Large</th>
-        </tr>
-    </thead>
-    <tbody>
-        {% for pizza in regularPizzas %}
-        <tr>
-            <td>{{pizza.name}}</td>
-            <td>${{pizza.smallPrice}}{% if user.is_authenticated %}<a href="{% url 'add' pizza.category pizza.name pizza.smallPrice %}">+</a>{% endif %}</td>
-            <td>${{pizza.largePrice}}{% if user.is_authenticated %}<a href="{% url 'add' pizza.category pizza.name pizza.largePrice %}">+</a>{% endif %}</td>
-        </tr>
-        {% endfor %}
-    </tbody>
-</table>
-<table class="menu">
-    <thead class='thead-light'>
-        <tr>
-            <th>Sicilian Pizza</th>
-            <th>Small</th>
-            <th>Large</th>
-        </tr>
-    </thead>
-    <tbody>
-        {% for pizza in sicilianPizzas %}
-        <tr>
-            <td>{{pizza.name}}</td>
-            <td>${{pizza.smallPrice}}{% if user.is_authenticated %}<a href="{% url 'add' pizza.category pizza.name pizza.smallPrice %}">+</a>{% endif %}</td>
-            <td>${{pizza.largePrice}}{% if user.is_authenticated %}<a href="{% url 'add' pizza.category pizza.name pizza.largePrice %}">+</a>{% endif %}</td>
-        </tr>
-        {% endfor %}
-    </tbody>
-</table>
+
 
 <table class="menu">
-    <thead class='thead-light'>
-        <tr >
-            <th>Toppings</th>
-        </tr>
-    </thead>
-    <tbody>
-        {% for topping in toppings %}
-        <tr>
-            <td>{{topping.name}}{% if user.is_authenticated %}<a href="{% url 'add' topping.category topping.name '0' %}">+</a>{% endif %}</td>
-        </tr>
-        {% endfor %}
-    </tbody>
+    {{allFood}}<br>
+    {{OnePriceFood}}<br>
+    {% for food in OnePriceFood %}
+        {{food}}<br>
+    {% endfor %}
+    {{TwoPriceFood}}
 </table>
 <br>
 <div class="menu">

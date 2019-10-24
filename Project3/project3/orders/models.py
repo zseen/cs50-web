@@ -65,7 +65,7 @@ class Order(models.Model):
 
 class OrderItem(models.Model):
     order = models.ForeignKey(Order, on_delete=models.CASCADE, null=True, blank=True)
-    category = models.CharField(max_length=64, null=True)
+    category = models.CharField(max_length=64, null=True, blank=True)
     name = models.CharField(max_length=64)
     price = models.DecimalField(max_digits=4, decimal_places=2, null=True, blank=True)
 

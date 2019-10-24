@@ -5,10 +5,39 @@
 {% endblock %}
 
 {% block body %}
-    <div id="message">
-        {{specPizza}}
-        {{message}}
-    </div>
+
+<!--{{categoriesAndFoods}}-->
+
+
+{% for categoryAndFood in categoriesAndFoods %}
+    {{categoryAndFood.colours}}<br>
+{% endfor %}
+
+        <!--{% for categoryAndFood in categoriesAndFoods %}-->
+            <!--{{categoryAndFood.name}}-->
+            <!--{% for x in categoryAndFood %}-->
+                <!--{{x}}-->
+
+
+
+
+
+            <!--<table>-->
+                <!--<thead>-->
+                    <!--<tr>-->
+                        <!--<th>{{x.categoryName}}</th>-->
+                    <!--<tr>-->
+                <!--</thead>-->
+                <!--<tbody>-->
+                    <!--{% for food in categoryAndFood.allFoodInCategory %}-->
+                        <!--<tr>-->
+                            <!--<td>{{food.name}}, {{food.price}}</td>-->
+                        <!--</tr>-->
+                    <!--{% endfor %}-->
+                <!--</tbody>-->
+            <!--</table>-->
+        <!--{% endfor %}-->
+        <!--{% endfor %}-->
 {% endblock %}
 
 
