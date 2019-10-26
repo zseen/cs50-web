@@ -11,7 +11,7 @@
         {% for orderItem in orderDetail.getOrderItemsInOrder %}
             {% if orderItem.category == "Topping" %}
                 <ul>
-                    <li style="font-size:12px">{{orderItem.name}}</li>
+                    <li>{{orderItem.name}}</li>
                 </ul>
             {% else %}
                 <ul>

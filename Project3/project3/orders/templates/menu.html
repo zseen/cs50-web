@@ -13,36 +13,36 @@ Pizza!
             <th>{{categoryAndFood.foodCategory.category}}</th>
             <th>Price</th>
         </tr>
-    </thead>
-    <tbody>
-        {% for food in categoryAndFood.allFoodInCategory %}
-            <tr>
-                <td>{{food.name}}</td>
-                <td>${{food.price}}{% if user.is_authenticated %}<a href="{% url 'add' food.category food.name food.price %}">+</a>{% endif %}</td>
-            </tr>
-        {% endfor %}
-    </tbody>
+        </thead>
+        <tbody>
+            {% for food in categoryAndFood.allFoodInCategory %}
+                <tr>
+                    <td>{{food.name}}</td>
+                    <td>${{food.price}}{% if user.is_authenticated %}<a href="{% url 'add' food.category food.name food.price %}">+</a>{% endif %}</td>
+                </tr>
+            {% endfor %}
+        </tbody>
     </table>
 {% endfor %}
 
 {% for categoryAndFood in twoPriceFoods %}
     <table class="menu">
         <thead class='thead-light'>
-        <tr >
+        <tr>
             <th>{{categoryAndFood.foodCategory.category}}</th>
             <th>Small</th>
             <th>Large</th>
         </tr>
-    </thead>
-    <tbody>
-        {% for food in categoryAndFood.allFoodInCategory %}
-            <tr>
-                <td>{{food.name}}</td>
-                <td>${{food.smallPrice}}{% if user.is_authenticated %}<a href="{% url 'add' food.category food.name food.smallPrice %}">+</a>{% endif %}</td>
-                <td>${{food.largePrice}}{% if user.is_authenticated %}<a href="{% url 'add' food.category food.name food.largePrice %}">+</a>{% endif %}</td>
-            </tr>
-        {% endfor %}
-    </tbody>
+        </thead>
+        <tbody>
+            {% for food in categoryAndFood.allFoodInCategory %}
+                <tr>
+                    <td>{{food.name}}</td>
+                    <td>${{food.smallPrice}}{% if user.is_authenticated %}<a href="{% url 'add' food.category food.name food.smallPrice %}">+</a>{% endif %}</td>
+                    <td>${{food.largePrice}}{% if user.is_authenticated %}<a href="{% url 'add' food.category food.name food.largePrice %}">+</a>{% endif %}</td>
+                </tr>
+            {% endfor %}
+        </tbody>
     </table>
 {% endfor %}
 
