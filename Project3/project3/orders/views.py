@@ -4,15 +4,16 @@ from django.http import HttpResponse, HttpResponseRedirect
 from django.shortcuts import render, redirect
 from django.urls import reverse
 
-from .models import RegularPizza, SicilianPizza, Topping, Pasta, DinnerPlatter, Salad, Sub, OrderItem, Order, \
-    ToppingOrderItem, FoodOrderItem, OnePriceFood, TwoPriceFood
-from .helpers.orderUtils import OrderState, getCurrentOrderForUser, getTotalOrderPrice, getAllOrderDetails
+from .models import Topping, Order, ToppingOrderItem, FoodOrderItem
+from .helpers.orderUtils import OrderState, getCurrentOrderForUser, getTotalOrderPrice, getAllOrderDetails, \
+    getAllFoodContextDict, getUserDependentContextDict
 from .helpers.PizzaOrderHandler import PizzaOrderHandler
-
-#from .helpers.WebpageRenderer import NumbersAndColours
-from .helpers.WebpageRenderer import listAllOnePriceFood, listAllTwoPriceFood
+from .helpers.WebpageRenderer import getAllOnePriceFoodCategoriesWithFood, getAllTwoPriceFoodCategoriesWithFood
 
 pizzaOrderHandler = PizzaOrderHandler()
+
+allOnePriceFood = getAllOnePriceFoodCategoriesWithFood()
+allTwoPriceFood = getAllTwoPriceFoodCategoriesWithFood()
 
 
 def index(request):
@@ -65,74 +66,45 @@ def logout_view(request):
 
 
 def menu(request):
-    allOnePriceFood = listAllOnePriceFood()
-    allTwoPriceFood = listAllTwoPriceFood()
-
-    context = {
-        "onePriceFoods": allOnePriceFood,
-        "twoPriceFoods": allTwoPriceFood
-    }
+    context = getAllFoodContextDict()
 
     if request.user.is_authenticated:
         order = getCurrentOrderForUser(request.user)
 
-        pizzasToToppingsInOrder = pizzaOrderHandler.getAllPizzasToToppingsInOrder(order)
-
-        context["user"] = request.user
-        context["order"] = FoodOrderItem.objects.filter(order=order)
-        context["pizzasToToppingsInOrder"] = pizzasToToppingsInOrder
-        context["total"] = getTotalOrderPrice(order)
+        context.update(getUserDependentContextDict(order, pizzaOrderHandler))
 
     return render(request, "menu.html", context)
 
 
 def add(request, category, name, price):
-    allOnePriceFood = listAllOnePriceFood()
-    allTwoPriceFood = listAllTwoPriceFood()
-
-    context = {
-        "onePriceFoods": allOnePriceFood,
-        "twoPriceFoods": allTwoPriceFood
-    }
+    context = getAllFoodContextDict()
 
     order = Order.objects.get(user=request.user, status=OrderState.INITIATED.value)
 
     if category == "Regular pizza" or category == "Sicilian pizza":
         pizzaOrderHandler.createPizzaOrderItem(order, category, name, price)
-        context["toppingInformationMessage"] = "You can choose " + str(pizzaOrderHandler.getRemainingToppingAllowance()) + " toppings(s)."
+        context["toppingInformationMessage"] = "You can choose " + str(
+            pizzaOrderHandler.getRemainingToppingAllowance()) + " toppings(s)."
     elif category == "Topping":
         currentPizza = pizzaOrderHandler.getCurrentPizza()
         if currentPizza and pizzaOrderHandler.isCurrentPizzaToppable():
-            toppingOrderItem = ToppingOrderItem(foodOrderItem=currentPizza, category=category, name=name)
-            toppingOrderItem.save()
-            pizzaOrderHandler.decreaseToppingAllowance()
-            context["toppingInformationMessage"] = "You can add " + str(pizzaOrderHandler.getRemainingToppingAllowance()) + " more topping(s)."
+            pizzaOrderHandler.addTopping(category, name)
+            context["toppingInformationMessage"] = "You can add " + str(
+                pizzaOrderHandler.getRemainingToppingAllowance()) + " more topping(s)."
         else:
             context["toppingInformationMessage"] = "Please order an eligible pizza to put topping on."
     else:
         foodOrderItem = FoodOrderItem(order=order, category=category, name=name, price=price)
         foodOrderItem.save()
 
-    pizzasToToppingsInOrder = pizzaOrderHandler.getAllPizzasToToppingsInOrder(order)
-    currentPizza = pizzaOrderHandler.getCurrentPizza()
-
     if request.user.is_authenticated:
-        context["user"] = request.user
-        context["order"] = FoodOrderItem.objects.filter(order=order)
-        context["total"] = getTotalOrderPrice(order)
-        context["pizzasToToppingsInOrder"] = pizzasToToppingsInOrder
-        context["currentPizza"] = currentPizza
+        context.update(getUserDependentContextDict(order, pizzaOrderHandler))
 
     return render(request, "menu.html", context)
 
 
 def deleteItemFromCart(request, category, name, price):
-    context = {
-        "pastas": Pasta.objects.all(),
-        "regularPizzas": RegularPizza.objects.all(),
-        "sicilianPizzas": SicilianPizza.objects.all(),
-        "toppings": Topping.objects.all()
-    }
+    context = getAllFoodContextDict()
 
     order = getCurrentOrderForUser(request.user)
 
@@ -140,19 +112,13 @@ def deleteItemFromCart(request, category, name, price):
         toppingToRemove = ToppingOrderItem.objects.filter(category=category, name=name).last()
         toppingToRemove.delete()
         pizzaOrderHandler.increaseToppingAllowance()
-        context["toppingInformationMessage"] = "You can add " + str(pizzaOrderHandler.getRemainingToppingAllowance()) + " more topping(s)."
+        context["toppingInformationMessage"] = "You can add " + str(
+            pizzaOrderHandler.getRemainingToppingAllowance()) + " more topping(s)."
     else:
         itemToRemove = FoodOrderItem.objects.filter(order=order, category=category, name=name, price=price).last()
         itemToRemove.delete()
 
-    pizzasToToppingsInOrder = pizzaOrderHandler.getAllPizzasToToppingsInOrder(order)
-    currentPizza = pizzaOrderHandler.getCurrentPizza()
-
-    context["user"] = request.user
-    context["order"] = FoodOrderItem.objects.filter(order=order)
-    context["total"] = getTotalOrderPrice(order)
-    context["pizzasToToppingsInOrder"] = pizzasToToppingsInOrder
-    context["currentPizza"] = currentPizza
+    context.update(getUserDependentContextDict(order, pizzaOrderHandler))
 
     return render(request, "menu.html", context)
 

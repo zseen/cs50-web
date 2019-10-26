@@ -1,45 +1,29 @@
 from orders.models import Pasta, RegularPizza, SicilianPizza, Sub, DinnerPlatter, Salad, OnePriceFood
+from enum import Enum
 
 
-class OnePriceFoodRenderer:
-    def __init__(self, foodCateg):
-        self.foodCategory = foodCateg
-        self.allFoodInCategory = []
-
-    def getFoodInCategory(self):
-        for food in self.foodCategory.objects.all():
-            self.allFoodInCategory.append(food)
-
-    def __iter__(self):
-        return iter(self.allFoodInCategory)
+class FoodPriceCategory(Enum):
+    ONE_PRICE_FOODS = [Pasta, Salad]
+    TWO_PRICE_FOODS = [RegularPizza, SicilianPizza, Sub, DinnerPlatter]
 
 
-class TwoPriceFoodRenderer:
-    def __init__(self, foodCateg):
-        self.foodCategory = foodCateg
-        self.allFoodInCategory = []
-
-    def getFoodInCategory(self):
-        for food in self.foodCategory.objects.all():
-            self.allFoodInCategory.append(food)
-
-    def __iter__(self):
-        return iter(self.allFoodInCategory)
+class FoodCategoryRenderer:
+    def __init__(self, foodCategory):
+        self.foodCategory = foodCategory
+        self.allFoodInCategory = list(self.foodCategory.objects.all())
 
 
-def listAllOnePriceFood():
-    allOnePriceFood = []
-    for foodCategory in [Pasta, Salad]:
-        onePriceFoods = OnePriceFoodRenderer(foodCategory)
-        onePriceFoods.getFoodInCategory()
-        allOnePriceFood.append(onePriceFoods)
-    return allOnePriceFood
+def getCategoryAndFoodItemsList(foodPriceCategory):
+    allFoodCategoriesWithFoodList = []
+    for foodCategory in foodPriceCategory:
+        foodCategoryRenderer = FoodCategoryRenderer(foodCategory)
+        allFoodCategoriesWithFoodList.append(foodCategoryRenderer)
+    return allFoodCategoriesWithFoodList
 
-def listAllTwoPriceFood():
-    allTwoPriceFood = []
-    for foodCategory in [RegularPizza, SicilianPizza, Sub, DinnerPlatter]:
-        twoPriceFoods = TwoPriceFoodRenderer(foodCategory)
-        twoPriceFoods.getFoodInCategory()
-        allTwoPriceFood.append(twoPriceFoods)
-    return allTwoPriceFood
 
+def getAllOnePriceFoodCategoriesWithFood():
+    return getCategoryAndFoodItemsList(FoodPriceCategory.ONE_PRICE_FOODS.value)
+
+
+def getAllTwoPriceFoodCategoriesWithFood():
+    return getCategoryAndFoodItemsList(FoodPriceCategory.TWO_PRICE_FOODS.value)

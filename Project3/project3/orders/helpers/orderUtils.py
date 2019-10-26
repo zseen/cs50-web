@@ -1,6 +1,7 @@
 from django.db.models import Sum
-from orders.models import Order, OrderItem, OrderCounter, ToppingOrderItem
+from orders.models import Order, OrderItem, OrderCounter, ToppingOrderItem, Topping, FoodOrderItem
 from .orderState import OrderState
+from .WebpageRenderer import getAllOnePriceFoodCategoriesWithFood, getAllTwoPriceFoodCategoriesWithFood
 
 
 def createNewOrderForUser(user):
@@ -49,3 +50,23 @@ def getAllOrderDetails(orders):
     return allOrderDetailsList
 
 
+def getAllFoodContextDict():
+    allOnePriceFood = getAllOnePriceFoodCategoriesWithFood()
+    allTwoPriceFood = getAllTwoPriceFoodCategoriesWithFood()
+
+    context = {
+        "onePriceFoods": allOnePriceFood,
+        "twoPriceFoods": allTwoPriceFood,
+        "toppings": Topping.objects.all()
+    }
+    return context
+
+
+def getUserDependentContextDict(order, pizzaOrderHandler):
+    context = {
+        "order": FoodOrderItem.objects.filter(order=order),
+        "total": getTotalOrderPrice(order),
+        "pizzasToToppingsInOrder": pizzaOrderHandler.getAllPizzasToToppingsInOrder(order),
+        "currentPizza": pizzaOrderHandler.getCurrentPizza()
+    }
+    return context
