@@ -98,7 +98,9 @@ def add(request, category, name, price):
         foodOrderItem.save()
 
     if request.user.is_authenticated:
-        context.update(getUserDependentContextDict(order, pizzaOrderHandler))
+        pizzasToToppingsInOrder = pizzaOrderHandler.getAllPizzasToToppingsInOrder(order)
+        currentPizza = pizzaOrderHandler.getCurrentPizza()
+        context.update(getUserDependentContextDict(order, currentPizza, pizzasToToppingsInOrder))
 
     return render(request, "menu.html", context)
 
@@ -109,9 +111,7 @@ def deleteItemFromCart(request, category, name, price):
     order = getCurrentOrderForUser(request.user)
 
     if category == "Topping":
-        toppingToRemove = ToppingOrderItem.objects.filter(category=category, name=name).last()
-        toppingToRemove.delete()
-        pizzaOrderHandler.increaseToppingAllowance()
+        pizzaOrderHandler.removeTopping(category, name)
         context["toppingInformationMessage"] = "You can add " + str(
             pizzaOrderHandler.getRemainingToppingAllowance()) + " more topping(s)."
     else:

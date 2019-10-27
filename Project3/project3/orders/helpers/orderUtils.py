@@ -5,14 +5,21 @@ from .WebpageRenderer import getAllOnePriceFoodCategoriesWithFood, getAllTwoPric
 
 
 def createNewOrderForUser(user):
+    orderCounter = getOrderCounter()
+    newUserOrder = Order(user=user, orderNumber=orderCounter.counter)
+    newUserOrder.save()
+    return newUserOrder
+
+
+def getOrderCounter():
     orderCounter = OrderCounter.objects.first()
     if not orderCounter:
         orderCounter = OrderCounter(counter=1)
-    newUserOrder = Order(user=user, orderNumber=orderCounter.counter)
-    newUserOrder.save()
+
+    currentOrderCounter = orderCounter
     orderCounter.counter += 1
     orderCounter.save()
-    return newUserOrder
+    return currentOrderCounter
 
 
 def getCurrentOrderForUser(user):
@@ -62,11 +69,11 @@ def getAllFoodContextDict():
     return context
 
 
-def getUserDependentContextDict(order, pizzaOrderHandler):
+def getUserDependentContextDict(userOrder, currentPizza, pizzasToToppingsInOrder):
     context = {
-        "order": FoodOrderItem.objects.filter(order=order),
-        "total": getTotalOrderPrice(order),
-        "pizzasToToppingsInOrder": pizzaOrderHandler.getAllPizzasToToppingsInOrder(order),
-        "currentPizza": pizzaOrderHandler.getCurrentPizza()
+        "order": FoodOrderItem.objects.filter(order=userOrder),
+        "total": getTotalOrderPrice(userOrder),
+        "pizzasToToppingsInOrder":pizzasToToppingsInOrder,
+        "currentPizza": currentPizza
     }
     return context

@@ -26,18 +26,18 @@ class PizzaOrderHandler:
                                    toppingAllowance=toppingAllowance)
         self.pizza.save()
 
-    def createToppingOrderItem(self, category, name):
+    def _createToppingOrderItem(self, category, name):
         toppingOrderItem = ToppingOrderItem(foodOrderItem=self.pizza, category=category, name=name)
         toppingOrderItem.save()
 
-    def decreaseToppingAllowance(self):
+    def _decreaseToppingAllowance(self):
         if self.pizza.toppingAllowance > 0:
             self.pizza.toppingAllowance -= 1
             self.pizza.save()
 
     def addTopping(self, category, name):
-        self.createToppingOrderItem(category, name)
-        self.decreaseToppingAllowance()
+        self._createToppingOrderItem(category, name)
+        self._decreaseToppingAllowance()
 
     def getRemainingToppingAllowance(self):
         return self.pizza.toppingAllowance
@@ -45,8 +45,16 @@ class PizzaOrderHandler:
     def isCurrentPizzaToppable(self):
         return self.pizza.toppingAllowance > 0
 
-    def increaseToppingAllowance(self):
+    def _deleteToppingOrderItem(self, category, name):
+        toppingToRemove = ToppingOrderItem.objects.filter(category=category, name=name).last()
+        toppingToRemove.delete()
+
+    def _increaseToppingAllowance(self):
         self.pizza.toppingAllowance += 1
+
+    def removeTopping(self, category, name):
+        self._deleteToppingOrderItem(category, name)
+        self._increaseToppingAllowance()
 
     @staticmethod
     def getAllPizzasToToppingsInOrder(order):
