@@ -114,9 +114,9 @@ def deleteItemFromCart(request, category, name, price=""):
         itemToRemove = FoodOrderItem.objects.filter(order=order, category=category, name=name, price=price).last()
         itemToRemove.delete()
 
-    currentPizza= pizzaOrderHandler.getCurrentPizza()
+    currentPizza = pizzaOrderHandler.getCurrentPizza()
     pizzasToToppingsInOrder = pizzaOrderHandler.getAllPizzasToToppingsInOrder(order)
-    context.update(getUserDependentContextDict(order,currentPizza, pizzasToToppingsInOrder))
+    context.update(getUserDependentContextDict(order, currentPizza, pizzasToToppingsInOrder))
 
     return render(request, "menuLoggedIn.html", context)
 

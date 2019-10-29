@@ -44,7 +44,6 @@ class PizzaOrderHandler:
             self.pizza.toppingAllowance -= 1
             self.pizza.save()
 
-
     def isCurrentPizzaToppable(self):
         return self.pizza.toppingAllowance > 0
 
@@ -69,7 +68,6 @@ class PizzaOrderHandler:
 
     def _getRemainingToppingAllowance(self):
         return self.pizza.toppingAllowance
-
 
     @staticmethod
     def getAllPizzasToToppingsInOrder(order):

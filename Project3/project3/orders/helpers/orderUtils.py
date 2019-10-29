@@ -73,7 +73,7 @@ def getUserDependentContextDict(userOrder, currentPizza, pizzasToToppingsInOrder
     context = {
         "order": FoodOrderItem.objects.filter(order=userOrder),
         "total": getTotalOrderPrice(userOrder),
-        "pizzasToToppingsInOrder":pizzasToToppingsInOrder,
+        "pizzasToToppingsInOrder": pizzasToToppingsInOrder,
         "currentPizza": currentPizza
     }
     return context

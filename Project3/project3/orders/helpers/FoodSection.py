@@ -1,6 +1,5 @@
 from orders.models import Pasta, RegularPizza, SicilianPizza, Sub, DinnerPlatter, Salad, OnePriceFood
 
-
 ONE_PRICE_FOODS = [Pasta, Salad]
 TWO_PRICE_FOODS = [RegularPizza, SicilianPizza, Sub, DinnerPlatter]
 
