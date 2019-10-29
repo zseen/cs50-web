@@ -1,7 +1,7 @@
 from django.db.models import Sum
 from orders.models import Order, OrderItem, OrderCounter, ToppingOrderItem, Topping, FoodOrderItem
-from .orderState import OrderState
-from .WebpageRenderer import getAllOnePriceFoodCategoriesWithFood, getAllTwoPriceFoodCategoriesWithFood
+from .OrderState import OrderState
+from .FoodSection import getAllOnePriceFoodCategoriesWithFood, getAllTwoPriceFoodCategoriesWithFood
 
 
 def createNewOrderForUser(user):

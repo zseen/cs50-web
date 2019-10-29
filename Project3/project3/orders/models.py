@@ -1,7 +1,7 @@
 from django.db import models
 from django.contrib.auth.models import User
 
-from .helpers.orderState import OrderState
+from .helpers.OrderState import OrderState
 
 
 class Food(models.Model):
@@ -68,7 +68,6 @@ class OrderItem(models.Model):
     category = models.CharField(max_length=64, null=True, blank=True)
     name = models.CharField(max_length=64)
     price = models.DecimalField(max_digits=4, decimal_places=2, null=True, blank=True)
-    
 
     def __str__(self):
         return f"{self.category} - {self.name} - {self.order.status} - ${self.price}"
@@ -76,6 +75,7 @@ class OrderItem(models.Model):
 
 class FoodOrderItem(OrderItem):
     toppingAllowance = models.IntegerField(null=True, blank=True)
+    isPizza = models.BooleanField(default=False)
 
     def __str__(self):
         return f"{self.category} - {self.name} - {self.price}"

@@ -2,10 +2,10 @@
 {% block title %}
 Pizza!
 {% endblock %}
+
 {% block body %}
 <h4>Menu:</h4>
 <br>
-
 {% for categoryAndFood in onePriceFoods %}
     <table class="menu">
         <thead class='thead-light'>
@@ -18,7 +18,7 @@ Pizza!
             {% for food in categoryAndFood.allFoodInCategory %}
                 <tr>
                     <td>{{food.name}}</td>
-                    <td>${{food.price}}{% if user.is_authenticated %}<a href="{% url 'add' food.category food.name food.price %}">+</a>{% endif %}</td>
+                    <td>${{food.price}}</td>
                 </tr>
             {% endfor %}
         </tbody>
@@ -38,8 +38,8 @@ Pizza!
             {% for food in categoryAndFood.allFoodInCategory %}
                 <tr>
                     <td>{{food.name}}</td>
-                    <td>${{food.smallPrice}}{% if user.is_authenticated %}<a href="{% url 'add' food.category food.name food.smallPrice %}">+</a>{% endif %}</td>
-                    <td>${{food.largePrice}}{% if user.is_authenticated %}<a href="{% url 'add' food.category food.name food.largePrice %}">+</a>{% endif %}</td>
+                    <td>${{food.smallPrice}}</td>
+                    <td>${{food.largePrice}}</td>
                 </tr>
             {% endfor %}
         </tbody>
@@ -55,7 +55,7 @@ Pizza!
     <tbody>
         {% for topping in toppings %}
             <tr>
-                <td>{{topping.name}}{% if user.is_authenticated %}<a href="{% url 'add' topping.category topping.name '0' %}">+</a>{% endif %}</td>
+                <td>{{topping.name}}</td>
             </tr>
         {% endfor %}
     </tbody>
@@ -64,30 +64,6 @@ Pizza!
 <br>
 <div class="menu">
     <h5>Your cart:</h5>
-    {% if user.is_authenticated %}
-        {% for food in order %}
-            {% if food.category == "Regular pizza" or food.category == "Sicilian pizza" %}
-                {% for pizzaItem, toppings in pizzasToToppingsInOrder.items %}
-                    {% if pizzaItem == food %}
-                        {{pizzaItem.category}}, {{pizzaItem.name}}, ${{pizzaItem.price}}<a href="{% url 'deleteItemFromCart' food.category food.name food.price %}"> -</a><br>
-                    {% for topping in toppings %}
-                        <ul>
-                            <li>{{topping.name}}{% if pizzaItem == currentPizza %}<a href="{% url 'deleteItemFromCart' topping.category topping.name '0' %}"> -</a>{% endif %}</li><br>
-                        </ul>
-                    {% endfor %}
-                    {% endif %}
-                {% endfor %}
-            {% else %}
-                {{food.category}}, {{food.name}}, ${{food.price}}<a href="{% url 'deleteItemFromCart' food.category food.name food.price %}"> -</a><br>
-            {% endif %}
-        {% endfor %}
-        <p>{{toppingInformationMessage}}<br></p>
-        {% if order %}
-            Total: ${{total}}
-            <a href="{% url 'checkoutOrder' %}">Checkout order</a>
-        {% endif %}
-    {% else %}
         Please <a href="/login">log in</a> to order. No account yet? Register <a href="/register">here!</a>
-    {%endif%}
 </div>
 {% endblock %}

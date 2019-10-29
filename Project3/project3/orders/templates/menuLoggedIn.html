@@ -1,0 +1,94 @@
+{% extends "base.html" %}
+{% block title %}
+Pizza!
+{% endblock %}
+{% block body %}
+<h4>Menu:</h4>
+<br>
+
+{% for categoryAndFood in onePriceFoods %}
+    <table class="menu">
+        <thead class='thead-light'>
+        <tr >
+            <th>{{categoryAndFood.foodCategory.category}}</th>
+            <th>Price</th>
+        </tr>
+        </thead>
+        <tbody>
+            {% for food in categoryAndFood.allFoodInCategory %}
+                <tr>
+                    <td>{{food.name}}</td>
+                    <td>${{food.price}}<a href="{% url 'add' food.category food.name food.price %}">+</a></td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+{% endfor %}
+
+{% for categoryAndFood in twoPriceFoods %}
+    <table class="menu">
+        <thead class='thead-light'>
+        <tr>
+            <th>{{categoryAndFood.foodCategory.category}}</th>
+            <th>Small</th>
+            <th>Large</th>
+        </tr>
+        </thead>
+        <tbody>
+            {% for food in categoryAndFood.allFoodInCategory %}
+                <tr>
+                    <td>{{food.name}}</td>
+                    <td>${{food.smallPrice}}<a href="{% url 'add' food.category food.name food.smallPrice %}">+</a></td>
+                    <td>${{food.largePrice}}<a href="{% url 'add' food.category food.name food.largePrice %}">+</a></td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+{% endfor %}
+
+<table class="menu">
+    <thead class='thead-light'>
+        <tr >
+            <th>Toppings</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for topping in toppings %}
+            <tr>
+                <td>{{topping.name}}<a href="{% url 'add' topping.category topping.name %}">+</a></td>
+            </tr>
+        {% endfor %}
+    </tbody>
+</table>
+
+<br>
+<div class="menu">
+    <h5>Your cart:</h5>
+        {% for food in order %}
+            {% if food.isPizza %}
+                {% for pizzaItem, toppings in pizzasToToppingsInOrder.items %}
+                    {% if pizzaItem == food %}
+                        {{pizzaItem.category}}, {{pizzaItem.name}}, ${{pizzaItem.price}}
+                        <a href="{% url 'deleteItemFromCart' food.category food.name food.price %}"> -</a><br>
+                    {% for topping in toppings %}
+                        <ul>
+                            <li>{{topping.name}}
+                                {% if pizzaItem == currentPizza %}
+                                    <a href="{% url 'deleteItemFromCart' topping.category topping.name %}"> -</a>
+                                {% endif %}
+                            </li><br>
+                        </ul>
+                    {% endfor %}
+                    {% endif %}
+                {% endfor %}
+            {% else %}
+                {{food.category}}, {{food.name}}, ${{food.price}}<a href="{% url 'deleteItemFromCart' food.category food.name food.price %}"> -</a><br>
+            {% endif %}
+        {% endfor %}
+        <p>{{toppingInformationMessage}}<br></p>
+        {% if order %}
+            Total: ${{total}}
+            <a href="{% url 'checkoutOrder' %}">Checkout order</a>
+        {% endif %}
+</div>
+{% endblock %}

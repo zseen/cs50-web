@@ -5,13 +5,13 @@
 {% block body %}
 <h5>Your order:</h5>
     {% for food in order %}
-        {% if food.category == "Regular pizza" or food.category == "Sicilian pizza" %}
+        {% if food.isPizza %}
             {% for pizzaItem, toppings in pizzasToOrder.items %}
                 {% if pizzaItem == food %}
                     {{pizzaItem.category}}, {{pizzaItem.name}}, ${{pizzaItem.price}}<br>
                 {% for topping in toppings %}
                     <ul>
-                        <li style="font-size:12px">{{topping.name}}</li><br>
+                        <li>{{topping.name}}</li><br>
                     </ul>
                 {% endfor %}
                 {% endif %}
