@@ -1,9 +1,7 @@
 from orders.models import Order, OrderItem, OrderCounter, ToppingOrderItem, FoodOrderItem
 from enum import Enum
 
-
 TOPPING = "Topping"
-
 
 
 class PizzaCategory(Enum):
@@ -62,8 +60,6 @@ class PizzaOrderHandler:
     def _increaseToppingAllowance(self):
         self.pizza.toppingAllowance += 1
 
-
-
     @staticmethod
     def getAllPizzasToToppingsInOrder(order):
         pizzaToToppings = dict()
@@ -87,7 +83,6 @@ class PizzaOrderHandler:
         return toppingAllowance
 
 
-
 class RemainingToppingAllowanceMessageGenerator:
     def __init__(self, pizzaOrderHandler):
         self.message = None
@@ -102,7 +97,7 @@ class RemainingToppingAllowanceMessageGenerator:
             message = "You can add " + str(self.pizzaOrderHandler.getRemainingToppingAllowance()) + " more topping(s)."
             if currentPizza.name == PizzaName.CHEESE.value:
                 message = ""
-            elif self.pizzaOrderHandler.getRemainingToppingAllowance() == 0:
+            elif not self.pizzaOrderHandler.isCurrentPizzaToppable():
                 message = "All toppings added!"
         else:
             message = "Please order an eligible pizza to put topping on."
