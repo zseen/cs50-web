@@ -7,9 +7,10 @@ from django.urls import reverse
 from .models import Order, FoodOrderItem
 from .helpers.OrderUtils import OrderState, getCurrentOrderForUser, getTotalOrderPrice, getAllOrderDetails, \
     getAllFoodContextDict, getUserDependentContextDict
-from .helpers.PizzaOrderHandler import PizzaOrderHandler, PizzaCategory, ToppingCategory
+from .helpers.PizzaOrderHandler import PizzaOrderHandler, PizzaCategory, TOPPING, RemainingToppingAllowanceMessageGenerator
 
 pizzaOrderHandler = PizzaOrderHandler()
+messageGenerator = RemainingToppingAllowanceMessageGenerator(pizzaOrderHandler)
 
 
 def index(request):
@@ -81,14 +82,12 @@ def add(request, category, name, price=""):
 
     if category == PizzaCategory.REGULAR_PIZZA.value or category == PizzaCategory.SICILIAN_PIZZA.value:
         pizzaOrderHandler.createPizzaOrderItem(order, category, name, price)
-        context["toppingInformationMessage"] = pizzaOrderHandler.getRemainingToppingAllowanceMessage()
-    elif category == ToppingCategory.TOPPING.value:
-        currentPizza = pizzaOrderHandler.getCurrentPizza()
-        if currentPizza and pizzaOrderHandler.isCurrentPizzaToppable():
-            pizzaOrderHandler.addTopping(category, name)
-            context["toppingInformationMessage"] = pizzaOrderHandler.getRemainingToppingAllowanceMessage()
-        else:
-            context["toppingInformationMessage"] = "Please order an eligible pizza to put topping on."
+        context["toppingInformationMessage"] = messageGenerator.getRemainingToppingAllowanceMessage(
+            order)
+    elif category == TOPPING:
+        pizzaOrderHandler.addTopping(category, name)
+        context["toppingInformationMessage"] = messageGenerator.getRemainingToppingAllowanceMessage(
+            order)
     else:
         foodOrderItem = FoodOrderItem(order=order, category=category, name=name, price=price)
         foodOrderItem.save()
@@ -107,9 +106,10 @@ def deleteItemFromCart(request, category, name, price=""):
 
     order = getCurrentOrderForUser(request.user)
 
-    if category == ToppingCategory.TOPPING.value:
+    if category == TOPPING:
         pizzaOrderHandler.removeTopping(category, name)
-        context["toppingInformationMessage"] = pizzaOrderHandler.getRemainingToppingAllowanceMessage()
+        context["toppingInformationMessage"] = messageGenerator.getRemainingToppingAllowanceMessage(
+            order)
     else:
         itemToRemove = FoodOrderItem.objects.filter(order=order, category=category, name=name, price=price).last()
         itemToRemove.delete()

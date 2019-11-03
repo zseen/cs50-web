@@ -15,11 +15,11 @@ def getOrderCounter():
     orderCounter = OrderCounter.objects.first()
     if not orderCounter:
         orderCounter = OrderCounter(counter=1)
+        return orderCounter
 
-    currentOrderCounter = orderCounter
     orderCounter.counter += 1
     orderCounter.save()
-    return currentOrderCounter
+    return orderCounter
 
 
 def getCurrentOrderForUser(user):

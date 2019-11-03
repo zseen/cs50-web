@@ -2,8 +2,8 @@ from orders.models import Order, OrderItem, OrderCounter, ToppingOrderItem, Food
 from enum import Enum
 
 
-class ToppingCategory(Enum):
-    TOPPING = "Topping"
+TOPPING = "Topping"
+
 
 
 class PizzaCategory(Enum):
@@ -32,8 +32,19 @@ class PizzaOrderHandler:
         self.pizza.save()
 
     def addTopping(self, category, name):
-        self._createToppingOrderItem(category, name)
-        self._decreaseToppingAllowance()
+        if self.pizza and self.isCurrentPizzaToppable():
+            self._createToppingOrderItem(category, name)
+            self._decreaseToppingAllowance()
+
+    def removeTopping(self, category, name):
+        self._deleteToppingOrderItem(category, name)
+        self._increaseToppingAllowance()
+
+    def getRemainingToppingAllowance(self):
+        return self.pizza.toppingAllowance
+
+    def isCurrentPizzaToppable(self):
+        return self.pizza.toppingAllowance > 0
 
     def _createToppingOrderItem(self, category, name):
         toppingOrderItem = ToppingOrderItem(foodOrderItem=self.pizza, category=category, name=name)
@@ -44,13 +55,6 @@ class PizzaOrderHandler:
             self.pizza.toppingAllowance -= 1
             self.pizza.save()
 
-    def isCurrentPizzaToppable(self):
-        return self.pizza.toppingAllowance > 0
-
-    def removeTopping(self, category, name):
-        self._deleteToppingOrderItem(category, name)
-        self._increaseToppingAllowance()
-
     def _deleteToppingOrderItem(self, category, name):
         toppingToRemove = ToppingOrderItem.objects.filter(category=category, name=name).last()
         toppingToRemove.delete()
@@ -58,16 +62,7 @@ class PizzaOrderHandler:
     def _increaseToppingAllowance(self):
         self.pizza.toppingAllowance += 1
 
-    def getRemainingToppingAllowanceMessage(self):
-        message = "You can add " + str(self._getRemainingToppingAllowance()) + " more topping(s)."
-        if self.pizza.name == PizzaName.CHEESE.value:
-            message = ""
-        elif self.pizza.toppingAllowance == 0:
-            message = "All toppings added!"
-        return message
 
-    def _getRemainingToppingAllowance(self):
-        return self.pizza.toppingAllowance
 
     @staticmethod
     def getAllPizzasToToppingsInOrder(order):
@@ -90,3 +85,26 @@ class PizzaOrderHandler:
             toppingAllowance = 3
 
         return toppingAllowance
+
+
+
+class RemainingToppingAllowanceMessageGenerator:
+    def __init__(self, pizzaOrderHandler):
+        self.message = None
+        self.pizzaOrderHandler = pizzaOrderHandler
+
+    def getRemainingToppingAllowanceMessage(self, userOrder):
+        latestItemInBasket = FoodOrderItem.objects.filter(order=userOrder).last()
+        isLatestFoodPizza = latestItemInBasket.isPizza
+
+        if isLatestFoodPizza:
+            currentPizza = self.pizzaOrderHandler.getCurrentPizza()
+            message = "You can add " + str(self.pizzaOrderHandler.getRemainingToppingAllowance()) + " more topping(s)."
+            if currentPizza.name == PizzaName.CHEESE.value:
+                message = ""
+            elif self.pizzaOrderHandler.getRemainingToppingAllowance() == 0:
+                message = "All toppings added!"
+        else:
+            message = "Please order an eligible pizza to put topping on."
+
+        return message

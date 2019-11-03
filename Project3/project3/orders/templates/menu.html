@@ -6,16 +6,16 @@ Pizza!
 {% block body %}
 <h4>Menu:</h4>
 <br>
-{% for categoryAndFood in onePriceFoods %}
+{% for foodSection in onePriceFoods %}
     <table class="menu">
         <thead class='thead-light'>
-        <tr >
-            <th>{{categoryAndFood.foodCategory.category}}</th>
-            <th>Price</th>
-        </tr>
+            <tr >
+                <th>{{foodSection.foodCategory.category}}</th>
+                <th>Price</th>
+            </tr>
         </thead>
         <tbody>
-            {% for food in categoryAndFood.allFoodInCategory %}
+            {% for food in foodSection.allFoodInCategory %}
                 <tr>
                     <td>{{food.name}}</td>
                     <td>${{food.price}}</td>
@@ -25,17 +25,17 @@ Pizza!
     </table>
 {% endfor %}
 
-{% for categoryAndFood in twoPriceFoods %}
+{% for foodSection in twoPriceFoods %}
     <table class="menu">
         <thead class='thead-light'>
-        <tr>
-            <th>{{categoryAndFood.foodCategory.category}}</th>
-            <th>Small</th>
-            <th>Large</th>
-        </tr>
+            <tr>
+                <th>{{foodSection.foodCategory.category}}</th>
+                <th>Small</th>
+                <th>Large</th>
+            </tr>
         </thead>
         <tbody>
-            {% for food in categoryAndFood.allFoodInCategory %}
+            {% for food in foodSection.allFoodInCategory %}
                 <tr>
                     <td>{{food.name}}</td>
                     <td>${{food.smallPrice}}</td>

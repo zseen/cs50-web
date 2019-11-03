@@ -11,10 +11,7 @@ class FoodSection:
 
 
 def getFoodSectionList(foodCategories):
-    allFoodCategoriesWithFoodList = []
-    for foodCategory in foodCategories:
-        allFoodCategoriesWithFoodList.append(FoodSection(foodCategory))
-    return allFoodCategoriesWithFoodList
+    return [FoodSection(foodCategory) for foodCategory in foodCategories]
 
 
 def getAllOnePriceFoodCategoriesWithFood():
