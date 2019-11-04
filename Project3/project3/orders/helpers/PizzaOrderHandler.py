@@ -61,7 +61,7 @@ class PizzaOrderHandler:
         self.pizza.toppingAllowance += 1
 
     @staticmethod
-    def getAllPizzasToToppingsInOrder(order):
+    def getAllPizzasToToppingsInUserOrder(order):
         pizzaToToppings = dict()
         for pizzaCategory in [PizzaCategory.REGULAR_PIZZA.value, PizzaCategory.SICILIAN_PIZZA.value]:
             pizzas = FoodOrderItem.objects.filter(order=order, category=pizzaCategory)
@@ -89,8 +89,8 @@ class RemainingToppingAllowanceMessageGenerator:
         self.pizzaOrderHandler = pizzaOrderHandler
 
     def getRemainingToppingAllowanceMessage(self, userOrder):
-        latestItemInBasket = FoodOrderItem.objects.filter(order=userOrder).last()
-        isLatestFoodPizza = latestItemInBasket.isPizza
+        latestFoodInBasket = FoodOrderItem.objects.filter(order=userOrder).last()
+        isLatestFoodPizza = latestFoodInBasket.isPizza
 
         if isLatestFoodPizza:
             currentPizza = self.pizzaOrderHandler.getCurrentPizza()

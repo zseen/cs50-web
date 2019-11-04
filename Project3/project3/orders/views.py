@@ -67,7 +67,7 @@ def menu(request):
 
     if request.user.is_authenticated:
         order = getCurrentOrderForUser(request.user)
-        pizzasToToppingsInOrder = pizzaOrderHandler.getAllPizzasToToppingsInOrder(order)
+        pizzasToToppingsInOrder = pizzaOrderHandler.getAllPizzasToToppingsInUserOrder(order)
         currentPizza = pizzaOrderHandler.getCurrentPizza()
         context.update(getUserDependentContextDict(order, currentPizza, pizzasToToppingsInOrder))
         return render(request, "menuLoggedIn.html", context)
@@ -93,7 +93,7 @@ def add(request, category, name, price=""):
         foodOrderItem.save()
 
     if request.user.is_authenticated:
-        pizzasToToppingsInOrder = pizzaOrderHandler.getAllPizzasToToppingsInOrder(order)
+        pizzasToToppingsInOrder = pizzaOrderHandler.getAllPizzasToToppingsInUserOrder(order)
         currentPizza = pizzaOrderHandler.getCurrentPizza()
         context.update(getUserDependentContextDict(order, currentPizza, pizzasToToppingsInOrder))
         return render(request, "menuLoggedIn.html", context)
@@ -115,7 +115,7 @@ def deleteItemFromCart(request, category, name, price=""):
         itemToRemove.delete()
 
     currentPizza = pizzaOrderHandler.getCurrentPizza()
-    pizzasToToppingsInOrder = pizzaOrderHandler.getAllPizzasToToppingsInOrder(order)
+    pizzasToToppingsInOrder = pizzaOrderHandler.getAllPizzasToToppingsInUserOrder(order)
     context.update(getUserDependentContextDict(order, currentPizza, pizzasToToppingsInOrder))
 
     return render(request, "menuLoggedIn.html", context)
@@ -123,7 +123,7 @@ def deleteItemFromCart(request, category, name, price=""):
 
 def checkoutOrder(request):
     userOrder = Order.objects.get(user=request.user, status=OrderState.INITIATED.value)
-    pizzasWithToppingsInOrder = pizzaOrderHandler.getAllPizzasToToppingsInOrder(userOrder)
+    pizzasWithToppingsInOrder = pizzaOrderHandler.getAllPizzasToToppingsInUserOrder(userOrder)
 
     context = {
         "order": FoodOrderItem.objects.filter(order=userOrder),

@@ -5,21 +5,21 @@ from .FoodSection import getAllOnePriceFoodCategoriesWithFood, getAllTwoPriceFoo
 
 
 def createNewOrderForUser(user):
-    orderCounter = getOrderCounter()
-    newUserOrder = Order(user=user, orderNumber=orderCounter.counter)
+    orderNumber = createNextOrderNumber()
+    newUserOrder = Order(user=user, orderNumber=orderNumber)
     newUserOrder.save()
     return newUserOrder
 
 
-def getOrderCounter():
+def createNextOrderNumber():
     orderCounter = OrderCounter.objects.first()
     if not orderCounter:
         orderCounter = OrderCounter(counter=1)
-        return orderCounter
+        return orderCounter.counter
 
     orderCounter.counter += 1
     orderCounter.save()
-    return orderCounter
+    return orderCounter.counter
 
 
 def getCurrentOrderForUser(user):
