@@ -9,9 +9,13 @@
     {% for orderDetail in allOrderDetailsList %}
         {{orderDetail.getOrder}}: <br> <a href="{% url 'completeOrderAdmin' orderDetail.getOrder.orderNumber %}">Completed</a>
         {% for orderItem in orderDetail.getOrderItemsInOrder %}
-        <ul>
-            <li>{{orderItem}}</li>
-        </ul>
+            <ul>
+                {% if orderItem.category == "Topping" %}
+                    <li>{{orderItem.name}}</li>
+                {% else %}
+                    <li>{{orderItem}}</li>
+                {% endif %}
+            </ul>
         {% endfor %}
     {% endfor %}
 </div>

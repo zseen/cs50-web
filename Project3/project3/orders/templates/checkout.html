@@ -1,12 +1,24 @@
 {% extends "base.html" %}
 {% block title %}
-Your order!
+    Your order!
 {% endblock %}
 {% block body %}
- <h5>Your order:</h5>
+<h5>Your order:</h5>
     {% for food in order %}
-        {{food.category}}, {{food.name}}, ${{food.price}}<br>
+        {% if food.isPizza %}
+            {% for pizzaItem, toppings in pizzasToOrder.items %}
+                {% if pizzaItem == food %}
+                    {{pizzaItem.category}}, {{pizzaItem.name}}, ${{pizzaItem.price}}<br>
+                    {% for topping in toppings %}
+                        <ul>
+                            <li>{{topping.name}}</li><br>
+                        </ul>
+                    {% endfor %}
+                {% endif %}
+            {% endfor %}
+        {% else %}
+            {{food.category}}, {{food.name}}, ${{food.price}}<br>
+        {% endif %}
     {% endfor %}
-    Total: ${{total}}
-    <a href="{% url 'confirmOrder' %}">Order!</a>
+        Total: ${{total}} <a href="{% url 'confirmOrder' %}">Order!</a>
 {% endblock %}

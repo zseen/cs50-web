@@ -1,17 +1,23 @@
 from django.contrib.auth.models import User
 from django.contrib.auth import authenticate, login, logout
 from django.http import HttpResponse, HttpResponseRedirect
-from django.shortcuts import render, redirect
+from django.shortcuts import render
 from django.urls import reverse
 
-from .models import RegularPizza, SicilianPizza, Topping, Pasta, DinnerPlatter, Salad, Sub, OrderItem, Order
-from .helpers.orderUtils import OrderState, getCurrentOrderForUser, getTotalOrderPrice, getAllOrderDetails
+from .models import Order, FoodOrderItem
+from .helpers.OrderUtils import OrderState, getCurrentOrderForUser, getTotalOrderPrice, getAllOrderDetails, \
+    getAllFoodContextDict, getUserDependentContextDict
+from .helpers.PizzaOrderHandler import PizzaOrderHandler, PizzaCategory, TOPPING, RemainingToppingAllowanceMessageGenerator
+
+pizzaOrderHandler = PizzaOrderHandler()
+messageGenerator = RemainingToppingAllowanceMessageGenerator(pizzaOrderHandler)
 
 
 def index(request):
     message = {
         "specPizza": "Special Pizza: tomato base, grilled broccoli, courgette, sweetcorn, tomato, cashew 'mozzarella'!"
     }
+
     return render(request, "index.html", message)
 
 
@@ -57,64 +63,72 @@ def logout_view(request):
 
 
 def menu(request):
-    context = {
-        "pastas": Pasta.objects.all(),
-        "regularPizzas": RegularPizza.objects.all()
-    }
+    context = getAllFoodContextDict()
 
     if request.user.is_authenticated:
         order = getCurrentOrderForUser(request.user)
-
-        context["user"] = request.user
-        context["order"] = OrderItem.objects.filter(order=order)
-        context["total"] = getTotalOrderPrice(order)
+        pizzasToToppingsInOrder = pizzaOrderHandler.getAllPizzasToToppingsInUserOrder(order)
+        currentPizza = pizzaOrderHandler.getCurrentPizza()
+        context.update(getUserDependentContextDict(order, currentPizza, pizzasToToppingsInOrder))
+        return render(request, "menuLoggedIn.html", context)
 
     return render(request, "menu.html", context)
 
 
-def add(request, category, name, price):
-    context = {
-        "pastas": Pasta.objects.all(),
-        "regularPizzas": RegularPizza.objects.all()
-    }
+def add(request, category, name, price=""):
+    context = getAllFoodContextDict()
 
     order = Order.objects.get(user=request.user, status=OrderState.INITIATED.value)
 
-    orderItem = OrderItem(order=order, category=category, name=name, price=price)
-    orderItem.save()
+    if category == PizzaCategory.REGULAR_PIZZA.value or category == PizzaCategory.SICILIAN_PIZZA.value:
+        pizzaOrderHandler.createPizzaOrderItem(order, category, name, price)
+        context["toppingInformationMessage"] = messageGenerator.getRemainingToppingAllowanceMessage(
+            order)
+    elif category == TOPPING:
+        pizzaOrderHandler.addTopping(category, name)
+        context["toppingInformationMessage"] = messageGenerator.getRemainingToppingAllowanceMessage(
+            order)
+    else:
+        foodOrderItem = FoodOrderItem(order=order, category=category, name=name, price=price)
+        foodOrderItem.save()
 
     if request.user.is_authenticated:
-        context["user"] = request.user
-        context["order"] = OrderItem.objects.filter(order=order)
-        context["total"] = getTotalOrderPrice(order)
+        pizzasToToppingsInOrder = pizzaOrderHandler.getAllPizzasToToppingsInUserOrder(order)
+        currentPizza = pizzaOrderHandler.getCurrentPizza()
+        context.update(getUserDependentContextDict(order, currentPizza, pizzasToToppingsInOrder))
+        return render(request, "menuLoggedIn.html", context)
 
     return render(request, "menu.html", context)
 
 
-def deleteItemFromCart(request, category, name, price):
-    context = {
-        "pastas": Pasta.objects.all(),
-        "regularPizzas": RegularPizza.objects.all()
-    }
+def deleteItemFromCart(request, category, name, price=""):
+    context = getAllFoodContextDict()
 
     order = getCurrentOrderForUser(request.user)
 
-    itemToRemove = OrderItem.objects.filter(order=order, category=category, name=name, price=price).last()
-    itemToRemove.delete()
+    if category == TOPPING:
+        pizzaOrderHandler.removeTopping(category, name)
+        context["toppingInformationMessage"] = messageGenerator.getRemainingToppingAllowanceMessage(
+            order)
+    else:
+        itemToRemove = FoodOrderItem.objects.filter(order=order, category=category, name=name, price=price).last()
+        itemToRemove.delete()
 
-    context["user"] = request.user
-    context["order"] = OrderItem.objects.filter(order=order)
-    context["total"] = getTotalOrderPrice(order)
+    currentPizza = pizzaOrderHandler.getCurrentPizza()
+    pizzasToToppingsInOrder = pizzaOrderHandler.getAllPizzasToToppingsInUserOrder(order)
+    context.update(getUserDependentContextDict(order, currentPizza, pizzasToToppingsInOrder))
 
-    return render(request, "menu.html", context)
+    return render(request, "menuLoggedIn.html", context)
 
 
 def checkoutOrder(request):
     userOrder = Order.objects.get(user=request.user, status=OrderState.INITIATED.value)
+    pizzasWithToppingsInOrder = pizzaOrderHandler.getAllPizzasToToppingsInUserOrder(userOrder)
+
     context = {
-        "user": request.user,
-        "order": OrderItem.objects.filter(order=userOrder),
-        "total": getTotalOrderPrice(userOrder)
+        "order": FoodOrderItem.objects.filter(order=userOrder),
+        "total": getTotalOrderPrice(userOrder),
+        "pizzasWithToppingsInOrder": pizzasWithToppingsInOrder
     }
 
     return render(request, "checkout.html", context)
@@ -144,6 +158,14 @@ def completeOrderAdmin(request, orderNumber):
     order = Order.objects.get(orderNumber=int(orderNumber))
     order.status = OrderState.COMPLETED.value
     order.save()
+
+    return manageConfirmedOrdersAdmin(request)
+
+
+def markOrderDeliveredAdmin(request):
+    userOrder = Order.objects.get(user=request.user, status=OrderState.COMPLETED.value)
+    userOrder.status = OrderState.DELIVERED.value
+    userOrder.save()
 
     return manageConfirmedOrdersAdmin(request)
 

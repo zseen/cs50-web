@@ -1,15 +1,25 @@
 from django.db.models import Sum
-from orders.models import Order, OrderItem, OrderCounter
-from .orderState import OrderState
+from orders.models import Order, OrderItem, OrderCounter, ToppingOrderItem, Topping, FoodOrderItem
+from .OrderState import OrderState
+from .FoodSection import getAllOnePriceFoodCategoriesWithFood, getAllTwoPriceFoodCategoriesWithFood
 
 
 def createNewOrderForUser(user):
-    orderCounter = OrderCounter.objects.first()
-    newUserOrder = Order(user=user, orderNumber=orderCounter.counter)
+    orderNumber = createNextOrderNumber()
+    newUserOrder = Order(user=user, orderNumber=orderNumber)
     newUserOrder.save()
+    return newUserOrder
+
+
+def createNextOrderNumber():
+    orderCounter = OrderCounter.objects.first()
+    if not orderCounter:
+        orderCounter = OrderCounter(counter=1)
+        return orderCounter.counter
+
     orderCounter.counter += 1
     orderCounter.save()
-    return newUserOrder
+    return orderCounter.counter
 
 
 def getCurrentOrderForUser(user):
@@ -45,3 +55,25 @@ def getAllOrderDetails(orders):
         orderDetail = OrderDetails(order)
         allOrderDetailsList.append(orderDetail)
     return allOrderDetailsList
+
+
+def getAllFoodContextDict():
+    allOnePriceFood = getAllOnePriceFoodCategoriesWithFood()
+    allTwoPriceFood = getAllTwoPriceFoodCategoriesWithFood()
+
+    context = {
+        "onePriceFoods": allOnePriceFood,
+        "twoPriceFoods": allTwoPriceFood,
+        "toppings": Topping.objects.all()
+    }
+    return context
+
+
+def getUserDependentContextDict(userOrder, currentPizza, pizzasToToppingsInOrder):
+    context = {
+        "order": FoodOrderItem.objects.filter(order=userOrder),
+        "total": getTotalOrderPrice(userOrder),
+        "pizzasToToppingsInOrder": pizzasToToppingsInOrder,
+        "currentPizza": currentPizza
+    }
+    return context
