@@ -1,9 +1,11 @@
 {% extends "base.html" %}
 {% block title %}
-Pizza!
+    Menu
 {% endblock %}
 {% block body %}
-<h4>Menu:</h4>
+ <div id="shadowed-text">
+        {{specialPizza}}
+ </div>
 <br>
 
 {% for foodSection in onePriceFoods %}
@@ -54,7 +56,7 @@ Pizza!
     </thead>
     <tbody>
         {% for topping in toppings %}
-            <tr>
+            <tr  class="toppingColumn">
                 <td>{{topping.name}}<a href="{% url 'add' topping.category topping.name %}">+</a></td>
             </tr>
         {% endfor %}

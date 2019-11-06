@@ -1,27 +1,70 @@
 body {
     display: block;
     background-image: url("pizzaBackground.jpg");
+    background-repeat: no-repeat;
+    background-size: auto;
+    background-color: #525e6a;
+    }
+
+main
+{
+    overflow-x: auto;
+    text-align: center;
+
 }
 
+main .form-control
+{
+    display: inline-block;
+    width: auto;
+    background-color: #dad8d8;
+}
 
-#message{
+.nav-link
+{
+    color: #f8f9fa;
+}
+
+#shadowed-text{
     color: #f8f9fa;
     text-shadow: 2px 0 0 #111, 0 -1px 0 #111, 0 2px 0 #111, -1px 0 0 #111;
     font-size: 22pt;
+    background-color: #a5a2a27d;
+
+
+}
+
+.extra-large-top-left-right-margin
+{
     margin-top: 200px;
     margin-left: 240px;
     margin-right: 200px;
-    background-color: #a5a2a27d;
 }
-
 
 .menu
 {
     font-size: 16pt;
     background-color: #f8f9fa9e;
     margin-left: 300px;
+    margin-right: 375px;
 }
 
 .grayish-background{
-    background-color: #a5a2a27d;
+    background-color: #dad8d8;
+}
+
+table {
+  width: 50%;
+
+}
+
+th, td {
+  vertical-align:middle;
+  text-align: left;
+  width:75%
+}
+
+.toppingColumn{
+    float: left;
+    width: 33%;
 }

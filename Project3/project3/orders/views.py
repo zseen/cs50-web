@@ -4,9 +4,9 @@ from django.http import HttpResponse, HttpResponseRedirect
 from django.shortcuts import render
 from django.urls import reverse
 
-from .models import Order, FoodOrderItem
+from .models import Order, FoodOrderItem, OrderItem
 from .helpers.OrderUtils import OrderState, getCurrentOrderForUser, getTotalOrderPrice, getAllOrderDetails, \
-    getAllFoodContextDict, getUserDependentContextDict
+    getAllFoodContextDict, getUserDependentContextDict, SPECIAL_PIZZA
 from .helpers.PizzaOrderHandler import PizzaOrderHandler, PizzaCategory, TOPPING, RemainingToppingAllowanceMessageGenerator
 
 pizzaOrderHandler = PizzaOrderHandler()
@@ -15,7 +15,7 @@ messageGenerator = RemainingToppingAllowanceMessageGenerator(pizzaOrderHandler)
 
 def index(request):
     message = {
-        "specPizza": "Special Pizza: tomato base, grilled broccoli, courgette, sweetcorn, tomato, cashew 'mozzarella'!"
+        "specialPizza": SPECIAL_PIZZA
     }
 
     return render(request, "index.html", message)

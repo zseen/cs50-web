@@ -3,6 +3,8 @@ from orders.models import Order, OrderItem, OrderCounter, ToppingOrderItem, Topp
 from .OrderState import OrderState
 from .FoodSection import getAllOnePriceFoodCategoriesWithFood, getAllTwoPriceFoodCategoriesWithFood
 
+SPECIAL_PIZZA = "Special Pizza: tomato base, grilled broccoli, courgette, sweetcorn, tomato, cashew 'mozzarella'!"
+
 
 def createNewOrderForUser(user):
     orderNumber = createNextOrderNumber()
@@ -64,7 +66,8 @@ def getAllFoodContextDict():
     context = {
         "onePriceFoods": allOnePriceFood,
         "twoPriceFoods": allTwoPriceFood,
-        "toppings": Topping.objects.all()
+        "toppings": Topping.objects.all(),
+        "specialPizza": SPECIAL_PIZZA,
     }
     return context
 
