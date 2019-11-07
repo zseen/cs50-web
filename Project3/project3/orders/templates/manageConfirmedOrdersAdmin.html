@@ -6,12 +6,12 @@
 
 {% block body %}
 <div class="grayish-background">
-    {% for orderDetail in allOrderDetailsList %}
+    {% for orderDetail in allConfirmedOrderDetailsList %}
         {{orderDetail.getOrder}}: <br> <a href="{% url 'completeOrderAdmin' orderDetail.getOrder.orderNumber %}">Completed</a>
         {% for orderItem in orderDetail.getOrderItemsInOrder %}
             <ul>
                 {% if orderItem.category == "Topping" %}
-                    <li>{{orderItem.name}}</li>
+                    <li class="smallFont">{{orderItem.name}}</li>
                 {% else %}
                     <li>{{orderItem}}</li>
                 {% endif %}
@@ -19,4 +19,20 @@
         {% endfor %}
     {% endfor %}
 </div>
+
+<div class="grayish-background">
+    {% for orderDetail in allCompletedOrderDetailsList %}
+        {{orderDetail.getOrder}}: <br> <a href="{% url 'markOrderDeliveredAdmin' orderDetail.getOrder.orderNumber %}">Delivered</a>
+        {% for orderItem in orderDetail.getOrderItemsInOrder %}
+            <ul>
+                {% if orderItem.category == "Topping" %}
+                    <li class="smallFont">{{orderItem.name}}</li>
+                {% else %}
+                    <li>{{orderItem}}</li>
+                {% endif %}
+            </ul>
+        {% endfor %}
+    {% endfor %}
+</div>
+
 {% endblock %}

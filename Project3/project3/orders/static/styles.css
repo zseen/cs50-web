@@ -30,8 +30,11 @@ main .form-control
     text-shadow: 2px 0 0 #111, 0 -1px 0 #111, 0 2px 0 #111, -1px 0 0 #111;
     font-size: 22pt;
     background-color: #a5a2a27d;
+}
 
-
+.smallFont
+{
+    font-size: 10pt;
 }
 
 .extra-large-top-left-right-margin
@@ -64,7 +67,7 @@ th, td {
   width:75%
 }
 
-.toppingColumn{
+.threeColumns{
     float: left;
     width: 33%;
 }

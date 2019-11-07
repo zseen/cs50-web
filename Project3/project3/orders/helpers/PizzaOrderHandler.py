@@ -91,8 +91,11 @@ class RemainingToppingAllowanceMessageGenerator:
 
     def getRemainingToppingAllowanceMessage(self, userOrder):
         latestFoodInBasket = FoodOrderItem.objects.filter(order=userOrder).last()
-        isLatestFoodPizza = latestFoodInBasket.isPizza
+        if not latestFoodInBasket:
+            message = "Please order an eligible pizza to put topping on."
+            return message
 
+        isLatestFoodPizza = latestFoodInBasket.isPizza
         if isLatestFoodPizza:
             currentPizza = self.pizzaOrderHandler.getCurrentPizza()
             message = "You can add " + str(self.pizzaOrderHandler.getRemainingToppingAllowance()) + " more topping(s)."

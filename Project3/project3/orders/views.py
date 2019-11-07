@@ -1,13 +1,14 @@
 from django.contrib.auth.models import User
 from django.contrib.auth import authenticate, login, logout
-from django.http import HttpResponse, HttpResponseRedirect
+from django.http import HttpResponseRedirect
 from django.shortcuts import render
 from django.urls import reverse
 
 from .models import Order, FoodOrderItem, OrderItem
 from .helpers.OrderUtils import OrderState, getCurrentOrderForUser, getTotalOrderPrice, getAllOrderDetails, \
     getAllFoodContextDict, getUserDependentContextDict, SPECIAL_PIZZA
-from .helpers.PizzaOrderHandler import PizzaOrderHandler, PizzaCategory, TOPPING, RemainingToppingAllowanceMessageGenerator
+from .helpers.PizzaOrderHandler import PizzaOrderHandler, PizzaCategory, TOPPING, \
+    RemainingToppingAllowanceMessageGenerator
 
 pizzaOrderHandler = PizzaOrderHandler()
 messageGenerator = RemainingToppingAllowanceMessageGenerator(pizzaOrderHandler)
@@ -64,6 +65,16 @@ def logout_view(request):
 
 def menu(request):
     context = getAllFoodContextDict()
+
+    # rows = Order.objects.filter()
+    #
+    # for r in rows:
+    #     r.delete()
+    #
+    # rows = OrderItem.objects.filter()
+    #
+    # for r in rows:
+    #     r.delete()
 
     if request.user.is_authenticated:
         order = getCurrentOrderForUser(request.user)
@@ -143,12 +154,15 @@ def confirmOrder(request):
 
 
 def manageConfirmedOrdersAdmin(request):
-    allOrders = Order.objects.filter(status=OrderState.CONFIRMED.value)
+    allConfirmedOrders = Order.objects.filter(status=OrderState.CONFIRMED.value)
+    allCompletedOrders = Order.objects.filter(status=OrderState.COMPLETED.value)
 
-    allOrderDetailsList = getAllOrderDetails(allOrders)
+    allConfirmedOrderDetailsList = getAllOrderDetails(allConfirmedOrders)
+    allCompletedOrderDetailsList = getAllOrderDetails(allCompletedOrders)
 
     context = {
-        "allOrderDetailsList": allOrderDetailsList
+        "allConfirmedOrderDetailsList": allConfirmedOrderDetailsList,
+        "allCompletedOrderDetailsList": allCompletedOrderDetailsList
     }
 
     return render(request, "manageConfirmedOrdersAdmin.html", context)
@@ -162,8 +176,8 @@ def completeOrderAdmin(request, orderNumber):
     return manageConfirmedOrdersAdmin(request)
 
 
-def markOrderDeliveredAdmin(request):
-    userOrder = Order.objects.get(user=request.user, status=OrderState.COMPLETED.value)
+def markOrderDeliveredAdmin(request, orderNumber):
+    userOrder = Order.objects.get(orderNumber=int(orderNumber))
     userOrder.status = OrderState.DELIVERED.value
     userOrder.save()
 
@@ -171,15 +185,16 @@ def markOrderDeliveredAdmin(request):
 
 
 def displayUserOwnOrders(request):
-    userPendingOrders = Order.objects.filter(user=request.user, status=OrderState.CONFIRMED.value)
-    pendingOrderDetailsList = getAllOrderDetails(userPendingOrders)
+    userPendingOrConfirmedOrders = Order.objects.filter(status=OrderState.CONFIRMED.value) | Order.objects.filter(
+        status=OrderState.COMPLETED.value)
+    pendingOrCompletedOrderDetailsListt = getAllOrderDetails(userPendingOrConfirmedOrders)
 
-    userCompletedOrders = Order.objects.filter(user=request.user, status=OrderState.COMPLETED.value)
-    completedOrderDetailsList = getAllOrderDetails(userCompletedOrders)
+    userDeliveredOrders = Order.objects.filter(user=request.user, status=OrderState.DELIVERED.value)
+    deliveredOrderDetailsList = getAllOrderDetails(userDeliveredOrders)
 
     context = {
-        "pendingOrders": pendingOrderDetailsList,
-        "completedOrders": completedOrderDetailsList
+        "pendingOrConfirmedOrders": pendingOrCompletedOrderDetailsListt,
+        "deliveredOrders": deliveredOrderDetailsList
     }
 
     return render(request, "userOwnOrders.html", context)

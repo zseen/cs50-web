@@ -56,7 +56,7 @@
     </thead>
     <tbody>
         {% for topping in toppings %}
-            <tr  class="toppingColumn">
+            <tr class="threeColumns">
                 <td>{{topping.name}}<a href="{% url 'add' topping.category topping.name %}">+</a></td>
             </tr>
         {% endfor %}
@@ -74,7 +74,7 @@
                         <a href="{% url 'deleteItemFromCart' food.category food.name food.price %}"> -</a><br>
                         {% for topping in toppings %}
                             <ul>
-                                <li>{{topping.name}}
+                                <li class="smallFont">{{topping.name}}
                                     {% if pizzaItem == currentPizza %}
                                         <a href="{% url 'deleteItemFromCart' topping.category topping.name %}"> -</a>
                                     {% endif %}
@@ -87,7 +87,7 @@
                 {{food.category}}, {{food.name}}, ${{food.price}}<a href="{% url 'deleteItemFromCart' food.category food.name food.price %}"> -</a><br>
             {% endif %}
         {% endfor %}
-        <p>{{toppingInformationMessage}}<br></p>
+        <p class="smallFont">{{toppingInformationMessage}}<br></p>
         {% if order %}
             Total: ${{total}}
             <a href="{% url 'checkoutOrder' %}">Checkout order</a>

@@ -6,22 +6,22 @@
 
 {% block body %}
 <div class="grayish-background">
-    Your current orders:<br>
-    {% for pendingOrder in pendingOrders %}
-        {{ pendingOrder.getOrder }}
-        {% for orderItem in pendingOrder.getOrderItemsInOrder %}
+    <h5>Your current orders:</h5>
+    {% for pendingOrConfirmedOrder in pendingOrConfirmedOrders %}
+        {{pendingOrConfirmedOrder.getOrder.user}} - {{pendingOrConfirmedOrder.getOrder.status}}
+        {% for orderItem in pendingOrConfirmedOrder.getOrderItemsInOrder %}
         <ul>
-            <li>{{orderItem}}</li>
+            <li>{{orderItem.category}}: {{orderItem.name}}, ${{orderItem.price}}</li>
         </ul>
         {% endfor %}
     {% endfor %}
 
-    Your previous orders:<br>
-    {% for completedOrder in completedOrders %}
-        {{ completedOrder.getOrder }}
-        {% for orderItem in completedOrder.getOrderItemsInOrder %}
+    <h5>Your previous orders:</h5>
+    {% for deliveredOrder in deliveredOrders %}
+        {{deliveredOrder.getOrder.user}} - {{deliveredOrder.getOrder.status}}
+        {% for orderItem in deliveredOrder.getOrderItemsInOrder %}
         <ul>
-            <li>{{orderItem}}</li>
+            <li>{{orderItem.category}}: {{orderItem.name}}, ${{orderItem.price}}</li>
         </ul>
         {% endfor %}
     {% endfor %}
