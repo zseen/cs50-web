@@ -4,21 +4,23 @@ Pizza!
 {% endblock %}
 
 {% block body %}
-<h4>Menu:</h4>
+ <div class="shadowed-text">
+        {{specialPizza}}
+ </div>
 <br>
 {% for foodSection in onePriceFoods %}
-    <table class="menu">
+    <table class="large-side-margins-gray-background">
         <thead class='thead-light'>
             <tr >
-                <th>{{foodSection.foodCategory.category}}</th>
+                <th class="small-paddings">{{foodSection.foodCategory.category}}</th>
                 <th>Price</th>
             </tr>
         </thead>
         <tbody>
             {% for food in foodSection.allFoodInCategory %}
                 <tr>
-                    <td>{{food.name}}</td>
-                    <td>${{food.price}}</td>
+                    <td class="small-left-padding">{{food.name}}</td>
+                    <td class="small-right-padding">${{food.price}}</td>
                 </tr>
             {% endfor %}
         </tbody>
@@ -26,10 +28,10 @@ Pizza!
 {% endfor %}
 
 {% for foodSection in twoPriceFoods %}
-    <table class="menu">
+    <table class="large-side-margins-gray-background">
         <thead class='thead-light'>
             <tr>
-                <th>{{foodSection.foodCategory.category}}</th>
+                <th class="small-paddings">{{foodSection.foodCategory.category}}</th>
                 <th>Small</th>
                 <th>Large</th>
             </tr>
@@ -37,32 +39,32 @@ Pizza!
         <tbody>
             {% for food in foodSection.allFoodInCategory %}
                 <tr>
-                    <td>{{food.name}}</td>
-                    <td>${{food.smallPrice}}</td>
-                    <td>${{food.largePrice}}</td>
+                    <td class="small-left-padding">{{food.name}}</td>
+                    <td class="small-right-padding">${{food.smallPrice}}</td>
+                    <td class="small-right-padding">${{food.largePrice}}</td>
                 </tr>
             {% endfor %}
         </tbody>
     </table>
 {% endfor %}
 
-<table class="menu">
+<table class="large-side-margins-gray-background">
     <thead class='thead-light'>
         <tr >
-            <th>Toppings</th>
+            <th class="small-paddings">Toppings</th>
         </tr>
     </thead>
     <tbody>
         {% for topping in toppings %}
-            <tr>
-                <td>{{topping.name}}</td>
+            <tr class="threeColumns">
+                <td class="small-left-padding">{{topping.name}}</td>
             </tr>
         {% endfor %}
     </tbody>
 </table>
 
 <br>
-<div class="menu">
+<div class="large-side-margins-gray-background small-paddings">
     <h5>Your cart:</h5>
         Please <a href="/login">log in</a> to order. No account yet? Register <a href="/register">here!</a>
 </div>

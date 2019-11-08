@@ -72,6 +72,10 @@ class PizzaOrderHandler:
         return pizzaToToppings
 
     @staticmethod
+    def getAllPizzasToToppingsInSelectedUserOrders(orders):
+        return [PizzaOrderHandler.getAllPizzasToToppingsInUserOrder(order) for order in orders]
+
+    @staticmethod
     def getInitialToppingAllowance(pizzaName):
         toppingAllowance = 0
         if pizzaName == PizzaName.ONE_TOPPING.value:

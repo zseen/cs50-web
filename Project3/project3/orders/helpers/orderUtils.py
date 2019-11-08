@@ -42,7 +42,7 @@ class OrderDetails:
 
     def getOrderItemsInOrder(self):
         orderItemsInOrder = []
-        for orderItem in OrderItem.objects.all():
+        for orderItem in FoodOrderItem.objects.all():
             if orderItem.order.orderNumber == self._order.orderNumber:
                 orderItemsInOrder.append(orderItem)
         return orderItemsInOrder

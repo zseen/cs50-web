@@ -4,7 +4,7 @@ from django.http import HttpResponseRedirect
 from django.shortcuts import render
 from django.urls import reverse
 
-from .models import Order, FoodOrderItem, OrderItem
+from .models import Order, FoodOrderItem
 from .helpers.OrderUtils import OrderState, getCurrentOrderForUser, getTotalOrderPrice, getAllOrderDetails, \
     getAllFoodContextDict, getUserDependentContextDict, SPECIAL_PIZZA
 from .helpers.PizzaOrderHandler import PizzaOrderHandler, PizzaCategory, TOPPING, \
@@ -65,16 +65,6 @@ def logout_view(request):
 
 def menu(request):
     context = getAllFoodContextDict()
-
-    # rows = Order.objects.filter()
-    #
-    # for r in rows:
-    #     r.delete()
-    #
-    # rows = OrderItem.objects.filter()
-    #
-    # for r in rows:
-    #     r.delete()
 
     if request.user.is_authenticated:
         order = getCurrentOrderForUser(request.user)
@@ -160,9 +150,15 @@ def manageConfirmedOrdersAdmin(request):
     allConfirmedOrderDetailsList = getAllOrderDetails(allConfirmedOrders)
     allCompletedOrderDetailsList = getAllOrderDetails(allCompletedOrders)
 
+    allConfirmedPizzasToToppings = pizzaOrderHandler.getAllPizzasToToppingsInSelectedUserOrders(allConfirmedOrders)
+    allCompletedPizzasToToppings = pizzaOrderHandler.getAllPizzasToToppingsInSelectedUserOrders(allCompletedOrders)
+
     context = {
         "allConfirmedOrderDetailsList": allConfirmedOrderDetailsList,
-        "allCompletedOrderDetailsList": allCompletedOrderDetailsList
+        "allCompletedOrderDetailsList": allCompletedOrderDetailsList,
+        "allConfirmedPizzasToToppings": allConfirmedPizzasToToppings,
+        "allCompletedPizzasToToppings": allCompletedPizzasToToppings
+
     }
 
     return render(request, "manageConfirmedOrdersAdmin.html", context)
@@ -188,13 +184,18 @@ def displayUserOwnOrders(request):
     userPendingOrConfirmedOrders = Order.objects.filter(status=OrderState.CONFIRMED.value) | Order.objects.filter(
         status=OrderState.COMPLETED.value)
     pendingOrCompletedOrderDetailsListt = getAllOrderDetails(userPendingOrConfirmedOrders)
+    userPendingOrConfirmedPizzasToToppings = pizzaOrderHandler.getAllPizzasToToppingsInSelectedUserOrders(
+        userPendingOrConfirmedOrders)
 
     userDeliveredOrders = Order.objects.filter(user=request.user, status=OrderState.DELIVERED.value)
     deliveredOrderDetailsList = getAllOrderDetails(userDeliveredOrders)
+    userDeliveredPizzasToToppings = pizzaOrderHandler.getAllPizzasToToppingsInSelectedUserOrders(userDeliveredOrders)
 
     context = {
         "pendingOrConfirmedOrders": pendingOrCompletedOrderDetailsListt,
-        "deliveredOrders": deliveredOrderDetailsList
+        "pendingOrConfirmedPizzasToToppings": userPendingOrConfirmedPizzasToToppings,
+        "deliveredOrders": deliveredOrderDetailsList,
+        "deliveredPizzasToToppings": userDeliveredPizzasToToppings
     }
 
     return render(request, "userOwnOrders.html", context)

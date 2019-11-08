@@ -6,68 +6,79 @@ body {
     background-color: #525e6a;
     }
 
-main
-{
+main {
     overflow-x: auto;
     text-align: center;
-
 }
 
-main .form-control
-{
+main .form-control{
     display: inline-block;
     width: auto;
     background-color: #dad8d8;
 }
 
-.nav-link
-{
+.nav-link{
     color: #f8f9fa;
 }
 
-#shadowed-text{
+.shadowed-text {
     color: #f8f9fa;
     text-shadow: 2px 0 0 #111, 0 -1px 0 #111, 0 2px 0 #111, -1px 0 0 #111;
     font-size: 22pt;
     background-color: #a5a2a27d;
 }
 
-.smallFont
-{
+.smallFont {
     font-size: 10pt;
 }
 
-.extra-large-top-left-right-margin
-{
+.extra-large-top-left-right-margin {
     margin-top: 200px;
     margin-left: 240px;
     margin-right: 200px;
 }
 
-.menu
-{
-    font-size: 16pt;
-    background-color: #f8f9fa9e;
-    margin-left: 300px;
-    margin-right: 375px;
+.extra-large-side-margins {
+    margin-left: 25%;
+    margin-right: 30%;
 }
 
-.grayish-background{
+.large-side-margins-gray-background {
+    font-size: 16pt;
+    background-color: #f8f9fad4;
+    margin-left: 25%;
+    margin-right: 30%;
+}
+
+.grayish-background {
     background-color: #dad8d8;
+}
+
+.small-paddings {
+    padding-left: 20px;
+    padding-bottom: 10px;
+    padding-top: 20px;
+}
+
+.small-left-padding {
+    padding-left: 20px;
+}
+
+.small-right-padding {
+    padding-right: 20px;
+}
+
+.threeColumns {
+    float: left;
+    width: 33%;
 }
 
 table {
   width: 50%;
-
 }
 
 th, td {
   vertical-align:middle;
   text-align: left;
   width:75%
-}
-
-.threeColumns{
-    float: left;
-    width: 33%;
 }

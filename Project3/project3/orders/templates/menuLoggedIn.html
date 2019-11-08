@@ -3,23 +3,23 @@
     Menu
 {% endblock %}
 {% block body %}
- <div id="shadowed-text">
+ <div class="shadowed-text">
         {{specialPizza}}
  </div>
 <br>
 
 {% for foodSection in onePriceFoods %}
-    <table class="menu">
+    <table class="large-side-margins-gray-background">
         <thead class='thead-light'>
-            <tr >
-                <th>{{foodSection.foodCategory.category}}</th>
+            <tr>
+                <th class="small-paddings">{{foodSection.foodCategory.category}}</th>
                 <th>Price</th>
             </tr>
         </thead>
         <tbody>
             {% for food in foodSection.allFoodInCategory %}
                 <tr>
-                    <td>{{food.name}}</td>
+                    <td class="small-left-padding">{{food.name}}</td>
                     <td>${{food.price}}<a href="{% url 'add' food.category food.name food.price %}">+</a></td>
                 </tr>
             {% endfor %}
@@ -28,10 +28,10 @@
 {% endfor %}
 
 {% for foodSection in twoPriceFoods %}
-    <table class="menu">
+    <table class="large-side-margins-gray-background">
         <thead class='thead-light'>
             <tr>
-                <th>{{foodSection.foodCategory.category}}</th>
+                <th class="small-paddings">{{foodSection.foodCategory.category}}</th>
                 <th>Small</th>
                 <th>Large</th>
             </tr>
@@ -39,7 +39,7 @@
         <tbody>
             {% for food in foodSection.allFoodInCategory %}
                 <tr>
-                    <td>{{food.name}}</td>
+                    <td class="small-left-padding">{{food.name}}</td>
                     <td>${{food.smallPrice}}<a href="{% url 'add' food.category food.name food.smallPrice %}">+</a></td>
                     <td>${{food.largePrice}}<a href="{% url 'add' food.category food.name food.largePrice %}">+</a></td>
                 </tr>
@@ -48,23 +48,23 @@
     </table>
 {% endfor %}
 
-<table class="menu">
+<table class="large-side-margins-gray-background">
     <thead class='thead-light'>
         <tr >
-            <th>Toppings</th>
+            <th class="small-paddings">Toppings</th>
         </tr>
     </thead>
     <tbody>
         {% for topping in toppings %}
             <tr class="threeColumns">
-                <td>{{topping.name}}<a href="{% url 'add' topping.category topping.name %}">+</a></td>
+                <td class="small-left-padding">{{topping.name}}<a href="{% url 'add' topping.category topping.name %}">+</a></td>
             </tr>
         {% endfor %}
     </tbody>
 </table>
-
 <br>
-<div class="menu">
+
+<div class="large-side-margins-gray-background small-paddings">
     <h5>Your cart:</h5>
         {% for food in order %}
             {% if food.isPizza %}
@@ -78,7 +78,7 @@
                                     {% if pizzaItem == currentPizza %}
                                         <a href="{% url 'deleteItemFromCart' topping.category topping.name %}"> -</a>
                                     {% endif %}
-                                </li><br>
+                                </li>
                             </ul>
                         {% endfor %}
                     {% endif %}
