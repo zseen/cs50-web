@@ -32,6 +32,9 @@ def register_view(request):
     email = request.POST["email"]
     password = request.POST["password"]
 
+    if User.objects.filter(username=username).exists() or User.objects.filter(email=email).exists():
+        return render(request, "register.html", {"message": "Please provide a unique username and email."})
+
     user = User.objects.create_user(username, email, password)
     user.first_name = firstname
     user.last_name = lastname
@@ -41,7 +44,7 @@ def register_view(request):
         login(request, user)
         return HttpResponseRedirect(reverse("index"))
     else:
-        return render(request, "register.html", {"message": "Please provide a unique username and email."})
+        return render(request, "register.html", {"message": "Something went wrong. Please try to register again!"})
 
 
 def login_view(request):
@@ -60,7 +63,10 @@ def login_view(request):
 
 def logout_view(request):
     logout(request)
-    return render(request, "index.html")
+    message = {
+        "specialPizza": SPECIAL_PIZZA
+    }
+    return render(request, "index.html", message)
 
 
 def menu(request):
@@ -158,7 +164,6 @@ def manageConfirmedOrdersAdmin(request):
         "allCompletedOrderDetailsList": allCompletedOrderDetailsList,
         "allConfirmedPizzasToToppings": allConfirmedPizzasToToppings,
         "allCompletedPizzasToToppings": allCompletedPizzasToToppings
-
     }
 
     return render(request, "manageConfirmedOrdersAdmin.html", context)
@@ -181,8 +186,9 @@ def markOrderDeliveredAdmin(request, orderNumber):
 
 
 def displayUserOwnOrders(request):
-    userPendingOrConfirmedOrders = Order.objects.filter(status=OrderState.CONFIRMED.value) | Order.objects.filter(
-        status=OrderState.COMPLETED.value)
+    userPendingOrConfirmedOrders = Order.objects.filter(user=request.user,
+                                                        status=OrderState.CONFIRMED.value) | Order.objects.filter(
+        user=request.user, status=OrderState.COMPLETED.value)
     pendingOrCompletedOrderDetailsListt = getAllOrderDetails(userPendingOrConfirmedOrders)
     userPendingOrConfirmedPizzasToToppings = pizzaOrderHandler.getAllPizzasToToppingsInSelectedUserOrders(
         userPendingOrConfirmedOrders)

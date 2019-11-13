@@ -2,8 +2,9 @@
 {% block title %}
     Your order!
 {% endblock %}
+
 {% block body %}
-<div class="grayish-background">
+<div class="large-side-margins grayish-background small-paddings">
     <h5>Your order:</h5>
         {% for food in order %}
             {% if food.isPizza %}

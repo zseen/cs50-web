@@ -7,6 +7,9 @@
 {% block body %}
 <div class="extra-large-side-margins grayish-background small-paddings">
     <h5>Your current orders:</h5>
+    {% if not pendingOrConfirmedOrders %}
+        You do not have any current orders at the moment! Why not <a href="/menu">order</a> a scrumptious pizza or a crunchy salad?
+    {% endif %}
     {% for pendingOrConfirmedOrder in pendingOrConfirmedOrders %}
         {{pendingOrConfirmedOrder.getOrder.user}} - {{pendingOrConfirmedOrder.getOrder.status}}
         {% for orderItem in pendingOrConfirmedOrder.getOrderItemsInOrder %}
@@ -31,29 +34,31 @@
         {% endfor %}
     {% endfor %}
 
-    <h5>Your previous orders:</h5>
-    {% for deliveredOrder in deliveredOrders %}
-        {{deliveredOrder.getOrder.user}} - {{deliveredOrder.getOrder.status}}
-        {% for orderItem in deliveredOrder.getOrderItemsInOrder %}
-            <ul>
-                {% if orderItem.isPizza %}
-                    {% for pizzaToTopping in deliveredPizzasToToppings %}
-                        {% for pizzaItem, toppings in pizzaToTopping.items %}
-                            {% if pizzaItem == orderItem %}
-                                <li>{{pizzaItem.category}}, {{pizzaItem.name}}, ${{pizzaItem.price}}</li>
-                                {% for topping in toppings %}
-                                    <ul>
-                                        <li class="smallFont">{{topping.name}}</li>
-                                    </ul>
-                                {% endfor %}
-                            {% endif %}
+    {% if deliveredOrders %}
+        <h5>Your previous orders:</h5>
+        {% for deliveredOrder in deliveredOrders %}
+            {{deliveredOrder.getOrder.user}} - {{deliveredOrder.getOrder.status}}
+            {% for orderItem in deliveredOrder.getOrderItemsInOrder %}
+                <ul>
+                    {% if orderItem.isPizza %}
+                        {% for pizzaToTopping in deliveredPizzasToToppings %}
+                            {% for pizzaItem, toppings in pizzaToTopping.items %}
+                                {% if pizzaItem == orderItem %}
+                                    <li>{{pizzaItem.category}}, {{pizzaItem.name}}, ${{pizzaItem.price}}</li>
+                                    {% for topping in toppings %}
+                                        <ul>
+                                            <li class="smallFont">{{topping.name}}</li>
+                                        </ul>
+                                    {% endfor %}
+                                {% endif %}
+                            {% endfor %}
                         {% endfor %}
-                    {% endfor %}
-                {% else %}
-                    <li>{{orderItem.category}}: {{orderItem.name}}, ${{orderItem.price}}</li>
-                {% endif %}
-            </ul>
+                    {% else %}
+                        <li>{{orderItem.category}}: {{orderItem.name}}, ${{orderItem.price}}</li>
+                    {% endif %}
+                </ul>
+            {% endfor %}
         {% endfor %}
-    {% endfor %}
+    {% endif %}
 </div>
 {% endblock %}

@@ -2,8 +2,8 @@ body {
     display: block;
     background-image: url("pizzaBackground.jpg");
     background-repeat: no-repeat;
-    background-size: auto;
-    background-color: #525e6a;
+    background-size: 100%;
+    background-color: #bac7d1;
     }
 
 main {
@@ -28,14 +28,10 @@ main .form-control{
     background-color: #a5a2a27d;
 }
 
-.smallFont {
-    font-size: 10pt;
-}
-
-.extra-large-top-left-right-margin {
-    margin-top: 200px;
-    margin-left: 240px;
-    margin-right: 200px;
+.large-top-left-right-margin {
+    margin-top: 15%;
+    margin-left: 20%;
+    margin-right: 20%;
 }
 
 .extra-large-side-margins {
@@ -43,11 +39,15 @@ main .form-control{
     margin-right: 30%;
 }
 
+.small-bottom-margin {
+    margin-bottom: 20px;
+}
+
 .large-side-margins-gray-background {
     font-size: 16pt;
     background-color: #f8f9fad4;
     margin-left: 25%;
-    margin-right: 30%;
+    margin-right: 25%;
 }
 
 .grayish-background {
@@ -68,9 +68,18 @@ main .form-control{
     padding-right: 20px;
 }
 
-.threeColumns {
-    float: left;
-    width: 33%;
+.smallFont {
+    font-size: 10pt;
+}
+
+.container {
+  width: 250px;
+  clear: both;
+}
+
+.container input {
+  width: 100%;
+  clear: both;
 }
 
 table {
@@ -81,4 +90,9 @@ th, td {
   vertical-align:middle;
   text-align: left;
   width:75%
+}
+
+.threeColumns {
+    float: left;
+    width: 33%;
 }

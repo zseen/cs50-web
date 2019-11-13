@@ -6,15 +6,21 @@
 
 {% block body %}
     {% if message %}
-        <div>
+        <div class="container grayish-background">
             {{ message }}
         </div>
     {% endif %}
 
-    <form action="{% url 'login' %}" method="post">
-        {% csrf_token %}
-        Username: <input name="username" type="text"/><br>
-        Password: <input name="password" type="password"/>
-        <input type="submit" value="Login"/>
-    </form>
+    <body>
+      <div class="container grayish-background small-paddings">
+        <form action="{% url 'login' %}" method="post">
+            {% csrf_token %}
+          <label >Username: </label>
+          <input class="small-bottom-margin" name="username" type="text" required><br/>
+          <label>Password: </label>
+          <input class="small-bottom-margin" name="password" type="password"required><br/>
+          <input type="submit" value="Login"/>
+        </form>
+      </div>
+    </body>
 {% endblock %}
