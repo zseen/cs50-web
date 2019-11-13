@@ -12,15 +12,15 @@
     <table class="large-side-margins-gray-background">
         <thead class='thead-light'>
             <tr>
-                <th class="small-paddings">{{foodSection.foodCategory.category}}</th>
-                <th>Price</th>
+                <th class="small-paddings align-middle">{{foodSection.foodCategory.category}}</th>
+                <th class="align-middle">Price</th>
             </tr>
         </thead>
         <tbody>
             {% for food in foodSection.allFoodInCategory %}
                 <tr>
-                    <td class="small-left-padding">{{food.name}}</td>
-                    <td>${{food.price}}<a href="{% url 'add' food.category food.name food.price %}">+</a></td>
+                    <td class="small-left-padding align-middle">{{food.name}}</td>
+                    <td class="align-middle">${{food.price}}<a href="{% url 'add' food.category food.name food.price %}">+</a></td>
                 </tr>
             {% endfor %}
         </tbody>
@@ -31,17 +31,17 @@
     <table class="large-side-margins-gray-background">
         <thead class='thead-light'>
             <tr>
-                <th class="small-paddings">{{foodSection.foodCategory.category}}</th>
-                <th>Small</th>
-                <th>Large</th>
+                <th class="small-paddings align-middle">{{foodSection.foodCategory.category}}</th>
+                <th class="align-middle">Small</th>
+                <th class="align-middle">Large</th>
             </tr>
         </thead>
         <tbody>
             {% for food in foodSection.allFoodInCategory %}
                 <tr>
-                    <td class="small-left-padding">{{food.name}}</td>
-                    <td>${{food.smallPrice}}<a href="{% url 'add' food.category food.name food.smallPrice %}">+</a></td>
-                    <td>${{food.largePrice}}<a href="{% url 'add' food.category food.name food.largePrice %}">+</a></td>
+                    <td class="small-left-padding align-middle">{{food.name}}</td>
+                    <td class="align-middle">${{food.smallPrice}}<a href="{% url 'add' food.category food.name food.smallPrice %}">+</a></td>
+                    <td class="align-middle">${{food.largePrice}}<a href="{% url 'add' food.category food.name food.largePrice %}">+</a></td>
                 </tr>
             {% endfor %}
         </tbody>
@@ -51,13 +51,13 @@
 <table class="large-side-margins-gray-background">
     <thead class='thead-light'>
         <tr >
-            <th class="small-paddings">Toppings</th>
+            <th class="small-paddings align-middle">Toppings</th>
         </tr>
     </thead>
     <tbody>
         {% for topping in toppings %}
-            <tr class="threeColumns">
-                <td class="small-left-padding">{{topping.name}}<a href="{% url 'add' topping.category topping.name %}">+</a></td>
+            <tr class="three-columns">
+                <td class="small-left-padding align-middle">{{topping.name}}<a href="{% url 'add' topping.category topping.name %}">+</a></td>
             </tr>
         {% endfor %}
     </tbody>
@@ -74,7 +74,7 @@
                         <a href="{% url 'deleteItemFromCart' food.category food.name food.price %}"> -</a><br>
                         {% for topping in toppings %}
                             <ul>
-                                <li class="smallFont">{{topping.name}}
+                                <li class="small-font">{{topping.name}}
                                     {% if pizzaItem == currentPizza %}
                                         <a href="{% url 'deleteItemFromCart' topping.category topping.name %}"> -</a>
                                     {% endif %}
@@ -87,7 +87,7 @@
                 {{food.category}}, {{food.name}}, ${{food.price}}<a href="{% url 'deleteItemFromCart' food.category food.name food.price %}"> -</a><br>
             {% endif %}
         {% endfor %}
-        <p class="smallFont">{{toppingInformationMessage}}<br></p>
+        <p class="small-font">{{toppingInformationMessage}}<br></p>
         {% if order %}
             Total: ${{total}}
             <a href="{% url 'checkoutOrder' %}">Checkout order</a>

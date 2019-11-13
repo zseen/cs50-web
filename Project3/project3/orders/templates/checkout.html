@@ -6,22 +6,17 @@
 {% block body %}
 <div class="large-side-margins grayish-background small-paddings">
     <h5>Your order:</h5>
-        {% for food in order %}
-            {% if food.isPizza %}
-                {% for pizzaItem, toppings in pizzasWithToppingsInOrder.items %}
-                    {% if pizzaItem == food %}
-                        {{pizzaItem.category}}, {{pizzaItem.name}}, ${{pizzaItem.price}}<br>
-                        {% for topping in toppings %}
-                            <ul>
-                                <li class="smallFont">{{topping.name}}</li>
-                            </ul>
-                        {% endfor %}
-                    {% endif %}
+        {{userOrderWithAllFoods.order}}
+        {% for foodInUserOrder in userOrderWithAllFoods.allFoodInUserOrder %}
+            <ul>
+                <li>{{foodInUserOrder.foodOrderItem}}</li>
+                {% for topping in foodInUserOrder.toppings %}
+                    <ul>
+                        <li class="small-font">{{topping.name}}</li>
+                    </ul>
                 {% endfor %}
-            {% else %}
-                {{food.category}}, {{food.name}}, ${{food.price}}<br>
-            {% endif %}
+            </ul>
         {% endfor %}
-            Total: ${{total}} <a href="{% url 'confirmOrder' %}">Order!</a>
+        Total: ${{total}} <a href="{% url 'confirmOrder' %}">Order!</a>
 </div>
 {% endblock %}

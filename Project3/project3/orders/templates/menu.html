@@ -12,15 +12,15 @@ Pizza!
     <table class="large-side-margins-gray-background">
         <thead class='thead-light'>
             <tr >
-                <th class="small-paddings">{{foodSection.foodCategory.category}}</th>
-                <th>Price</th>
+                <th class="small-paddings align-middle">{{foodSection.foodCategory.category}}</th>
+                <th class="align-middle">Price</th>
             </tr>
         </thead>
         <tbody>
             {% for food in foodSection.allFoodInCategory %}
                 <tr>
-                    <td class="small-left-padding">{{food.name}}</td>
-                    <td class="small-right-padding">${{food.price}}</td>
+                    <td class="small-left-padding align-middle">{{food.name}}</td>
+                    <td class="small-right-padding align-middle">${{food.price}}</td>
                 </tr>
             {% endfor %}
         </tbody>
@@ -31,17 +31,17 @@ Pizza!
     <table class="large-side-margins-gray-background">
         <thead class='thead-light'>
             <tr>
-                <th class="small-paddings">{{foodSection.foodCategory.category}}</th>
-                <th>Small</th>
-                <th>Large</th>
+                <th class="small-paddings align-middle">{{foodSection.foodCategory.category}}</th>
+                <th class="align-middle">Small</th>
+                <th class="align-middle">Large</th>
             </tr>
         </thead>
         <tbody>
             {% for food in foodSection.allFoodInCategory %}
                 <tr>
-                    <td class="small-left-padding">{{food.name}}</td>
-                    <td class="small-right-padding">${{food.smallPrice}}</td>
-                    <td class="small-right-padding">${{food.largePrice}}</td>
+                    <td class="small-left-padding align-middle">{{food.name}}</td>
+                    <td class="small-right-padding align-middle">${{food.smallPrice}}</td>
+                    <td class="small-right-padding align-middle">${{food.largePrice}}</td>
                 </tr>
             {% endfor %}
         </tbody>
@@ -51,13 +51,13 @@ Pizza!
 <table class="large-side-margins-gray-background">
     <thead class='thead-light'>
         <tr >
-            <th class="small-paddings">Toppings</th>
+            <th class="small-paddings align-middle">Toppings</th>
         </tr>
     </thead>
     <tbody>
         {% for topping in toppings %}
-            <tr class="threeColumns">
-                <td class="small-left-padding">{{topping.name}}</td>
+            <tr class="three-columns">
+                <td class="small-left-padding align-middle">{{topping.name}}</td>
             </tr>
         {% endfor %}
     </tbody>

@@ -7,26 +7,16 @@
 {% block body %}
 <div class="extra-large-side-margins grayish-background small-paddings">
     <h5>Orders being prepared:</h5>
-    {% for orderDetail in allConfirmedOrderDetailsList %}
-        {{orderDetail.getOrder}}: <br> <a href="{% url 'completeOrderAdmin' orderDetail.getOrder.orderNumber %}">Completed</a>
-        {% for orderItem in orderDetail.getOrderItemsInOrder %}
+    {% for confirmedOrderWithFoods in allConfirmedOrdersWithFoods %}
+        {{confirmedOrderWithFoods.order}}: <br> <a href="{% url 'completeOrderAdmin' confirmedOrderWithFoods.getOrder.orderNumber %}">Completed</a>
+        {% for foodInUserOrder in confirmedOrderWithFoods.allFoodInUserOrder %}
             <ul>
-                {% if orderItem.isPizza %}
-                    {% for pizzaToTopping in allConfirmedPizzasToToppings %}
-                        {% for pizzaItem, toppings in pizzaToTopping.items %}
-                            {% if pizzaItem == orderItem %}
-                                <li>{{pizzaItem.category}}, {{pizzaItem.name}}, ${{pizzaItem.price}}</li>
-                                {% for topping in toppings %}
-                                    <ul>
-                                        <li class="smallFont">{{topping.name}}</li>
-                                    </ul>
-                                {% endfor %}
-                            {% endif %}
-                        {% endfor %}
-                    {% endfor %}
-                {% else %}
-                    <li>{{orderItem.category}}: {{orderItem.name}}, ${{orderItem.price}}</li>
-                {% endif %}
+                <li>{{foodInUserOrder.foodOrderItem}}</li>
+                {% for topping in foodInUserOrder.toppings %}
+                    <ul>
+                        <li class="small-font">{{topping.name}}</li>
+                    </ul>
+                {% endfor %}
             </ul>
         {% endfor %}
     {% endfor %}
@@ -34,26 +24,16 @@
 
 <div class="extra-large-side-margins grayish-background small-paddings">
     <h5>Orders being delivered:</h5>
-    {% for orderDetail in allCompletedOrderDetailsList %}
-        {{orderDetail.getOrder}}: <br> <a href="{% url 'markOrderDeliveredAdmin' orderDetail.getOrder.orderNumber %}">Delivered</a>
-        {% for orderItem in orderDetail.getOrderItemsInOrder %}
+    {% for completedOrderWithFoods in allCompletedOrdersWithFoods %}
+        {{completedOrderWithFoods.getOrder}}: <br> <a href="{% url 'markOrderDeliveredAdmin' completedOrderWithFoods.getOrder.orderNumber %}">Delivered</a>
+        {% for foodInUserOrder in completedOrderWithFoods.allFoodInUserOrder %}
             <ul>
-                {% if orderItem.isPizza %}
-                    {% for pizzaToTopping in allCompletedPizzasToToppings %}
-                        {% for pizzaItem, toppings in pizzaToTopping.items %}
-                            {% if pizzaItem == orderItem %}
-                                <li>{{pizzaItem.category}}, {{pizzaItem.name}}, ${{pizzaItem.price}}</li>
-                                {% for topping in toppings %}
-                                    <ul>
-                                        <li class="smallFont">{{topping.name}}</li>
-                                    </ul>
-                                {% endfor %}
-                            {% endif %}
-                        {% endfor %}
-                    {% endfor %}
-                {% else %}
-                    <li>{{orderItem.category}}: {{orderItem.name}}, ${{orderItem.price}}</li>
-                {% endif %}
+                <li>{{foodInUserOrder.foodOrderItem}}</li>
+                {% for topping in foodInUserOrder.toppings %}
+                    <ul>
+                        <li class="small-font">{{topping.name}}</li>
+                    </ul>
+                {% endfor %}
             </ul>
         {% endfor %}
     {% endfor %}
