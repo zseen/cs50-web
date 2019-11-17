@@ -5,11 +5,12 @@ from django.shortcuts import render
 from django.urls import reverse
 
 from .models import Order, FoodOrderItem
-from .helpers.OrderUtils import OrderState, getCurrentOrderForUser, getTotalOrderPrice, getAllOrderDetails, \
+from .helpers.OrderUtils import OrderState, getCurrentOrderForUser, getTotalOrderPrice, \
     getAllFoodContextDict, getUserDependentContextDict, SPECIAL_PIZZA
 from .helpers.PizzaOrderHandler import PizzaOrderHandler, PizzaCategory, TOPPING, \
     RemainingToppingAllowanceMessageGenerator
-from .helpers.FoodItemsWithToppings import getAllFoodsWithToppingsInSelectedUserOrders
+from .helpers.FoodItemsWithToppings import getAllFoodsWithToppingsInSelectedUserOrders, \
+    getAllFoodsWithToppingsInUserOrder
 
 pizzaOrderHandler = PizzaOrderHandler()
 messageGenerator = RemainingToppingAllowanceMessageGenerator(pizzaOrderHandler)
@@ -34,7 +35,7 @@ def register_view(request):
     password = request.POST["password"]
 
     if User.objects.filter(username=username).exists():
-        return render(request, "register.html", {"message": "Please provide a unique username."})
+        return render(request, "register.html", {"message": "This username is already taken, please choose a different one."})
 
     if User.objects.filter(email=email).exists():
         return render(request, "register.html", {"message": "Your email address is already registered on this site."})
@@ -134,12 +135,11 @@ def deleteItemFromCart(request, category, name, price=""):
 
 def checkoutOrder(request):
     userOrder = Order.objects.get(user=request.user, status=OrderState.INITIATED.value)
-    userOrderWithAllFoods = getAllFoodsWithToppingsInSelectedUserOrders([userOrder])
+    userOrderWithAllFoods = getAllFoodsWithToppingsInUserOrder(userOrder)
 
     context = {
         "total": getTotalOrderPrice(userOrder),
-        # The user can only have one initiated order, so allFoodInSelectedOrder looks like [[allFood]], only the first sublist is needed
-        "userOrderWithAllFoods": userOrderWithAllFoods[0]
+        "userOrderWithAllFoods": userOrderWithAllFoods
     }
 
     return render(request, "checkout.html", context)
@@ -185,9 +185,11 @@ def markOrderDeliveredAdmin(request, orderNumber):
 
 
 def displayUserOwnOrders(request):
-    userPendingOrConfirmedOrders = Order.objects.filter(user=request.user,
-                                                        status=OrderState.CONFIRMED.value) | Order.objects.filter(
-        user=request.user, status=OrderState.COMPLETED.value)
+    userPendingOrders = Order.objects.filter(user=request.user, status=OrderState.CONFIRMED.value)
+    userConfirmedOrders = Order.objects.filter(user=request.user, status=OrderState.COMPLETED.value)
+
+    # Querysets can be merged using the "|" operator
+    userPendingOrConfirmedOrders = userPendingOrders | userConfirmedOrders
     pendingOrCompletedOrdersWithFoods = getAllFoodsWithToppingsInSelectedUserOrders(userPendingOrConfirmedOrders)
 
     userDeliveredOrders = Order.objects.filter(user=request.user, status=OrderState.DELIVERED.value)

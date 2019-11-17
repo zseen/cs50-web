@@ -4,17 +4,11 @@ body {
     background-repeat: no-repeat;
     background-size: 100%;
     background-color: #bac7d1;
-    }
+}
 
 main {
     overflow-x: auto;
     text-align: center;
-}
-
-main .form-control {
-    display: inline-block;
-    width: auto;
-    background-color: #dad8d8;
 }
 
 .nav-link {
