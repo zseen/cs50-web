@@ -9,7 +9,7 @@ from .helpers.OrderUtils import OrderState, getCurrentOrderForUser, getTotalOrde
     getAllFoodContextDict, getUserDependentContextDict, SPECIAL_PIZZA
 from .helpers.PizzaOrderHandler import PizzaOrderHandler, PizzaCategory, TOPPING, \
     RemainingToppingAllowanceMessageGenerator
-from .helpers.FoodItemsWithToppings import getAllFoodWithToppingsInSelectedUserOrders
+from .helpers.FoodItemsWithToppings import getAllFoodsWithToppingsInSelectedUserOrders
 
 pizzaOrderHandler = PizzaOrderHandler()
 messageGenerator = RemainingToppingAllowanceMessageGenerator(pizzaOrderHandler)
@@ -134,7 +134,7 @@ def deleteItemFromCart(request, category, name, price=""):
 
 def checkoutOrder(request):
     userOrder = Order.objects.get(user=request.user, status=OrderState.INITIATED.value)
-    userOrderWithAllFoods = getAllFoodWithToppingsInSelectedUserOrders([userOrder])
+    userOrderWithAllFoods = getAllFoodsWithToppingsInSelectedUserOrders([userOrder])
 
     context = {
         "total": getTotalOrderPrice(userOrder),
@@ -157,8 +157,8 @@ def manageConfirmedOrdersAdmin(request):
     allConfirmedOrders = Order.objects.filter(status=OrderState.CONFIRMED.value)
     allCompletedOrders = Order.objects.filter(status=OrderState.COMPLETED.value)
 
-    allConfirmedOrdersWithFoods = getAllFoodWithToppingsInSelectedUserOrders(allConfirmedOrders)
-    allCompletedOrdersWithFoods = getAllFoodWithToppingsInSelectedUserOrders(allCompletedOrders)
+    allConfirmedOrdersWithFoods = getAllFoodsWithToppingsInSelectedUserOrders(allConfirmedOrders)
+    allCompletedOrdersWithFoods = getAllFoodsWithToppingsInSelectedUserOrders(allCompletedOrders)
 
     context = {
         "allConfirmedOrdersWithFoods": allConfirmedOrdersWithFoods,
@@ -188,10 +188,10 @@ def displayUserOwnOrders(request):
     userPendingOrConfirmedOrders = Order.objects.filter(user=request.user,
                                                         status=OrderState.CONFIRMED.value) | Order.objects.filter(
         user=request.user, status=OrderState.COMPLETED.value)
-    pendingOrCompletedOrdersWithFoods = getAllFoodWithToppingsInSelectedUserOrders(userPendingOrConfirmedOrders)
+    pendingOrCompletedOrdersWithFoods = getAllFoodsWithToppingsInSelectedUserOrders(userPendingOrConfirmedOrders)
 
     userDeliveredOrders = Order.objects.filter(user=request.user, status=OrderState.DELIVERED.value)
-    deliveredOrdersWithFoods = getAllFoodWithToppingsInSelectedUserOrders(userDeliveredOrders)
+    deliveredOrdersWithFoods = getAllFoodsWithToppingsInSelectedUserOrders(userDeliveredOrders)
 
     context = {
         "pendingOrConfirmedOrdersWithFoods": pendingOrCompletedOrdersWithFoods,

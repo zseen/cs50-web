@@ -1,5 +1,5 @@
 from .PizzaOrderHandler import PizzaOrderHandler
-from .OrderUtils import OrderDetails
+from orders.models import FoodOrderItem
 
 
 class FoodOrderItemWithToppings:
@@ -8,38 +8,47 @@ class FoodOrderItemWithToppings:
         self.toppings = []
 
 
-class AllFoodInUserOrder:
+class AllFoodsInUserOrder:
     def __init__(self, order):
-        self.order = order
-        self.allFoodInUserOrder = []
+        self._order = order
+        self._allFoodsInUserOrder = []
 
-    def getFoodItemsWithToppingsInUserOrder(self):
-        pizzasToToppings = PizzaOrderHandler.getAllPizzasToToppingsInUserOrder(self.order)
+    def getFoodOrderItemsInUserOrder(self):
+        orderItemsInOrder = []
+        for orderItem in FoodOrderItem.objects.all():
+            if orderItem.order.orderNumber == self._order.orderNumber:
+                orderItemsInOrder.append(orderItem)
+        return orderItemsInOrder
+
+    def getAllFoodsWithToppingsInUserOrder(self):
+        pizzasToToppings = PizzaOrderHandler.getAllPizzasToToppingsInUserOrder(self._order)
 
         for pizza, topping in pizzasToToppings.items():
             foodWithTopping = FoodOrderItemWithToppings()
             foodWithTopping.foodOrderItem = pizza
             foodWithTopping.toppings = topping
-            self.allFoodInUserOrder.append(foodWithTopping)
+            self._allFoodsInUserOrder.append(foodWithTopping)
 
-        orderDetails = OrderDetails(self.order)
-        foodItems = orderDetails.getOrderItemsInOrder()
+        foodItems = self.getFoodOrderItemsInUserOrder()
         for foodItem in foodItems:
             if not foodItem.isPizza:
                 foodWithTopping = FoodOrderItemWithToppings()
                 foodWithTopping.foodOrderItem = foodItem
-                self.allFoodInUserOrder.append(foodWithTopping)
+                self._allFoodsInUserOrder.append(foodWithTopping)
 
     def getOrder(self):
-        return self.order
+        return self._order
+
+    def getAllFoodsInUserOrder(self):
+        return self._allFoodsInUserOrder
 
 
-def getAllFoodWithToppingsInSelectedUserOrders(orders):
-    allFoodWithToppingsInUserOrders = []
+def getAllFoodsWithToppingsInSelectedUserOrders(orders):
+    allFoodsWithToppingsInUserOrders = []
 
     for order in orders:
-        allFoodInUserOrder = AllFoodInUserOrder(order)
-        allFoodInUserOrder.getFoodItemsWithToppingsInUserOrder()
-        allFoodWithToppingsInUserOrders.append(allFoodInUserOrder)
+        allFoodsInUserOrder = AllFoodsInUserOrder(order)
+        allFoodsInUserOrder.getAllFoodsWithToppingsInUserOrder()
+        allFoodsWithToppingsInUserOrders.append(allFoodsInUserOrder)
 
-    return allFoodWithToppingsInUserOrders
+    return allFoodsWithToppingsInUserOrders

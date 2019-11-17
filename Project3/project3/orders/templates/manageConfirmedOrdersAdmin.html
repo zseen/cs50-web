@@ -8,11 +8,11 @@
 <div class="extra-large-side-margins grayish-background small-paddings">
     <h5>Orders being prepared:</h5>
     {% for confirmedOrderWithFoods in allConfirmedOrdersWithFoods %}
-        {{confirmedOrderWithFoods.order}}: <br> <a href="{% url 'completeOrderAdmin' confirmedOrderWithFoods.getOrder.orderNumber %}">Completed</a>
-        {% for foodInUserOrder in confirmedOrderWithFoods.allFoodInUserOrder %}
+        {{confirmedOrderWithFoods.getOrder}}: <br> <a href="{% url 'completeOrderAdmin' confirmedOrderWithFoods.getOrder.orderNumber %}">Completed</a>
+        {% for foodsInUserOrder in confirmedOrderWithFoods.getAllFoodsInUserOrder %}
             <ul>
-                <li>{{foodInUserOrder.foodOrderItem}}</li>
-                {% for topping in foodInUserOrder.toppings %}
+                <li>{{foodsInUserOrder.foodOrderItem}}</li>
+                {% for topping in foodsInUserOrder.toppings %}
                     <ul>
                         <li class="small-font">{{topping.name}}</li>
                     </ul>
@@ -26,10 +26,10 @@
     <h5>Orders being delivered:</h5>
     {% for completedOrderWithFoods in allCompletedOrdersWithFoods %}
         {{completedOrderWithFoods.getOrder}}: <br> <a href="{% url 'markOrderDeliveredAdmin' completedOrderWithFoods.getOrder.orderNumber %}">Delivered</a>
-        {% for foodInUserOrder in completedOrderWithFoods.allFoodInUserOrder %}
+        {% for foodsInUserOrder in completedOrderWithFoods.getAllFoodsInUserOrder %}
             <ul>
-                <li>{{foodInUserOrder.foodOrderItem}}</li>
-                {% for topping in foodInUserOrder.toppings %}
+                <li>{{foodsInUserOrder.foodOrderItem}}</li>
+                {% for topping in foodsInUserOrder.toppings %}
                     <ul>
                         <li class="small-font">{{topping.name}}</li>
                     </ul>

@@ -11,11 +11,11 @@
         You do not have any current orders at the moment! Why not <a href="/menu">order</a> a scrumptious pizza or a crunchy salad?
     {% endif %}
     {% for pendingOrConfirmedOrderWithFoods in pendingOrConfirmedOrdersWithFoods %}
-        {{pendingOrConfirmedOrderWithFoods.order.user}} - {{pendingOrConfirmedOrderWithFoods.order.status}}
-        {% for foodInUserOrder in pendingOrConfirmedOrderWithFoods.allFoodInUserOrder %}
+        {{pendingOrConfirmedOrderWithFoods.getOrder.user}} - {{pendingOrConfirmedOrderWithFoods.getOrder.status}}
+        {% for foodsInUserOrder in pendingOrConfirmedOrderWithFoods.getAllFoodsInUserOrder %}
             <ul>
-                <li>{{foodInUserOrder.foodOrderItem}}</li>
-                {% for topping in foodInUserOrder.toppings %}
+                <li>{{foodsInUserOrder.foodOrderItem}}</li>
+                {% for topping in foodsInUserOrder.toppings %}
                     <ul>
                         <li class="small-font">{{topping.name}}</li>
                     </ul>
@@ -27,11 +27,11 @@
     {% if deliveredOrdersWithFoods %}
         <h5>Your previous orders:</h5>
         {% for deliveredOrderWithFoods in deliveredOrdersWithFoods %}
-                {{deliveredOrderWithFoods.order.user}} - {{deliveredOrderWithFoods.order.status}}
-            {% for foodInUserOrder in deliveredOrderWithFoods.allFoodInUserOrder %}
+                {{deliveredOrderWithFoods.getOrder.user}} - {{deliveredOrderWithFoods.getOrder.status}}
+            {% for foodsInUserOrder in deliveredOrderWithFoods.getAllFoodsInUserOrder %}
                 <ul>
-                    <li>{{foodInUserOrder.foodOrderItem}}</li>
-                    {% for topping in foodInUserOrder.toppings %}
+                    <li>{{foodsInUserOrder.foodOrderItem}}</li>
+                    {% for topping in foodsInUserOrder.toppings %}
                         <ul>
                             <li class="small-font">{{topping.name}}</li>
                         </ul>

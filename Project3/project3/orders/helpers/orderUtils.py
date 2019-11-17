@@ -40,15 +40,7 @@ class OrderDetails:
     def __init__(self, order):
         self._order = order
 
-    def getOrderItemsInOrder(self):
-        orderItemsInOrder = []
-        for orderItem in FoodOrderItem.objects.all():
-            if orderItem.order.orderNumber == self._order.orderNumber:
-                orderItemsInOrder.append(orderItem)
-        return orderItemsInOrder
 
-    def getOrder(self):
-        return self._order
 
 
 def getAllOrderDetails(orders):

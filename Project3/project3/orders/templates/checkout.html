@@ -6,11 +6,11 @@
 {% block body %}
 <div class="large-side-margins grayish-background small-paddings">
     <h5>Your order:</h5>
-        {{userOrderWithAllFoods.order}}
-        {% for foodInUserOrder in userOrderWithAllFoods.allFoodInUserOrder %}
+        {{userOrderWithAllFoods.getOrder}}
+        {% for foodsInUserOrder in userOrderWithAllFoods.getAllFoodsInUserOrder %}
             <ul>
-                <li>{{foodInUserOrder.foodOrderItem}}</li>
-                {% for topping in foodInUserOrder.toppings %}
+                <li>{{foodsInUserOrder.foodOrderItem}}</li>
+                {% for topping in foodsInUserOrder.toppings %}
                     <ul>
                         <li class="small-font">{{topping.name}}</li>
                     </ul>
