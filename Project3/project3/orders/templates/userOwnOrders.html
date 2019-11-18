@@ -1,29 +1,44 @@
 {% extends "base.html" %}
 
 {% block title %}
-    Pizza!
+    Your orders
 {% endblock %}
 
 {% block body %}
-<div class="grayish-background">
-    Your current orders:<br>
-    {% for pendingOrder in pendingOrders %}
-        {{ pendingOrder.getOrder }}
-        {% for orderItem in pendingOrder.getOrderItemsInOrder %}
-        <ul>
-            <li>{{orderItem}}</li>
-        </ul>
+<div class="extra-large-side-margins grayish-background small-paddings">
+    <h5>Your current orders:</h5>
+    {% if not pendingOrConfirmedOrdersWithFoods %}
+        You do not have any current orders at the moment! Why not <a href="/menu">order</a> a scrumptious pizza or a crunchy salad?
+    {% endif %}
+    {% for pendingOrConfirmedOrderWithFoods in pendingOrConfirmedOrdersWithFoods %}
+        {{pendingOrConfirmedOrderWithFoods.getOrder.user}} - {{pendingOrConfirmedOrderWithFoods.getOrder.status}}
+        {% for foodsInUserOrder in pendingOrConfirmedOrderWithFoods.getAllFoodsInUserOrder %}
+            <ul>
+                <li>{{foodsInUserOrder.foodOrderItem}}</li>
+                {% for topping in foodsInUserOrder.toppings %}
+                    <ul>
+                        <li class="small-font">{{topping.name}}</li>
+                    </ul>
+                {% endfor %}
+            </ul>
         {% endfor %}
     {% endfor %}
 
-    Your previous orders:<br>
-    {% for completedOrder in completedOrders %}
-        {{ completedOrder.getOrder }}
-        {% for orderItem in completedOrder.getOrderItemsInOrder %}
-        <ul>
-            <li>{{orderItem}}</li>
-        </ul>
+    {% if deliveredOrdersWithFoods %}
+        <h5>Your previous orders:</h5>
+        {% for deliveredOrderWithFoods in deliveredOrdersWithFoods %}
+                {{deliveredOrderWithFoods.getOrder.user}} - {{deliveredOrderWithFoods.getOrder.status}}
+            {% for foodsInUserOrder in deliveredOrderWithFoods.getAllFoodsInUserOrder %}
+                <ul>
+                    <li>{{foodsInUserOrder.foodOrderItem}}</li>
+                    {% for topping in foodsInUserOrder.toppings %}
+                        <ul>
+                            <li class="small-font">{{topping.name}}</li>
+                        </ul>
+                    {% endfor %}
+                </ul>
+            {% endfor %}
         {% endfor %}
-    {% endfor %}
+    {% endif %}
 </div>
 {% endblock %}

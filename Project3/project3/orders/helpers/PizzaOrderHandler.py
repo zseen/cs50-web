@@ -14,6 +14,7 @@ class PizzaName(Enum):
     ONE_TOPPING = "1 topping"
     TWO_TOPPINGS = "2 toppings"
     THREE_TOPPINGS = "3 toppings"
+    SPECIAL = "Special"
 
 
 class PizzaOrderHandler:
@@ -90,12 +91,15 @@ class RemainingToppingAllowanceMessageGenerator:
 
     def getRemainingToppingAllowanceMessage(self, userOrder):
         latestFoodInBasket = FoodOrderItem.objects.filter(order=userOrder).last()
-        isLatestFoodPizza = latestFoodInBasket.isPizza
+        if not latestFoodInBasket:
+            message = "Please order an eligible pizza to put topping on."
+            return message
 
+        isLatestFoodPizza = latestFoodInBasket.isPizza
         if isLatestFoodPizza:
             currentPizza = self.pizzaOrderHandler.getCurrentPizza()
             message = "You can add " + str(self.pizzaOrderHandler.getRemainingToppingAllowance()) + " more topping(s)."
-            if currentPizza.name == PizzaName.CHEESE.value:
+            if currentPizza.name == PizzaName.CHEESE.value or currentPizza.name == PizzaName.SPECIAL.value:
                 message = ""
             elif not self.pizzaOrderHandler.isCurrentPizzaToppable():
                 message = "All toppings added!"

@@ -1,27 +1,92 @@
 body {
     display: block;
     background-image: url("pizzaBackground.jpg");
+    background-repeat: no-repeat;
+    background-size: 100%;
+    background-color: #bac7d1;
 }
 
+main {
+    overflow-x: auto;
+    text-align: center;
+}
 
-#message{
+.nav-link {
+    color: #f8f9fa;
+}
+
+.shadowed-text {
     color: #f8f9fa;
     text-shadow: 2px 0 0 #111, 0 -1px 0 #111, 0 2px 0 #111, -1px 0 0 #111;
     font-size: 22pt;
-    margin-top: 200px;
-    margin-left: 240px;
-    margin-right: 200px;
     background-color: #a5a2a27d;
 }
 
+.large-top-left-right-margin {
+    margin-top: 15%;
+    margin-left: 20%;
+    margin-right: 20%;
+}
 
-.menu
-{
+.extra-large-side-margins {
+    margin-left: 25%;
+    margin-right: 30%;
+}
+
+.small-bottom-margin {
+    margin-bottom: 20px;
+}
+
+.large-side-margins-gray-background {
     font-size: 16pt;
-    background-color: #f8f9fa9e;
-    margin-left: 300px;
+    background-color: #f8f9fad4;
+    margin-left: 25%;
+    margin-right: 25%;
 }
 
-.grayish-background{
-    background-color: #a5a2a27d;
+.grayish-background {
+    background-color: #dad8d8;
+}
+
+.small-paddings {
+    padding-left: 20px;
+    padding-bottom: 10px;
+    padding-top: 20px;
+}
+
+.small-left-padding {
+    padding-left: 20px;
+}
+
+.small-right-padding {
+    padding-right: 20px;
+}
+
+.small-font {
+    font-size: 10pt;
+}
+
+.container {
+  width: 250px;
+  clear: both;
+}
+
+.container input {
+  width: 100%;
+  clear: both;
+}
+
+table {
+  width: 50%;
+}
+
+.align-middle {
+  vertical-align: middle;
+  text-align: left;
+  width:75%
+}
+
+.three-columns {
+    float: left;
+    width: 33%;
 }

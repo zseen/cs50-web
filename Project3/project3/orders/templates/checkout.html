@@ -2,23 +2,21 @@
 {% block title %}
     Your order!
 {% endblock %}
+
 {% block body %}
-<h5>Your order:</h5>
-    {% for food in order %}
-        {% if food.isPizza %}
-            {% for pizzaItem, toppings in pizzasToOrder.items %}
-                {% if pizzaItem == food %}
-                    {{pizzaItem.category}}, {{pizzaItem.name}}, ${{pizzaItem.price}}<br>
-                    {% for topping in toppings %}
-                        <ul>
-                            <li>{{topping.name}}</li><br>
-                        </ul>
-                    {% endfor %}
-                {% endif %}
-            {% endfor %}
-        {% else %}
-            {{food.category}}, {{food.name}}, ${{food.price}}<br>
-        {% endif %}
-    {% endfor %}
+<div class="large-side-margins grayish-background small-paddings">
+    <h5>Your order:</h5>
+        {{userOrderWithAllFoods.getOrder}}
+        {% for foodsInUserOrder in userOrderWithAllFoods.getAllFoodsInUserOrder %}
+            <ul>
+                <li>{{foodsInUserOrder.foodOrderItem}}</li>
+                {% for topping in foodsInUserOrder.toppings %}
+                    <ul>
+                        <li class="small-font">{{topping.name}}</li>
+                    </ul>
+                {% endfor %}
+            </ul>
+        {% endfor %}
         Total: ${{total}} <a href="{% url 'confirmOrder' %}">Order!</a>
+</div>
 {% endblock %}

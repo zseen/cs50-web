@@ -1,13 +1,15 @@
 from django.contrib.auth.models import User
 from django.contrib.auth import authenticate, login, logout
-from django.http import HttpResponse, HttpResponseRedirect
+from django.http import HttpResponseRedirect
 from django.shortcuts import render
 from django.urls import reverse
 
 from .models import Order, FoodOrderItem
-from .helpers.OrderUtils import OrderState, getCurrentOrderForUser, getTotalOrderPrice, getAllOrderDetails, \
-    getAllFoodContextDict, getUserDependentContextDict
-from .helpers.PizzaOrderHandler import PizzaOrderHandler, PizzaCategory, TOPPING, RemainingToppingAllowanceMessageGenerator
+from .helpers.OrderUtils import OrderState, getCurrentOrderForUser, getTotalOrderPrice, \
+    getAllFoodContextDict, getUserDependentContextDict, SPECIAL_PIZZA
+from .helpers.PizzaOrderHandler import PizzaOrderHandler, PizzaCategory, TOPPING, \
+    RemainingToppingAllowanceMessageGenerator
+from .helpers.FoodItemsWithToppings import getAllFoodsWithToppingsInSelectedUserOrders, AllFoodsInUserOrder
 
 pizzaOrderHandler = PizzaOrderHandler()
 messageGenerator = RemainingToppingAllowanceMessageGenerator(pizzaOrderHandler)
@@ -15,7 +17,7 @@ messageGenerator = RemainingToppingAllowanceMessageGenerator(pizzaOrderHandler)
 
 def index(request):
     message = {
-        "specPizza": "Special Pizza: tomato base, grilled broccoli, courgette, sweetcorn, tomato, cashew 'mozzarella'!"
+        "specialPizza": SPECIAL_PIZZA
     }
 
     return render(request, "index.html", message)
@@ -31,6 +33,12 @@ def register_view(request):
     email = request.POST["email"]
     password = request.POST["password"]
 
+    if User.objects.filter(username=username).exists():
+        return render(request, "register.html", {"message": "This username is already taken, please choose a different one."})
+
+    if User.objects.filter(email=email).exists():
+        return render(request, "register.html", {"message": "Your email address is already registered on this site."})
+
     user = User.objects.create_user(username, email, password)
     user.first_name = firstname
     user.last_name = lastname
@@ -40,7 +48,7 @@ def register_view(request):
         login(request, user)
         return HttpResponseRedirect(reverse("index"))
     else:
-        return render(request, "register.html", {"message": "Please provide a unique username and email."})
+        return render(request, "register.html", {"message": "Something went wrong. Please try to register again!"})
 
 
 def login_view(request):
@@ -59,7 +67,10 @@ def login_view(request):
 
 def logout_view(request):
     logout(request)
-    return render(request, "index.html")
+    message = {
+        "specialPizza": SPECIAL_PIZZA
+    }
+    return render(request, "index.html", message)
 
 
 def menu(request):
@@ -123,12 +134,11 @@ def deleteItemFromCart(request, category, name, price=""):
 
 def checkoutOrder(request):
     userOrder = Order.objects.get(user=request.user, status=OrderState.INITIATED.value)
-    pizzasWithToppingsInOrder = pizzaOrderHandler.getAllPizzasToToppingsInUserOrder(userOrder)
+    userOrderWithAllFoods = AllFoodsInUserOrder(userOrder)
 
     context = {
-        "order": FoodOrderItem.objects.filter(order=userOrder),
         "total": getTotalOrderPrice(userOrder),
-        "pizzasWithToppingsInOrder": pizzasWithToppingsInOrder
+        "userOrderWithAllFoods": userOrderWithAllFoods
     }
 
     return render(request, "checkout.html", context)
@@ -143,12 +153,15 @@ def confirmOrder(request):
 
 
 def manageConfirmedOrdersAdmin(request):
-    allOrders = Order.objects.filter(status=OrderState.CONFIRMED.value)
+    allConfirmedOrders = Order.objects.filter(status=OrderState.CONFIRMED.value)
+    allCompletedOrders = Order.objects.filter(status=OrderState.COMPLETED.value)
 
-    allOrderDetailsList = getAllOrderDetails(allOrders)
+    allConfirmedOrdersWithFoods = getAllFoodsWithToppingsInSelectedUserOrders(allConfirmedOrders)
+    allCompletedOrdersWithFoods = getAllFoodsWithToppingsInSelectedUserOrders(allCompletedOrders)
 
     context = {
-        "allOrderDetailsList": allOrderDetailsList
+        "allConfirmedOrdersWithFoods": allConfirmedOrdersWithFoods,
+        "allCompletedOrdersWithFoods": allCompletedOrdersWithFoods
     }
 
     return render(request, "manageConfirmedOrdersAdmin.html", context)
@@ -162,8 +175,8 @@ def completeOrderAdmin(request, orderNumber):
     return manageConfirmedOrdersAdmin(request)
 
 
-def markOrderDeliveredAdmin(request):
-    userOrder = Order.objects.get(user=request.user, status=OrderState.COMPLETED.value)
+def markOrderDeliveredAdmin(request, orderNumber):
+    userOrder = Order.objects.get(orderNumber=int(orderNumber))
     userOrder.status = OrderState.DELIVERED.value
     userOrder.save()
 
@@ -172,14 +185,17 @@ def markOrderDeliveredAdmin(request):
 
 def displayUserOwnOrders(request):
     userPendingOrders = Order.objects.filter(user=request.user, status=OrderState.CONFIRMED.value)
-    pendingOrderDetailsList = getAllOrderDetails(userPendingOrders)
+    userConfirmedOrders = Order.objects.filter(user=request.user, status=OrderState.COMPLETED.value)
 
-    userCompletedOrders = Order.objects.filter(user=request.user, status=OrderState.COMPLETED.value)
-    completedOrderDetailsList = getAllOrderDetails(userCompletedOrders)
+    userPendingOrConfirmedOrders = userPendingOrders | userConfirmedOrders
+    pendingOrCompletedOrdersWithFoods = getAllFoodsWithToppingsInSelectedUserOrders(userPendingOrConfirmedOrders)
+
+    userDeliveredOrders = Order.objects.filter(user=request.user, status=OrderState.DELIVERED.value)
+    deliveredOrdersWithFoods = getAllFoodsWithToppingsInSelectedUserOrders(userDeliveredOrders)
 
     context = {
-        "pendingOrders": pendingOrderDetailsList,
-        "completedOrders": completedOrderDetailsList
+        "pendingOrConfirmedOrdersWithFoods": pendingOrCompletedOrdersWithFoods,
+        "deliveredOrdersWithFoods": deliveredOrdersWithFoods
     }
 
     return render(request, "userOwnOrders.html", context)
