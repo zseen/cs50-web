@@ -43,15 +43,11 @@ class AllFoodsInUserOrder:
         return orderItemsInOrder
 
 
-def getAllFoodsWithToppingsInUserOrder(order):
-    return AllFoodsInUserOrder(order)
-
-
 def getAllFoodsWithToppingsInSelectedUserOrders(orders):
     allFoodsWithToppingsInUserOrders = []
 
     for order in orders:
-        allFoodsInUserOrder = getAllFoodsWithToppingsInUserOrder(order)
+        allFoodsInUserOrder = AllFoodsInUserOrder(order)
         allFoodsWithToppingsInUserOrders.append(allFoodsInUserOrder)
 
     return allFoodsWithToppingsInUserOrders

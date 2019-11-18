@@ -9,8 +9,7 @@ from .helpers.OrderUtils import OrderState, getCurrentOrderForUser, getTotalOrde
     getAllFoodContextDict, getUserDependentContextDict, SPECIAL_PIZZA
 from .helpers.PizzaOrderHandler import PizzaOrderHandler, PizzaCategory, TOPPING, \
     RemainingToppingAllowanceMessageGenerator
-from .helpers.FoodItemsWithToppings import getAllFoodsWithToppingsInSelectedUserOrders, \
-    getAllFoodsWithToppingsInUserOrder
+from .helpers.FoodItemsWithToppings import getAllFoodsWithToppingsInSelectedUserOrders, AllFoodsInUserOrder
 
 pizzaOrderHandler = PizzaOrderHandler()
 messageGenerator = RemainingToppingAllowanceMessageGenerator(pizzaOrderHandler)
@@ -135,7 +134,7 @@ def deleteItemFromCart(request, category, name, price=""):
 
 def checkoutOrder(request):
     userOrder = Order.objects.get(user=request.user, status=OrderState.INITIATED.value)
-    userOrderWithAllFoods = getAllFoodsWithToppingsInUserOrder(userOrder)
+    userOrderWithAllFoods = AllFoodsInUserOrder(userOrder)
 
     context = {
         "total": getTotalOrderPrice(userOrder),
@@ -188,7 +187,6 @@ def displayUserOwnOrders(request):
     userPendingOrders = Order.objects.filter(user=request.user, status=OrderState.CONFIRMED.value)
     userConfirmedOrders = Order.objects.filter(user=request.user, status=OrderState.COMPLETED.value)
 
-    # Querysets can be merged using the "|" operator
     userPendingOrConfirmedOrders = userPendingOrders | userConfirmedOrders
     pendingOrCompletedOrdersWithFoods = getAllFoodsWithToppingsInSelectedUserOrders(userPendingOrConfirmedOrders)
 
