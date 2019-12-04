@@ -1,10 +1,12 @@
 from django.test import TestCase
+from django.contrib.auth.models import User
 
 
 # Create your tests here.
 
 from .models import OnePriceFood, TwoPriceFood, Salad, RegularPizza, Topping, FoodOrderItem, Order
 from .helpers import PizzaOrderHandler
+
 
 pizzaOrderHandler = PizzaOrderHandler.PizzaOrderHandler()
 
@@ -32,10 +34,12 @@ class PizzaOrderHandlerTestCase(TestCase):
     def setUp(self):
         RegularPizza.objects.create(name="2 toppings", category="RegularPizza", smallPrice="15.20", largePrice="21.95")
         Topping.objects.create(name="Mushrooms", category="Topping")
-        Order.objects.create()
-        FoodOrderItem.objects.create(order="thisOrder", category="RegularPizza", name="2 toppings", isPizza=True, price="21.95")
+        user = User.objects.create_user(username="username")
+        order = Order.objects.create(user=user, orderNumber="1")
 
-    def test_getToppingAllowance_returnTwo(self):
+        FoodOrderItem.objects.create(order=order, category="RegularPizza", name="2 toppings", isPizza=True, price="21.95")
+
+    def test_getToppingAllowanceOfTwoToppingsPizza_twoReturned(self):
         twoToppingsPizza = RegularPizza.objects.get(name="2 toppings")
         toppingAllowance = pizzaOrderHandler.getInitialToppingAllowance(twoToppingsPizza.name)
         self.assertEqual(2, toppingAllowance)
@@ -43,8 +47,10 @@ class PizzaOrderHandlerTestCase(TestCase):
     def test_addToppingToPizza(self):
         pizzaToTop = RegularPizza.objects.get(name="2 toppings")
 
-        pizzaOrderHandler.createPizzaOrderItem(order="thisOrder", category=pizzaToTop.category, name=pizzaToTop.name, price="21.95")
-        pizzaOrderItem = FoodOrderItem.objects.get(order="thisOrder")
+        user = User.objects.get(username="username")
+        order = Order.objects.get(orderNumber="1", user=user)
+        pizzaOrderHandler.createPizzaOrderItem(order=order, category=pizzaToTop.category, name=pizzaToTop.name, price="21.95")
+        pizzaOrderItem = FoodOrderItem.objects.get(order=order, name="2 toppings") ##### filter this, so only the latest created pizza is returned
         self.assertEqual(pizzaOrderItem, pizzaOrderHandler.getCurrentPizza())
 
         toppingToAdd = Topping.objects.get(name="Mushrooms")
