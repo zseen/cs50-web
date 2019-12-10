@@ -37,7 +37,7 @@ class PizzaOrderHandlerTestCase(TestCase):
         user = User.objects.create_user(username="username")
         order = Order.objects.create(user=user, orderNumber="1")
         FoodOrderItem.objects.create(order=order, category="RegularPizza", name="3 toppings", isPizza=True, price="21.95")
-      
+
     def test_getToppingAllowanceOfTwoToppingsPizza_twoReturned(self):
         twoToppingsPizza = RegularPizza.objects.get(name="2 toppings")
         toppingAllowance = pizzaOrderHandler.getInitialToppingAllowance(twoToppingsPizza.name)
@@ -51,20 +51,15 @@ class PizzaOrderHandlerTestCase(TestCase):
         pizzaOrderItem = FoodOrderItem.objects.get(order=order, name="2 toppings")
         self.assertEqual(pizzaOrderItem, pizzaOrderHandler.getCurrentPizza())
 
-        toppingToAdd = Topping.objects.get(name="Mushrooms")
-        self.assertEqual("Mushrooms", toppingToAdd.name)
-        self.assertEqual("Topping", toppingToAdd.category)
-        self.assertEqual(pizzaOrderHandler.getCurrentPizza(), pizzaOrderItem)
         self.assertEqual(True, pizzaOrderHandler.isCurrentPizzaToppable())
 
-        foodItem = FoodOrderItem.objects.get(name="2 toppings")
-        self.assertEqual(pizzaOrderHandler.getCurrentPizza(), foodItem)
-
-        self.assertTrue(pizzaOrderHandler.pizza)
+        toppingToAdd = Topping.objects.get(name="Mushrooms")
+        pizzaOrderHandler.addTopping(toppingToAdd.category, toppingToAdd.name)
+        remainingToppingAllowance = pizzaOrderHandler.getRemainingToppingAllowance()
+        self.assertEqual(1, remainingToppingAllowance)
 
         pizzaOrderHandler.addTopping(toppingToAdd.category, toppingToAdd.name)
-
-        #remainingToppingAllowance = pizzaOrderHandler.getRemainingToppingAllowance()
-       # self.assertEqual(1, remainingToppingAllowance)
+        remainingToppingAllowance = pizzaOrderHandler.getRemainingToppingAllowance()
+        self.assertEqual(0, remainingToppingAllowance)
 
 
