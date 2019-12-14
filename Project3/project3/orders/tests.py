@@ -36,7 +36,7 @@ class PizzaOrderHandlerTestCase(TestCase):
                                      price="21.95")
 
     def test_getToppingAllowance_twoToppingsPizza_equalsTwo(self):
-        twoToppingsPizza = RegularPizza.objects.get(name="2  toppings")
+        twoToppingsPizza = RegularPizza.objects.get(name="2 toppings")
         toppingAllowance = pizzaOrderHandler.getInitialToppingAllowance(twoToppingsPizza.name)
         self.assertEqual(2, toppingAllowance)
 
