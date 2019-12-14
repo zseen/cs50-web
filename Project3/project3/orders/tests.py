@@ -1,12 +1,7 @@
 from django.test import TestCase
 from django.contrib.auth.models import User
-
-
-# Create your tests here.
-
-from .models import OnePriceFood, TwoPriceFood, Salad, RegularPizza, Topping, FoodOrderItem, Order, ToppingOrderItem
+from .models import OnePriceFood, TwoPriceFood, Salad, RegularPizza, Topping, FoodOrderItem, Order
 from .helpers import PizzaOrderHandler
-
 
 pizzaOrderHandler = PizzaOrderHandler.PizzaOrderHandler()
 
@@ -17,18 +12,19 @@ class ModelsTestCase(TestCase):
         TwoPriceFood.objects.create(name="DinnerPlatter", smallPrice="1.00", largePrice="1.20")
         Salad.objects.create(name="GardenSalad", category="Salad")
 
-    def test_returnOnePriceFoodPrice_returnCorrectly(self):
+    def test_getOnePriceFoodByName_getItsPrice_priceMatchesSetUp(self):
         pasta = OnePriceFood.objects.get(name="Pasta")
         self.assertEqual("1.10", str(pasta.price))
 
-    def test_returnTwoPriceFoodPrices_returnCorrectly(self):
+    def test_getTwoPriceFoodByName_getBothPrices_pricesMatchSetUp(self):
         dinnerPlatter = TwoPriceFood.objects.get(name="DinnerPlatter")
         self.assertEqual("1.00", str(dinnerPlatter.smallPrice))
         self.assertEqual("1.20", str(dinnerPlatter.largePrice))
 
-    def test_returnSaladCategory_returnCorrectly(self):
+    def test_getSaladByName_getItsCategory_categoryMatchesSetUp(self):
         gardenSalad = Salad.objects.get(name="GardenSalad")
         self.assertEqual("Salad", gardenSalad.category)
+
 
 class PizzaOrderHandlerTestCase(TestCase):
     def setUp(self):
@@ -36,18 +32,21 @@ class PizzaOrderHandlerTestCase(TestCase):
         Topping.objects.create(name="Mushrooms", category="Topping")
         user = User.objects.create_user(username="username")
         order = Order.objects.create(user=user, orderNumber="1")
-        FoodOrderItem.objects.create(order=order, category="RegularPizza", name="3 toppings", isPizza=True, price="21.95")
+        FoodOrderItem.objects.create(order=order, category="RegularPizza", name="3 toppings", isPizza=True,
+                                     price="21.95")
 
-    def test_getToppingAllowanceOfTwoToppingsPizza_twoReturned(self):
-        twoToppingsPizza = RegularPizza.objects.get(name="2 toppings")
+    def test_getToppingAllowance_twoToppingsPizza_equalsTwo(self):
+        twoToppingsPizza = RegularPizza.objects.get(name="2  toppings")
         toppingAllowance = pizzaOrderHandler.getInitialToppingAllowance(twoToppingsPizza.name)
         self.assertEqual(2, toppingAllowance)
 
-    def test_addToppingToPizza(self):
+    def test_addToppingToTwoToppingsPizza_topTwice_zeroRemainingToppingAllowance(self):
         pizzaToTop = RegularPizza.objects.get(name="2 toppings")
         user = User.objects.get(username="username")
         order = Order.objects.get(orderNumber="1", user=user)
-        pizzaOrderHandler.createPizzaOrderItem(order=order, category=pizzaToTop.category, name=pizzaToTop.name, price="21.95")
+        pizzaOrderHandler.createPizzaOrderItem(order=order, category=pizzaToTop.category, name=pizzaToTop.name,
+                                               price="21.95")
+
         pizzaOrderItem = FoodOrderItem.objects.get(order=order, name="2 toppings")
         self.assertEqual(pizzaOrderItem, pizzaOrderHandler.getCurrentPizza())
 
@@ -61,5 +60,3 @@ class PizzaOrderHandlerTestCase(TestCase):
         pizzaOrderHandler.addTopping(toppingToAdd.category, toppingToAdd.name)
         remainingToppingAllowance = pizzaOrderHandler.getRemainingToppingAllowance()
         self.assertEqual(0, remainingToppingAllowance)
-
-
