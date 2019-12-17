@@ -3,8 +3,6 @@ from django.contrib.auth.models import User
 from .models import OnePriceFood, TwoPriceFood, Salad, RegularPizza, Topping, FoodOrderItem, Order
 from .helpers import PizzaOrderHandler
 
-pizzaOrderHandler = PizzaOrderHandler.PizzaOrderHandler()
-
 
 class ModelsTestCase(TestCase):
     def setUp(self):
@@ -27,45 +25,47 @@ class ModelsTestCase(TestCase):
 
 
 class PizzaOrderHandlerTestCase(TestCase):
+    def __init__(self, *args, **kwargs):
+        super(PizzaOrderHandlerTestCase, self).__init__(*args, **kwargs)
+        self.pizzaOrderHandler = None
+
     def setUp(self):
         RegularPizza.objects.create(name="2 toppings", category="RegularPizza", smallPrice="15.20", largePrice="21.95")
         Topping.objects.create(name="Mushrooms", category="Topping")
         user = User.objects.create_user(username="username")
         Order.objects.create(user=user, orderNumber="1")
+        self.pizzaOrderHandler = PizzaOrderHandler.PizzaOrderHandler()
 
-    @staticmethod
-    def createPizzaOrderItem():
+    def createPizzaOrderItem(self):
         pizzaToTop = RegularPizza.objects.get(name="2 toppings")
         user = User.objects.get(username="username")
         order = Order.objects.get(orderNumber="1", user=user)
-        pizzaOrderHandler.createPizzaOrderItem(order=order, category=pizzaToTop.category, name=pizzaToTop.name,
-                                               price="21.95")
+        self.pizzaOrderHandler.createPizzaOrderItem(order=order, category=pizzaToTop.category, name=pizzaToTop.name,
+                                                    price="21.95")
 
         pizzaOrderItem = FoodOrderItem.objects.get(order=order, name="2 toppings")
         return pizzaOrderItem
 
     def test_getInitialToppingAllowance_twoToppingsPizza_equalsTwo(self):
         twoToppingsPizza = RegularPizza.objects.get(name="2 toppings")
-        toppingAllowance = pizzaOrderHandler.getInitialToppingAllowance(twoToppingsPizza.name)
+        toppingAllowance = self.pizzaOrderHandler.getInitialToppingAllowance(twoToppingsPizza.name)
         self.assertEqual(2, toppingAllowance)
 
-    def test_createPizzaOrderItem_callTestCaseCreatePizzaOrderItem_newlyCreatedPizzaIsCurrentPizza(self):
-        pizzaOrderItem = PizzaOrderHandlerTestCase.createPizzaOrderItem()
-        self.assertEqual(pizzaOrderItem, pizzaOrderHandler.getCurrentPizza())
+    def test_createPizzaOrderItem_newlyCreatedPizzaIsCurrentPizza(self):
+        pizzaOrderItem = PizzaOrderHandlerTestCase.createPizzaOrderItem(self)
+        self.assertEqual(pizzaOrderItem, self.pizzaOrderHandler.getCurrentPizza())
 
     def test_addToppingToTwoToppingsPizza_topTwice_zeroRemainingToppingAllowance(self):
-        pizzaToTop = PizzaOrderHandlerTestCase.createPizzaOrderItem()
-        self.assertEqual(pizzaToTop, pizzaOrderHandler.getCurrentPizza())
+        pizzaToTop = PizzaOrderHandlerTestCase.createPizzaOrderItem(self)
 
-        originalToppingAllowance = pizzaOrderHandler.getInitialToppingAllowance(pizzaToTop.name)
+        originalToppingAllowance = self.pizzaOrderHandler.getInitialToppingAllowance(pizzaToTop.name)
         self.assertEqual(2, originalToppingAllowance)
 
         toppingToAdd = Topping.objects.get(name="Mushrooms")
-        pizzaOrderHandler.addTopping(toppingToAdd.category, toppingToAdd.name)
-
-        remainingToppingAllowance = pizzaOrderHandler.getRemainingToppingAllowance()
+        self.pizzaOrderHandler.addTopping(toppingToAdd.category, toppingToAdd.name)
+        remainingToppingAllowance = self.pizzaOrderHandler.getRemainingToppingAllowance()
         self.assertEqual(1, remainingToppingAllowance)
 
-        pizzaOrderHandler.addTopping(toppingToAdd.category, toppingToAdd.name)
-        remainingToppingAllowance = pizzaOrderHandler.getRemainingToppingAllowance()
+        self.pizzaOrderHandler.addTopping(toppingToAdd.category, toppingToAdd.name)
+        remainingToppingAllowance = self.pizzaOrderHandler.getRemainingToppingAllowance()
         self.assertEqual(0, remainingToppingAllowance)
