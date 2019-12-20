@@ -15,9 +15,9 @@ class ModelsTestCase(TestCase):
         self.assertEqual("1.10", str(bakedZiti.price))
 
     def test_getTwoPriceFoodByName_getBothPrices_pricesMatchSetUp(self):
-        antiPasto = TwoPriceFood.objects.get(name="Antipasto")
-        self.assertEqual("1.00", str(antiPasto.smallPrice))
-        self.assertEqual("1.20", str(antiPasto.largePrice))
+        antipasto = TwoPriceFood.objects.get(name="Antipasto")
+        self.assertEqual("1.00", str(antipasto.smallPrice))
+        self.assertEqual("1.20", str(antipasto.largePrice))
 
     def test_getSaladByName_getItsCategory_categoryMatchesSetUp(self):
         gardenSalad = Salad.objects.get(name="GardenSalad")
